@@ -208,7 +208,11 @@ def get_pre_post_info(model, language):
 
     return pre, post, style
 
-def detect_packages(data_path, save_path, model_name, log_level, language):
+def detect_packages(data_path, save_path, model_name, log_level, language, overrides=None):
+    # `overrides` is an optional (pre, post, style) tuple used by the API/Ollama runner
+    # (run_test_api.py) to select a response parser explicitly instead of inferring one
+    # from the model name. Left as None -- the default for every original code path --
+    # behaviour is unchanged.
     if log_level != 'off':
         logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -238,7 +242,7 @@ def detect_packages(data_path, save_path, model_name, log_level, language):
         totals = aggregate_results.sum_columns(results_final, result_file_prefix, language)
         return results_final, totals
 
-    pre, post, style = get_pre_post_info(model_name, language)
+    pre, post, style = overrides if overrides is not None else get_pre_post_info(model_name, language)
 
     datasets = {
         "LLM_LY": ["LLM_Recent_Master.json", ["LLM_Recent_packages_1.json", "LLM_Recent_packages_2.json"]],
