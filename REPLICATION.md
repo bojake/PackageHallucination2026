@@ -68,9 +68,8 @@ is not directly comparable to the paper's numbers and we make no ratio claims ag
 
 ## Artificial Intelligence Disclosure
 
-The code and analysis of this work was made entirely by Anthropic Opus 5 under the direction
-of Jacob Anderson (<jwa@beyond-ordinary.com>, @bojake on github). A transcript of the build
-and analysis session was kept in the repository as EXTENSION_NOTES.MD. All work is derived
+The code and analysis of this work was made entirely by Anthropic Opus 5, Fable 5, and Open AI Codex 5.6 Sol,
+under the direction of Jacob Anderson (<jwa@beyond-ordinary.com>, @bojake on github). All work is derived
 from the original work at <https://github.com/Spracks/PackageHallucination>.
 
 ---
