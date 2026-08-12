@@ -32,6 +32,7 @@ import package_detection
 
 HALL_COLUMNS = ["hallucinated_1", "hallucinated_2", "pip_hallucinated", "npm_hallucinated"]
 VALID_COLUMNS = ["valid_1", "valid_2", "pip_valid", "npm_valid"]
+DATASET_KEYS = ["LLM_Recent", "LLM_All_Time", "Stack_Overflow_Recent", "Stack_Overflow_All_Time"]
 
 
 def parse_cell(cell):
@@ -52,6 +53,70 @@ def collect(df, columns):
             for cell in df[column]:
                 names.extend(parse_cell(cell))
     return names
+
+
+def ordered_parse(text):
+    """The default Python detection parse, but preserving first-occurrence order.
+
+    package_detection's set-based dedupe destroys list order; position within a response is
+    the quantity of interest here, so this mirrors the same filters while keeping order.
+    """
+    seen, out = set(), []
+    for piece in str(text).split(","):
+        name = package_detection.normalize_python(piece)
+        if len(name.split()) != 1 or len(name) <= 2 or name in ("None", "nan") or " " in name:
+            continue
+        if name in seen:
+            continue
+        seen.add(name)
+        out.append(name)
+    return out
+
+
+def positional_gradient(run_dir, master_set, max_position=8):
+    """Hallucination rate by position within a single response.
+
+    Tests the 'models name well-known packages first, invented ones later' hypothesis
+    directly, within responses -- no pairing across runs required. Requires the raw
+    ``{dataset}_packages_{1,2}.json`` response files (Python runs only; positions are only
+    meaningful where responses are comma-separated lists, so treat prose-heavy models with
+    caution).
+    """
+    files = []
+    for key in DATASET_KEYS:
+        for mode in (1, 2):
+            path = os.path.join(run_dir, f"{key}_packages_{mode}.json")
+            if os.path.exists(path):
+                files.append(path)
+    if not files:
+        print("\n  (raw response files absent -- skipping positional analysis)")
+        return
+
+    false_positives = set(pd.read_csv(os.path.join("Data", "Python",
+                                                   "false_positive_packages.csv"),
+                                      header=None)[1])
+    position_total = {}
+    position_hallucinated = {}
+    import json as _json
+    for path in files:
+        with open(path, encoding="utf-8") as handle:
+            for line in handle:
+                if not line.strip():
+                    continue
+                for index, name in enumerate(ordered_parse(_json.loads(line)), 1):
+                    if name in false_positives and name not in master_set:
+                        continue
+                    bucket = min(index, max_position)
+                    position_total[bucket] = position_total.get(bucket, 0) + 1
+                    position_hallucinated[bucket] = (position_hallucinated.get(bucket, 0)
+                                                     + (name not in master_set))
+
+    print("\nHallucination rate by position in the response "
+          "(1 = first package the model named):")
+    for bucket in sorted(position_total):
+        label = f"{bucket}+" if bucket == max_position else str(bucket)
+        share = 100 * position_hallucinated[bucket] / position_total[bucket]
+        print(f"  position {label:>2}   {share:5.1f}%   (n={position_total[bucket]:,})")
 
 
 def load_master_list(language):
@@ -109,6 +174,9 @@ def main():
         match = process.extractOne(name, master, scorer=Levenshtein.distance)
         distances.append(match[1])
         nearest[name] = (match[0], match[1])
+
+    if language == "Python":
+        positional_gradient(args.run, load_master_list(language))
 
     # Second reference set: the packages this run validly recommended. Searching the full
     # master list finds obscure near-collisions (opencv -> openav at distance 1) rather than

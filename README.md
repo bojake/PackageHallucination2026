@@ -58,8 +58,12 @@ This repo provides:
 .
 ├── run_test.py                 # Runs a full hallucination detection experiment (local weights)
 ├── run_test_api.py             # Same experiment against Ollama / OpenAI / Grok / Claude
-├── compare_to_paper.py         # Scores a run on the paper's scale (Tables 7 & 8)
+├── compare_to_paper.py         # Scores a run against the paper (Tables 7 & 8), cluster CIs
+├── analyze_hallucinations.py   # Characterises hallucinated names (repeats, position, Levenshtein)
+├── cap_experiment.py           # Controlled test of the 64-token cap on a reasoning model
+├── verify_audit_findings.py    # Re-derives the audit-response numbers from raw artifacts
 ├── Baselines/                  # Published per-model results, transcribed from the paper
+├── Experiments/                # Committed experiment summaries (hashes, digests, counts)
 ├── llm_api.py                  # Provider shim (plain HTTP, no SDKs)
 ├── api_batch.py                # Ordered + resumable batch execution
 ├── generate_code_api.py        # API port of generate_code.py (prompts unchanged)
@@ -90,6 +94,9 @@ This repo provides:
 ├── requirements-api.txt        # Dependencies for the API path (pandas, requests, tqdm)
 ├── .env.example                # Template for API keys
 ├── EXTENSION_NOTES.md          # How the API path was built, and what deviates from the paper
+├── REPLICATION.md              # Replication report (v3) — read before comparing to the paper
+├── codex-experiment.md         # Independent audit of this work (OpenAI Codex)
+├── AUDIT_RESPONSE.md           # Verification of and response to that audit
 └── README.md
 ```
 
@@ -292,6 +299,13 @@ with `--parser-style {gpt,deepseek,mistral,wizardcoder,mixtral,magicoder,opencha
 if a model's output format needs one of the others. **Spot-check `PACKAGE_NAMES.csv` on a
 `--limit` run** — a parser mismatch shows up as junk tokens counted as hallucinated packages.
 
+> ⚠️ **Parser choice can move the measured rate by more than any other setting.** Re-scoring
+> one DeepSeek run's identical responses under three defensible parser interpretations gave
+> rates from 12.7% to 50.8% ([REPLICATION.md](REPLICATION.md) §5.2). If you are replicating a
+> model the paper tested with a family parser (DeepSeek, Mistral, WizardCoder, OpenChat on
+> Python), `auto` is **not** the paper's parser for that model — and no mechanical choice is
+> provably faithful for a different serving stack. State the parser with every result.
+
 ### Reliability
 
 - **Resumable.** Responses stream to a `.partial` file; re-running the same command picks up
@@ -367,10 +381,13 @@ python run_test_api.py ollama:codellama:7b-instruct --language Python --sample 1
 ```
 
 `compare_to_paper.py` detects that the model spec names a model in the baseline and reports
-the delta as a **REPLICATION** line rather than a cross-model comparison. See
-[EXTENSION_NOTES.md](EXTENSION_NOTES.md) for the result and its caveats — quantization,
-chat template and sampling nondeterminism all differ from the original setup, so this is a
-sanity check on the pipeline, not a bit-exact reproduction.
+the delta as a **REPLICATION** line rather than a cross-model comparison. **Read
+[REPLICATION.md](REPLICATION.md) (v3) before interpreting the delta** — it reports the actual
+results (CodeLlama lands ~2.3 pp below the published value; DeepSeek is parser-confounded),
+the parser and response-cap sensitivities that dominate this measurement, and what was
+revised after independent audit ([codex-experiment.md](codex-experiment.md),
+[AUDIT_RESPONSE.md](AUDIT_RESPONSE.md)). This is a sanity check on the pipeline, not a
+bit-exact reproduction.
 
 ---
 

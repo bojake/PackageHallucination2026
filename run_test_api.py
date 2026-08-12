@@ -220,7 +220,7 @@ def main():
         raise SystemExit(f"--extra-body must be valid JSON: {exc}")
 
     try:
-        provider, _ = llm_api.split_spec(args.model)
+        provider, model_id = llm_api.split_spec(args.model)
         workers = args.workers if args.workers is not None else (1 if provider == "ollama" else 4)
         client = llm_api.Client.from_spec(
             args.model,
@@ -238,6 +238,10 @@ def main():
     run_name = args.name or llm_api.slugify(args.model)
     save_path = os.path.join(os.getcwd(), "Tests", f"{run_name}_{args.language}")
     os.makedirs(save_path, exist_ok=True)
+
+    # Mutable tags can be repointed at different weights; record the immutable identity of
+    # what is actually being run so results stay attributable months later.
+    identity = llm_api.ollama_identity(args.base_url, model_id) if provider == "ollama" else {}
 
     overrides = resolve_parser_style(args.parser_style, args.language)
     stats = {}
@@ -312,7 +316,7 @@ def main():
             package_detection.detect_packages(data_path, save_path, args.model,
                                               args.logging, args.language, overrides=overrides)
     finally:
-        write_manifest(save_path, args, client, workers, overrides, stats)
+        write_manifest(save_path, args, client, workers, overrides, stats, identity)
 
     logging.info("Experiment complete")
 
@@ -334,7 +338,7 @@ def paper_deviations(args):
             for name, paper in PAPER_DEFAULTS.items() if getattr(args, name) != paper}
 
 
-def write_manifest(save_path, args, client, workers, overrides, stats):
+def write_manifest(save_path, args, client, workers, overrides, stats, identity=None):
     """Record exactly what was sent, so results stay interpretable months later.
 
     Experiments are often run in stages or resumed days apart, so this merges into any
@@ -366,12 +370,15 @@ def write_manifest(save_path, args, client, workers, overrides, stats):
         "token_usage": dict(client.usage),
         "responses_hitting_token_cap": client.truncated,
         "request_adjustments": dict(client.adjustments),
+        "model_identity": identity or {},
+        "served_model_ids": dict(client.served_models),
     })
 
     manifest = {
         "model_spec": args.model,
         "language": args.language,
         "client": client.describe(),
+        "model_identity": identity or previous.get("model_identity") or {},
         "sampling_requested": {
             "code_temperature": args.code_temp,
             "package_temperature": args.package_temp,

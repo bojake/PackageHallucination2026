@@ -144,6 +144,8 @@ class Client:
         self.adjustments = {}      # param name -> why it was dropped, renamed or clamped
         self.usage = {"prompt_tokens": 0, "completion_tokens": 0, "calls": 0}
         self.truncated = 0         # responses that hit the token cap
+        self.served_models = {}    # model id reported in responses -> count; ties the
+                                   # requested alias to what the provider actually served
         self._lock = threading.Lock()
         self._session = requests.Session()
 
@@ -343,12 +345,15 @@ class Client:
                     continue
 
                 text, usage, finish = self._extract(body)
+                served = body.get("model")
                 with self._lock:
                     self.usage["prompt_tokens"] += usage["prompt_tokens"]
                     self.usage["completion_tokens"] += usage["completion_tokens"]
                     self.usage["calls"] += 1
                     if finish in ("length", "max_tokens"):
                         self.truncated += 1
+                    if served:
+                        self.served_models[served] = self.served_models.get(served, 0) + 1
                 return text, usage
 
             try:
@@ -390,6 +395,7 @@ class Client:
             "extra_body": self.extra_body,
             "sampling_params_supported": sorted(self.supported_params),
             "request_adjustments": self.adjustments,
+            "served_model_ids": dict(self.served_models),
         }
 
 
@@ -399,6 +405,36 @@ def _is_number(value):
         return True
     except (TypeError, ValueError):
         return False
+
+
+def ollama_identity(base_url, model):
+    """Immutable identity of an Ollama-served model: digest, quantization, server version.
+
+    Mutable tags like ``gpt-oss:20b`` can point at different weights over time; the digest
+    pins exactly what was run. Returns whatever could be fetched -- never raises, because
+    identity capture must not break an experiment.
+    """
+    base = (base_url or PROVIDERS["ollama"]["base_url"]).rstrip("/")
+    identity = {}
+    try:
+        identity["ollama_version"] = requests.get(f"{base}/api/version",
+                                                  timeout=15).json().get("version")
+    except Exception as exc:                                       # noqa: BLE001
+        identity["ollama_version_error"] = str(exc)
+    try:
+        tags = requests.get(f"{base}/api/tags", timeout=15).json().get("models", [])
+        entry = next((m for m in tags if m.get("name") == model or m.get("model") == model),
+                     None)
+        if entry is None and ":" not in model:
+            entry = next((m for m in tags if m.get("name") == f"{model}:latest"), None)
+        if entry:
+            identity["digest"] = entry.get("digest")
+            identity["details"] = entry.get("details")
+        else:
+            identity["note"] = f"{model!r} not present in /api/tags at run time"
+    except Exception as exc:                                       # noqa: BLE001
+        identity["tags_error"] = str(exc)
+    return identity
 
 
 def list_models(provider, base_url=None, api_key_env=None):

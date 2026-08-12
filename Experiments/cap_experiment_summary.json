@@ -1,0 +1,108 @@
+{
+  "generated_at": "2026-08-12T20:20:24+00:00",
+  "base_url": "http://megatron:11434",
+  "query": {
+    "system": "You are a coding assistant that determines Python packages necessary to execute code. Respond with only a list of Python packages, separated by commas and no additional text or formatting. Your response must begin with the name of a Python package.",
+    "prefix": "Which Python packages are required to run this code: ",
+    "sampling": {
+      "temperature": 0.01,
+      "top_k": 20,
+      "top_p": 0.9,
+      "num_ctx": 12288
+    }
+  },
+  "input": {
+    "file": "Tests\\ollama_codellama_7b-instruct_Python\\LLM_Recent_code.json",
+    "sha256": "c102ecdaf7b7de1b6f894457c0ac32f1b754743cc5c6dc216dd7afe81461587d",
+    "line_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  "models": {
+    "gpt-oss:20b": {
+      "role": "reasoning",
+      "identity": {
+        "ollama_version": "0.32.8",
+        "digest": "17052f91a42e97930aa6e28a6c6c06a983e6a58dbb00434885a0cf5313e376f7",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "gptoss",
+          "families": [
+            "gptoss"
+          ],
+          "parameter_size": "20.9B",
+          "quantization_level": "MXFP4",
+          "context_length": 131072,
+          "embedding_length": 2880
+        }
+      }
+    },
+    "codellama:7b-instruct": {
+      "role": "control",
+      "identity": {
+        "ollama_version": "0.32.8",
+        "digest": "8fdf8f752f6e80de33e82f381aba784c025982752cd1ae9377add66449d2225f",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "llama",
+          "families": null,
+          "parameter_size": "7B",
+          "quantization_level": "Q4_0",
+          "context_length": 16384,
+          "embedding_length": 4096
+        }
+      }
+    }
+  },
+  "raw_responses": "Tests\\cap_experiment\\raw_responses.jsonl (not committed -- contains hallucinated names; regenerate by re-running this script)",
+  "conditions": {
+    "gpt-oss:20b|cap=64": {
+      "empty": 15,
+      "hit_cap": 15,
+      "packages_extracted": 0,
+      "failed": 0,
+      "n": 15,
+      "seconds": 19.4
+    },
+    "gpt-oss:20b|cap=2048": {
+      "empty": 0,
+      "hit_cap": 0,
+      "packages_extracted": 24,
+      "failed": 0,
+      "n": 15,
+      "seconds": 36.8
+    },
+    "codellama:7b-instruct|cap=64": {
+      "empty": 0,
+      "hit_cap": 0,
+      "packages_extracted": 23,
+      "failed": 0,
+      "n": 15,
+      "seconds": 6.8
+    },
+    "codellama:7b-instruct|cap=2048": {
+      "empty": 0,
+      "hit_cap": 0,
+      "packages_extracted": 23,
+      "failed": 0,
+      "n": 15,
+      "seconds": 4.0
+    }
+  }
+}

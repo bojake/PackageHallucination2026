@@ -1,5 +1,6 @@
-# Dependencies for the API / Ollama path (run_test_api.py).
+# Dependencies for the API / Ollama path (run_test_api.py) and its analysis tools.
 # No torch, no transformers, no CUDA -- the models run on someone else's hardware.
 pandas>=2.0
 requests>=2.31
 tqdm>=4.66
+rapidfuzz>=3.0   # analyze_hallucinations.py (Levenshtein distances)

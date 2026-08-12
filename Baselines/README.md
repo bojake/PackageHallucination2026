@@ -61,3 +61,9 @@ baseline:
   Its first column matches Table 7 (Python) and its second matches Table 8 (JavaScript), but
   `figure_14()` plots the first on an axis labelled "JavaScript Hallucination Rate" and the
   second on "Python Hallucination Rate".
+- **`figure_9.csv` is internally inconsistent with the paper's prose** (first noted by the
+  independent audit, verified here). The CSV's counts sum to 76,395 observations where §RQ4
+  says 76,489; and the prose's "10,263 ... have a Levenshtein distance of 1 or 2" matches the
+  CSV only if the 15 distance-**0** entries are included (3,557 + 6,691 + 15 = 10,263).
+  Documented rather than reconciled; neither variant changes the paper's qualitative
+  conclusion.

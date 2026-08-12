@@ -190,14 +190,14 @@ prompts per dataset gave **23.84%** (6,258 packages), 2.28 pp *below* the publis
 with an interval excluding it. A second model, DeepSeek 6.7B, came in 3.20 pp low. Both
 replications are biased low; the initial agreement was a small sample landing well.
 
-The cause is now established and is not a property of this port: the paper's 64-token
-package-query cap truncates responses, and the discarded tail is four times more hallucinated
-than the part that survives (54% versus 13%). Re-querying identical DeepSeek code samples with
-only the cap raised moves its rate from 13.41% to 24.89%. See REPLICATION.md §5.2.
-
-Two lessons carried into the write-up: a single run of this measurement is worth ±3 pp at best
-regardless of package count, and the response cap is the most consequential free parameter in
-the methodology.
+Version 3 revised this account again after an independent audit (§10): the "discarded tail"
+arithmetic behind the cap explanation was invalid (the paired responses are separate samples,
+not truncations of one sequence), the "±3 pp run-to-run variance" rule conflated prompt
+composition with regeneration noise, and the DeepSeek run had been scored with the generic
+parser where the original pipeline selects a DeepSeek-specific one. The cap effect itself
+survives (+8 to +11.5 pp paired shift depending on parser; tail measured at 38.8% vs 5.0% on
+the pairs where a literal tail exists), but the authoritative statement of every result is
+now REPLICATION.md v3, not this file.
 
 ### Known differences from the original setup
 
@@ -222,7 +222,25 @@ python compare_to_paper.py Tests/ollama_codellama_7b-instruct_Python
 Sampling is not seed-controlled at the model, so the rate will differ from run to run; the
 prompt subset is fixed by `--seed 0`.
 
-## 9. Pre-existing issues noted during review
+## 9. Independent audit (2026-08-12)
+
+OpenAI Codex audited the repository at commit `3c021c0` ([codex-experiment.md](codex-experiment.md)).
+Its material findings — an undisclosed parser mismatch in the DeepSeek replication, an invalid
+causal decomposition in the cap experiment, a variance claim confounded by nested prompt
+samples, and inconsistent cross-protocol framing of the gpt-oss result — were each verified
+against the raw artifacts ([verify_audit_findings.py](verify_audit_findings.py)) and accepted.
+One audit re-computation did not reproduce through the repository's own code path (the
+DeepSeek family-parser re-score: 12.69%/20.76% here vs 50.78%/51.23% in the audit), a
+discrepancy that itself demonstrates the parser-sensitivity finding. Point-by-point
+disposition: [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md). Report: REPLICATION.md v3.
+
+Changes landed with the response: prompt-cluster bootstrap intervals in `compare_to_paper.py`
+(default on), positional-gradient analysis in `analyze_hallucinations.py`, the cap experiment
+promoted to a committed script (`cap_experiment.py`) with provenance and digests, immutable
+model identity in run manifests, per-phase truncation counters, and `rapidfuzz` in
+`requirements-api.txt`.
+
+## 10. Pre-existing issues noted during review
 
 Found while reading the repository, **not fixed** — they predate this work and are the
 authors' call:

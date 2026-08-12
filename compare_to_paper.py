@@ -26,10 +26,13 @@ Usage
 from __future__ import annotations
 
 import argparse
+import ast
 import glob
 import json
+import math
 import os
 
+import numpy as np
 import pandas as pd
 
 BASELINE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -116,6 +119,57 @@ def rate_from_results(results_path):
     }
 
 
+def _count_cell(cell):
+    """Length of a list stored as a Python literal in a results CSV cell."""
+    if pd.isna(cell):
+        return 0
+    try:
+        value = ast.literal_eval(cell)
+    except (ValueError, SyntaxError):
+        return 0
+    return len(value) if isinstance(value, list) else 0
+
+
+def prompt_level_counts(run_dir):
+    """Per-prompt (hallucinated, total) count arrays per dataset, from *_results.csv.
+
+    Returns None when the per-prompt files are not present (they live under Tests/, which
+    is not committed -- rerun the experiment to regenerate them).
+    """
+    counts = {}
+    for prefix in (p for group in DATASET_GROUPS.values() for p in group):
+        path = os.path.join(run_dir, f"{prefix}_results.csv")
+        if not os.path.exists(path):
+            return None
+        df = pd.read_csv(path)
+        install = (("pip_valid", "pip_hallucinated") if "pip_valid" in df.columns
+                   else ("npm_valid", "npm_hallucinated"))
+        pairs = [("valid_1", "hallucinated_1"), ("valid_2", "hallucinated_2"), install]
+        hallucinated = sum(df[h].map(_count_cell) for _, h in pairs)
+        total = hallucinated + sum(df[v].map(_count_cell) for v, _ in pairs)
+        counts[prefix] = (hallucinated.to_numpy(), total.to_numpy())
+    return counts
+
+
+def cluster_bootstrap(counts, reps=2000, seed=0):
+    """Stratified prompt-cluster bootstrap 95% interval for the pooled rate.
+
+    Package recommendations cluster within prompts, so a binomial interval over packages
+    understates uncertainty. The prompt is the sampling unit: resample prompts with
+    replacement within each of the four datasets, recompute the pooled rate each time.
+    """
+    rng = np.random.default_rng(seed)
+    rates = np.empty(reps)
+    for rep in range(reps):
+        hallucinated = total = 0
+        for h, t in counts.values():
+            index = rng.integers(0, len(h), len(h))
+            hallucinated += h[index].sum()
+            total += t[index].sum()
+        rates[rep] = 100 * hallucinated / total if total else float("nan")
+    return np.nanpercentile(rates, [2.5, 97.5])
+
+
 def describe_run(run_dir):
     """Pull model spec, sampling and deviations out of run_manifest.json if it exists."""
     manifest_path = os.path.join(run_dir, "run_manifest.json")
@@ -188,6 +242,17 @@ def main():
 
         print(f"\nHallucination rate: {result['rate']:.2f}%  "
               f"({result['hallucinated']:,}/{result['packages']:,} packages)")
+
+        counts = prompt_level_counts(run)
+        p, n = result["rate"] / 100, result["packages"]
+        binom = 1.96 * math.sqrt(p * (1 - p) / n) * 100 if n else float("nan")
+        if counts is not None:
+            low, high = cluster_bootstrap(counts)
+            print(f"  95% CI: [{low:.2f}%, {high:.2f}%]  (prompt-cluster bootstrap; "
+                  f"package-binomial would be ±{binom:.2f} pp and understates uncertainty)")
+        else:
+            print(f"  95% CI: ±{binom:.2f} pp package-binomial ONLY -- per-prompt files "
+                  f"absent, and packages cluster within prompts, so the true interval is wider")
         print("\n  by heuristic group:")
         labels = {"llm": "LLM-generated prompts", "so": "Stack Overflow prompts",
                   "install": "pip/npm install"}

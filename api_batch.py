@@ -57,6 +57,7 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
     done = _load_partial(outfile)
     todo = [i for i in range(len(items)) if i not in done]
     errors = []
+    truncated_before = client.truncated
 
     if done:
         print(f"  resuming: {len(done)}/{len(items)} responses already collected")
@@ -116,5 +117,8 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
             if os.path.exists(path):
                 os.remove(path)
 
+    # Truncations among the requests THIS invocation made. Rows recovered from a prior
+    # partial file are not re-measured, so a resumed phase undercounts relative to a fresh
+    # one -- callers wanting exact per-phase cap-hit denominators should run without resume.
     return {"items": len(items), "requested": len(todo), "resumed": len(items) - len(todo),
-            "errors": len(errors)}
+            "errors": len(errors), "truncated_new_requests": client.truncated - truncated_before}
