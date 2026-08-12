@@ -178,31 +178,26 @@ identical, not merely equivalent.
 
 ### Result
 
-| | Paper (Table 7) | This run | Delta |
-|---|---:|---:|---:|
-| **Total hallucination rate** | **26.12%** | **26.43%** | **+0.31 pp** |
-| LLM-generated prompts | 21.51% | 16.99% | −4.52 pp |
-| Stack Overflow prompts | 32.53% | 37.59% | +5.06 pp |
-| `pip install` | 16.15% | 12.50% | *n = 8, not meaningful* |
-| Packages measured | 106,487 | 1,464 | |
+> **[REPLICATION.md](REPLICATION.md) is the authoritative write-up.** This section records the
+> first result and how it was superseded, because the revision is itself a finding.
 
-400 code samples, 1,200 model calls, 0 failed requests, 2 h 22 min wall clock. The run
-manifest records `deviations_from_paper: none` and `request_adjustments: none` — Ollama's
-native endpoint accepted `temperature`, `top_k` and `top_p`, so this ran at full sampling
-fidelity, and the 31 responses that hit the token cap are the same truncation behaviour the
-paper's 2048/64 caps would have produced.
+The first run — CodeLlama 7B, 100 prompts per dataset, 1,464 packages — measured **26.43%**
+against the paper's 26.12%, a delta of +0.31 pp with the confidence interval containing the
+published value. That looked like a clean replication.
 
-At n = 1,464 packages the 95% confidence interval is **[24.17%, 28.69%]**, which contains
-the paper's 26.12%. **The pipeline reproduces the paper's headline number for a model the
-paper tested.**
+It did not survive more data. Re-running the same model with the same settings and seed at 400
+prompts per dataset gave **23.84%** (6,258 packages), 2.28 pp *below* the published figure and
+with an interval excluding it. A second model, DeepSeek 6.7B, came in 3.20 pp low. Both
+replications are biased low; the initial agreement was a small sample landing well.
 
-**The composition does not match, and that is worth stating.** Both sub-rates differ from
-the paper by more than their own confidence intervals, in opposite directions, and happen to
-cancel in the total. This run also extracted 3.66 packages per code sample against the
-paper's 5.55. So the headline agreement is stronger evidence than the breakdown supports on
-its own — plausible causes are the chat-template and quantization differences below changing
-how verbosely the model answers each prompt type, and the 100-prompt subsample. A larger
-sample would tighten this; it has not been run.
+The cause is now established and is not a property of this port: the paper's 64-token
+package-query cap truncates responses, and the discarded tail is four times more hallucinated
+than the part that survives (54% versus 13%). Re-querying identical DeepSeek code samples with
+only the cap raised moves its rate from 13.41% to 24.89%. See REPLICATION.md §5.2.
+
+Two lessons carried into the write-up: a single run of this measurement is worth ±3 pp at best
+regardless of package count, and the response cap is the most consequential free parameter in
+the methodology.
 
 ### Known differences from the original setup
 

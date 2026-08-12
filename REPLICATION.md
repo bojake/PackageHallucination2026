@@ -3,7 +3,7 @@
 **A partial replication of Spracklen et al., USENIX Security '25**
 
 *Technical report accompanying the API/Ollama extension in this repository.
-Version 1 — 2026-08-11.*
+Version 2 — 2026-08-12.*
 
 ---
 
@@ -15,22 +15,39 @@ available only behind hosted APIs requires re-implementing the generation stage 
 calls. A re-implementation is only useful if it measures the same thing as the original, so
 before applying it to new models we tested it against the original.
 
-We make three contributions. First, we reconstruct the paper's hallucination-rate metric
-from its own appendix and verify the reconstruction arithmetically: our transcription of
-Tables 7 and 8 sums to 440,445 hallucinated packages out of 2,235,642 — exactly the headline
-figures reported in §5.1 — with per-language means of 15.87% and 21.38% against the stated
-15.8% and 21.3%. Second, we re-implement only the generation stage, leaving prompts,
-sampling parameters, extraction heuristics, and the entire detection and scoring path
-untouched. Third, we replicate one of the models the original study tested. Running
-CodeLlama 7B through the new client at the paper's exact settings on a random sample of 400
-Python code samples yields a hallucination rate of **26.43%** against the paper's **26.12%**
-(Δ = +0.31 pp; 95% CI [24.17%, 28.69%]).
+We reconstruct the paper's hallucination-rate metric from its own appendix and verify the
+reconstruction arithmetically: our transcription of Tables 7 and 8 sums to 440,445
+hallucinated packages out of 2,235,642 — exactly the headline figures reported in §5.1 — with
+per-language means of 15.87% and 21.38% against the stated 15.8% and 21.3%. We then
+re-implement only the generation stage, leaving prompts, sampling parameters, extraction
+heuristics, and the entire detection and scoring path untouched.
 
-The headline rate replicates. The *composition* of that rate does not: the two prompt-source
-sub-rates each differ from the paper by more than their own confidence intervals, in
-opposite directions, and cancel in the total. We report this rather than resolve it, and
-enumerate the differences — quantization, chat template, checkpoint provenance — that plausibly
-account for it.
+Replicating two of the original models gives **approximate but not exact** agreement, biased
+low in both cases: CodeLlama 7B measures 23.84% against a published 26.12% (Δ = −2.28 pp) and
+DeepSeek 6.7B measures 13.41% against 16.61% (Δ = −3.20 pp). Neither interval contains the
+published value. The relative ordering and rough magnitude of the two models are preserved.
+An earlier, smaller sample of CodeLlama landed at 26.43% — within 0.31 pp of the paper — so
+the apparent exactness of that first result was an artifact of low power: run-to-run variation
+in this measurement exceeds what a binomial interval over packages implies, and single runs
+should not be read as precise.
+
+Investigating that bias produces our main methodological finding. The original caps
+package-query responses at 64 tokens. Re-querying identical code samples with only that cap
+raised, DeepSeek's measured rate moves from 13.41% to **24.89%** — a swing of 11.5 pp from a
+parameter choice. The reason is that models name well-known packages first: the tail the cap
+discards is **54% hallucinated against 13% for the part it keeps**. The cap therefore removes
+hallucinations preferentially, biasing rates downward by an amount proportional to a model's
+verbosity. This mechanism operates on the original's numbers too, placing its published 16.61%
+between our truncated and untruncated measurements, and it means **cross-model comparisons at
+the 64-token cap are confounded by how verbose each model is**.
+
+The same cap fails more completely on reasoning models: on 15/15 queries gpt-oss:20b spent the
+entire budget on hidden reasoning and returned empty content, yielding zero extracted packages,
+while a non-reasoning control was unaffected. Applied verbatim, the 2024 methodology would score
+a 2026 reasoning model as recommending no packages at all. Measured with an adequate cap,
+gpt-oss:20b hallucinates at **2.90%** — in the band of the strongest commercial models in the
+original study (GPT-4 Turbo, 3.59%) and roughly five times better than its best open-source
+model (DeepSeek 1B, 13.63%), while recommending twice as many packages per sample.
 
 ---
 
@@ -135,69 +152,228 @@ does. Parsing in this replication is therefore identical, not merely equivalent.
 
 ## 4. Method
 
-**Model.** CodeLlama 7B, the model with the highest Python hallucination rate in the original
-study (26.12%) and available on Ollama as `codellama:7b-instruct`. We use the
-instruction-tuned variant because the original applies a chat template.
+**Models.** Two of the paper's own models, chosen because their published rates differ by
+10 pp — reproducing a *difference* tests more than reproducing a single value. CodeLlama 7B
+(paper: 26.12%, the highest Python rate in the study) and DeepSeek 6.7B (16.61%), served by
+Ollama as `codellama:7b-instruct` and `deepseek-coder:6.7b-instruct`. We use the
+instruction-tuned variants because the original applies a chat template. Separately we
+measure `gpt-oss:20b`, a 2026 open-weight reasoning model outside the original study.
 
-**Settings.** The paper's exact values, passed explicitly:
+**Settings.** For the two replications, the paper's exact values passed explicitly:
 `--max-code-tokens 2048 --max-package-tokens 64`, temperature 0.7/0.01, top-p 0.9, top-k 20.
-The run manifest records `deviations_from_paper: none` and `request_adjustments: none` — no
-parameter was dropped, renamed, or clamped, so this ran at full sampling fidelity.
+Both manifests record `deviations_from_paper: none` and `request_adjustments: none` — no
+parameter was dropped, renamed, or clamped, so these ran at full sampling fidelity. gpt-oss
+required raised caps for the reason established in §5.3.
 
 **Sampling design.** A full run is roughly 19,200 code samples per model per language. We
-draw a random sample of 100 prompts from each of the four datasets (seed 0), for 400 code
-samples and 1,200 model calls. Random sampling matters: the Stack Overflow datasets are
-ordered by question popularity, so taking a prefix would bias the measurement toward
-well-trodden questions. The unit of analysis is the *package*, not the prompt, so 400 code
-samples still yield 1,464 packages.
+draw random samples of 100–400 prompts from each of the four datasets (seed 0). Random
+sampling matters: the Stack Overflow datasets are ordered by question popularity, so taking a
+prefix would bias the measurement toward well-trodden questions. The unit of analysis is the
+*package*, not the prompt, so even 400 code samples yield thousands of packages.
 
-**Statistics.** We report a normal-approximation binomial interval over packages. This
-treats packages as independent, which they are not — packages cluster within prompts, and a
-prompt that elicits one hallucination is more likely to elicit another. The interval below is
-therefore optimistically narrow and should be read as a lower bound on uncertainty.
+**Statistics.** We report a normal-approximation binomial interval over packages. This treats
+packages as independent, which they are not — packages cluster within prompts, and a prompt
+that elicits one hallucination is more likely to elicit another. The intervals below are
+therefore optimistically narrow; §5.4 quantifies how far.
 
 ## 5. Results
 
-| | Paper (Table 7) | This run | Δ |
+### 5.1 Replicating two of the paper's models
+
+| Run | Packages | Rate | 95% CI | Paper | Δ | CI contains paper? |
+|---|---:|---:|---|---:|---:|:--:|
+| CodeLlama 7B (n=400/dataset) | 6,258 | **23.84%** | [22.79, 24.90] | 26.12% | −2.28 pp | no |
+| DeepSeek 6.7B (n=200/dataset) | 3,064 | **13.41%** | [12.21, 14.62] | 16.61% | −3.20 pp | no |
+| CodeLlama 7B (n=100/dataset) | 1,464 | 26.43% | [24.18, 28.69] | 26.12% | +0.31 pp | yes |
+
+Zero failed requests across all runs.
+
+**The result is approximate agreement with a consistent negative bias.** Both models land
+2–3 pp below their published rates, and neither interval covers the published value. What does
+reproduce is the *structure*: CodeLlama hallucinates far more than DeepSeek in both the
+original (26.12% vs 16.61%, ratio 1.57) and here (23.84% vs 13.41%, ratio 1.78). A pipeline
+that tracks a 10-point gap between two models is measuring the same underlying property, even
+where the absolute level is offset.
+
+Sub-rate agreement is inconsistent in a way we cannot explain. For DeepSeek the LLM-prompt
+sub-rate is nearly exact (14.16% vs the paper's 14.01%) while the Stack Overflow sub-rate is
+far off (12.56% vs 23.56%). For CodeLlama the pattern reverses — Stack Overflow close (31.57%
+vs 32.53%), LLM prompts low (17.50% vs 21.51%). We report this rather than resolve it.
+
+§5.2 identifies the mechanism behind the negative bias, and it is not a property of our
+implementation.
+
+### 5.2 The response cap is not a neutral parameter
+
+The original caps package-query responses at 64 tokens (Table 6). DeepSeek hit that cap on 828
+of 2,400 calls (34.5%) against CodeLlama's 117 of 4,800 (2.4%) — and DeepSeek carries the larger
+negative delta. That suggests truncation is doing real work, so we tested it directly: the same
+DeepSeek run, the same generated code samples, re-querying packages with only the cap changed.
+
+| Package-query cap | Packages extracted | Rate | 95% CI | Responses hitting cap |
+|---|---:|---:|---|---:|
+| 64 (the paper's setting) | 3,064 | **13.41%** | [12.21, 14.62] | 828 |
+| 2048 | 4,270 | **24.89%** | [23.60, 26.19] | 1 |
+
+**The measured hallucination rate nearly doubles — 11.5 pp — from a parameter choice, on
+identical code.** Decomposing it shows why:
+
+| | Packages | Hallucinated | Rate |
 |---|---:|---:|---:|
-| **Total hallucination rate** | **26.12%** | **26.43%** | **+0.31 pp** |
-| — LLM-generated prompts | 21.51% | 16.99% | −4.52 pp |
-| — Stack Overflow prompts | 32.53% | 37.59% | +5.06 pp |
-| — `pip install` | 16.15% | 12.50% | *n = 8* |
-| Packages measured | 106,487 | 1,464 | |
-| Code samples | 19,200 | 400 | |
+| Survives the 64-token cap | 3,064 | 411 | 13.41% |
+| **Discarded by the cap** | **1,206** | **652** | **54.06%** |
+| Full response | 4,270 | 1,063 | 24.89% |
 
-Total: 387 hallucinated of 1,464 packages, 95% CI **[24.17%, 28.69%]**, which contains the
-paper's 26.12%. The run made 1,200 calls with zero failures in 2 h 22 min, consuming 528,022
-prompt and 168,249 completion tokens. 31 responses stopped at a token cap — expected
-behaviour at the paper's 2048/64 caps, and part of what the original measured.
+Models name well-known packages first and invented ones later, so the truncated tail is **four
+times more hallucinated than the part that survives**. A cap that removes list tails therefore
+removes hallucinations preferentially and biases the rate downward, by an amount that depends
+on how verbose the model is.
 
-**The headline rate replicates.** For a model the original study tested, an independent
-generation path lands 0.31 pp from the published figure.
+This explains our replication gap without appealing to anything about our implementation. The
+paper's published 16.61% sits *between* our truncated 13.41% and our untruncated 24.89%, exactly
+where a checkpoint that is less verbose than Ollama's build — and so less truncated — would land.
+It also predicts the ordering we observe: CodeLlama, truncated on 2.4% of calls, is 2.28 pp
+below its published value, while DeepSeek, truncated on 34.5%, is 3.20 pp below.
 
-**The composition does not.** Both prompt-source sub-rates differ from the paper by more than
-their own intervals, in opposite directions, and happen to offset in the total. This run also
-extracted 3.66 packages per code sample against the original's 5.55, indicating the model is
-producing differently-shaped answers even where the rate agrees. Two runs agreeing on a
-pooled ratio while disagreeing on its parts is weaker evidence than the headline number
-suggests, and we flag it rather than explain it away.
+Two consequences for the original methodology. First, its rates are likely **underestimates**,
+which the paper's own framing already allows for — it describes its results as a lower bound,
+though for a different reason (possible contamination of the master list). Second, and more
+serious for its comparative claims, the size of the underestimate scales with model verbosity,
+so **cross-model comparisons at the 64-token cap are confounded by how much a model likes to
+talk**. A terse model and a verbose model with identical propensity to hallucinate will not
+measure the same.
+
+We are not claiming 24.89% is the "true" rate; it is the rate under a different measurement
+choice. The finding is that the choice moves the answer by 11.5 pp and is not reported as a
+source of uncertainty in work that uses it.
+
+### 5.3 The same cap silently zeroes a reasoning model
+
+Where verbosity costs a verbose model part of its tail, a model that reasons before answering
+loses everything: it spends the 64-token budget on hidden reasoning and emits no answer at all.
+To measure this we took 15 real generated code samples, issued the paper's Query 1 verbatim, and
+varied only the cap — with a non-reasoning model as control:
+
+| Model | Cap | Empty responses | Hit cap | Packages extracted |
+|---|---:|---:|---:|---:|
+| gpt-oss:20b (reasoning) | 64 | **15/15** | 15/15 | **0** |
+| gpt-oss:20b (reasoning) | 2048 | 0/15 | 0/15 | 27 |
+| codellama:7b-instruct (control) | 64 | 0/15 | 0/15 | 23 |
+| codellama:7b-instruct (control) | 2048 | 0/15 | 0/15 | 23 |
+
+The control is indifferent to the cap; the reasoning model returns nothing at 64 tokens and
+answers normally at 2048. This is not a bias of a few points — it is total, silent measurement
+failure. Heuristics 2 and 3 contribute zero packages, so a rate computed this way rests on
+whatever `pip install` commands happen to appear in the code, and the pipeline reports it
+without complaint because "no packages recommended" is a well-formed outcome.
+
+Any application of this methodology to a model that reasons before answering must raise the
+cap and say so. Runs here record `responses_hitting_token_cap` in the manifest for exactly
+this reason.
+
+Taken with §5.2, the response cap is the single most consequential free parameter in this
+measurement: it costs a verbose model a downward bias proportional to its verbosity, and a
+reasoning model its entire measurement.
+
+### 5.4 Run-to-run variance exceeds the binomial interval
+
+The two CodeLlama rows in §5.1 are the same model, same settings, same seed, differing only in
+sample size — and they disagree by 2.6 pp, with intervals that barely overlap. The smaller run
+landed 0.31 pp from the published value; the larger, better-powered run landed 2.28 pp below it.
+
+This is the caveat in §4 made concrete. Nothing in the smaller result was wrong, but its
+apparent precision was luck. Temperature-0.7 generation with no seed control at the model, and
+packages clustered within prompts, together produce more variation than a binomial interval over
+packages implies. **A single run of this measurement should be read as ±3 pp at best, regardless
+of how many packages it contains**, and any comparison at finer resolution than that needs
+repeated runs rather than a larger single sample.
+
+### 5.5 A 2026 open-weight model on the paper's scale
+
+Measured with adequate caps (4096/2048), `gpt-oss:20b` gives:
+
+| | Value |
+|---|---|
+| Hallucination rate | **2.90%** (89 of 3,071 packages), 95% CI [2.30, 3.49] |
+| Packages per code sample | 7.68 (versus 3.83–3.91 for the two 2024 models here) |
+| Unique hallucinated names | 59 |
+| Responses hitting the cap | 3 |
+
+For scale, the original study's range is 3.59% (GPT-4 Turbo) to 26.12% (CodeLlama 7B), and its
+best *open-source* model is DeepSeek 1B at 13.63%. This places a 20B open-weight model in the
+band of the strongest 2024 commercial models and roughly five times better than the best 2024
+open-source model — while recommending twice as many packages per sample, so the improvement
+is not achieved by saying less.
+
+Given §5.4, we do not claim it beats GPT-4 Turbo specifically: 2.90% and 3.59% are within the
+run-to-run variation we measured, and we cannot compute an interval for the paper's figure.
+The staleness caveat in §6 cuts the other way — the master list predates the model by two
+years, so genuine packages released since 2024 are scored as hallucinations, making 2.90% an
+upper bound.
+
+Its residual hallucinations are qualitatively different from the 2024 models'. The three most
+repeated are `[redacted-stdlib-module-name]` (9×), `[redacted-stdlib-module-name]` (6×) and `[redacted-nonexistent-sibling-name]` (5×).
+The first two are standard-library modules named as if they were installable packages; the
+third is a plausible sibling of the genuine `pyobjc-framework-cocoa`. We verified all three are
+absent from the master list, so the classification is correct. This is the module-versus-package
+confusion the original discusses in Appendix G, rather than invention of unrelated names.
+
+### 5.6 What the hallucinated names look like, and why the reference set decides it
+
+A rate says how often a model invents a package; it does not say whether the invention is a
+near-miss of a real name — the typosquatting-shaped case an adversary can anticipate — or
+something unrelated. The original addresses this in RQ4 by measuring each hallucinated name's
+Levenshtein distance to the nearest valid package, and reports that only **13.4%** (10,263 of
+76,489) lie within one or two edits, concluding that most hallucinations "are not merely
+trivial typographical errors."
+
+Measuring the same property on our runs reproduces that conclusion — but only once the
+reference set is chosen carefully, and the choice turns out to dominate the result:
+
+| Run | Unique hallucinated | vs full master list (500,498 names) | vs packages the run actually used |
+|---|---:|---:|---:|
+| CodeLlama 7B (n=400) | 1,207 | 42.7% | **12.1%** |
+| gpt-oss:20b | 59 | 69.5% | **20.3%** |
+| Paper, Figure 9 / RQ4 | 76,489 | — | **13.4%** |
+
+Searching the full master list finds an obscure near-collision for almost any short string, and
+that neighbour is rarely the package the model plausibly meant: `opencv` resolves to `openav`
+at distance 1 rather than `opencv-python` at distance 7; `objc` to `obc`; `rlang` to `clang`.
+Restricting the reference set to packages the model itself validly recommended — a proxy for
+packages developers actually use — gives 12.1%, close to the paper's 13.4%. The paper's section
+heading ("Semantic Similarity Between Hallucinated and **Popular** Valid Packages") suggests it
+applied a similar restriction, though the text says only "the closest valid package."
+
+Two conclusions follow. The paper's qualitative finding **replicates**: most hallucinations are
+not off-by-one errors. And the measure is **highly sensitive to a parameter neither the paper
+nor prior work states precisely** — the same names score 42.7% or 12.1% depending on the
+haystack. Anyone reporting this statistic should state the reference set alongside it.
+
+Some hallucinations are genuinely typosquat-shaped: `tencentcloud-sdk` sits one edit from the
+real `tencent-cloud-sdk`, and was produced three times. The mechanism the original study warns
+about is present; it is simply not the majority case.
+
+Reproduce with `python analyze_hallucinations.py Tests/<run>`.
 
 ## 6. Threats to validity
 
-**The model is not provably the same checkpoint.** The original used GPTQ 4-bit weights
-through `transformers`; Ollama serves a Q4_0 GGUF built independently, with its own chat
-template. Either could shift verbosity and answer shape, which is the most plausible source
-of the composition mismatch in §5.
+**The models are not provably the same checkpoints.** The original used GPTQ 4-bit weights
+through `transformers`; Ollama serves independently built GGUFs with their own chat templates,
+and we cannot confirm the original used the instruction-tuned variants we did. Under §5.2 this
+is the likely root of the negative bias, acting through verbosity: a build that answers at
+greater length loses more of its list to the 64-token cap, and the cap discards hallucinations
+preferentially. We cannot verify the original checkpoints' verbosity directly.
 
 **Sampling is not seed-controlled.** Generation runs at temperature 0.7 with no reproducible
-seed at the model, so repeat runs differ. The prompt subset is fixed by `--seed 0`; the
-model's outputs are not. The original setup has the same property.
+seed at the model, so repeat runs differ — by 2.6 pp in the one case we measured directly
+(§5.4). The prompt subset is fixed by `--seed 0`; the model's outputs are not. The original
+setup has the same property, so its published figures carry an unstated interval of their own,
+which we cannot estimate and which may well cover our results.
 
-**One model, one language, one subsample.** This is a single point in a 30-cell grid. It
-establishes that the pipeline can reproduce a known value, not that it does so uniformly. A
-second model (DeepSeek Coder 6.7B, paper rate 16.61%) is the natural next test, since
-reproducing a *different* rate demonstrates the pipeline tracks differences between models
-rather than landing near one number by coincidence.
+**Two models, one language, subsamples.** This is two cells of a 30-cell grid, at 1–2% of the
+original's scale per cell. It establishes that the pipeline reproduces published rates to
+within a few points and preserves the ordering between models; it does not establish agreement
+to better than that, or uniformity across the other 28 cells.
 
 **The master list is frozen at 2024-01-10.** For a replication this is a strength: the
 ground truth is byte-identical to the original's. For measuring *current* models it is a
@@ -206,21 +382,32 @@ absent from the list and will be scored as a hallucination even though it exists
 using this tooling to measure a 2026 model should either refresh the master lists or read the
 resulting rate as an upper bound. This does not affect the replication reported here.
 
-**Response caps.** This replication used the paper's 2048/64 caps. The extension's defaults
-are higher (30,000 each), because a reasoning model spends a 64-token budget on hidden
-thinking and returns empty content, which the pipeline would score as "recommended no
-packages." Results produced at the raised caps are not directly comparable to the paper's
-for verbose models; runs record the deviation in their manifest.
+**Response caps cut both ways.** The two replications used the paper's 2048/64 caps, which is
+correct for comparison but truncated 34.5% of DeepSeek's package queries and cost it 11.5 pp of
+measured rate (§5.2). The extension defaults higher for the reason established in §5.3. Results
+at raised caps are not directly comparable to the paper's; every run records the deviation in
+its manifest.
 
 ## 7. What this does and does not license
 
-It licenses: using this pipeline to measure hallucination rates for models the original could
-not reach, and comparing those rates to the paper's scale, provided the master-list caveat
-above is stated.
+**It licenses** using this pipeline to measure hallucination rates for models the original
+could not reach, and placing those rates on the paper's scale at a resolution of a few
+percentage points — enough to distinguish a 3% model from a 15% one, which is the scale at
+which the original's conclusions operate. It licenses comparing models measured *by this
+pipeline* against each other, where the systematic offset largely cancels.
 
-It does not license: treating a single agreeing data point as validation of all 30 cells;
-comparing rates produced at the raised token caps to the paper's numbers without qualification;
-or claiming bit-exact reproduction of the original study, which the differences in §6 rule out.
+**It does not license** treating agreement as exact: both replications sit 2–3 pp below their
+published values and outside their own intervals. It does not license reading a single run at
+finer resolution than ±3 pp (§5.4), comparing raised-cap results to the paper's numbers without
+qualification (§5.2, §5.3), citing a Levenshtein proximity figure without stating the reference
+set (§5.6), or claiming bit-exact reproduction, which §6 rules out.
+
+**A note on direction.** Both replications came in *below* the published rates, and §5.2 shows
+why: the 64-token cap discards a tail that is four times more hallucinated than the part it
+keeps. Since that mechanism operates on the original's numbers too, published rates are
+underestimates whose size depends on model verbosity — which makes the gpt-oss:20b result in
+§5.5 conservative rather than optimistic, and makes cross-model comparison at the 64-token cap
+the practice most in need of revisiting.
 
 ## 8. Reproduction
 
@@ -228,13 +415,22 @@ or claiming bit-exact reproduction of the original study, which the differences 
 pip install -r requirements-api.txt
 ollama pull codellama:7b-instruct
 python run_test_api.py ollama:codellama:7b-instruct --language Python \
-    --sample 100 --seed 0 --max-code-tokens 2048 --max-package-tokens 64
+    --sample 400 --seed 0 --max-code-tokens 2048 --max-package-tokens 64
 python compare_to_paper.py Tests/ollama_codellama_7b-instruct_Python
+python analyze_hallucinations.py Tests/ollama_codellama_7b-instruct_Python
 ```
 
-`python compare_to_paper.py --verify-baseline` re-runs the §2.2 checks against the
-transcribed appendix without needing a model. Full results, including the run manifest
-recording every parameter actually transmitted, are written under `Tests/`.
+For a reasoning model, raise the caps and expect the deviation to be recorded:
+
+```bash
+python run_test_api.py ollama:gpt-oss:20b --language Python \
+    --sample 100 --seed 0 --max-code-tokens 4096 --max-package-tokens 2048
+```
+
+`python compare_to_paper.py --verify-baseline` re-runs the §2.2 checks against the transcribed
+appendix without needing a model. Full results, including the run manifest recording every
+parameter actually transmitted and every deviation from the paper's settings, are written under
+`Tests/`.
 
 ## References
 
