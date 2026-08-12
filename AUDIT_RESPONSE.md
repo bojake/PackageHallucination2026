@@ -15,9 +15,11 @@ in versions 1–2 of the replication report (an undisclosed parser mismatch, an 
 decomposition, and a variance claim confounded by nested samples) and one framing
 inconsistency (cross-protocol comparison of gpt-oss to the paper's scale). All four are
 accepted and REPLICATION.md v3 reflects them. One of the audit's central re-computations
-could not be reproduced through the repository's own code path — a discrepancy that
-*strengthens* the audit's underlying point while superseding its specific figures — and two
-of its withdrawal recommendations are amended in light of new measurements it prompted.
+initially did not reproduce through the repository's own code path; the audit traced its own
+error and its corrected figures match ours exactly (see finding 1). The audit's subsequent
+**forensic addendum** on the DeepSeek cap sensitivity was verified number-for-number and is
+incorporated in REPLICATION.md v3.1 — its parser-contamination mechanism supersedes the cap
+interpretation of both v2 and v3 (see "Response to the forensic addendum" below).
 
 ## Disposition of the four material findings
 
@@ -29,17 +31,16 @@ while `get_pre_post_info()` routes DeepSeek models on Python through `(True, Tru
 this; that was an error. DeepSeek is reclassified in v3 §5.2 as a parser-sensitivity finding,
 not a replication.
 
-**Amendment — the audit's re-scored figures did not reproduce.** Running the repository's own
-`detect_packages` with the DeepSeek overrides on the same stored responses gives **12.69%**
-(cap 64) and **20.76%** (cap 2048), not the audit's 50.78% / 51.23%. The likely cause: the
-DeepSeek pre-parser's regexes match *escaped* newline sequences, so its output depends on
-whether the text carries literal `\n` or real newlines at parse time — a serialization detail
-on which implementations of "the original parser" legitimately differ. Two defensible
-implementations disagreeing by 4× on identical bytes is stronger evidence for the audit's own
-conclusion (parser choice is a large, uncontrolled variable) than either figure. Consequence
-worth noting: under the repo-code family parser the cap effect persists (+8.07 pp); under the
-audit's implementation it nearly vanishes. Parser validation against manually labeled
-responses must precede everything else, exactly as the audit recommends.
+**Resolved by mutual correction.** Our re-score through the repository's own `detect_packages`
+gave **12.69%** (cap 64) and **20.76%** (cap 2048), against the audit's initial 50.78% /
+51.23%. The audit subsequently retracted its figures — the cause was applying the parser a
+second time to list-valued fields already serialized in `*_results.csv` rather than to the
+raw responses — and its corrected numbers **match ours exactly**. Our own initial hypothesis
+for the discrepancy (escaped-versus-real newline handling in the DeepSeek pre-parser's
+regexes) is likewise **retracted**: the actual cause was the double-parse, not serialization
+of newlines. Two implementations now independently converge: family-versus-generic parsing
+shifts the DeepSeek result modestly and narrows the cap contrast from 11.5 to 8.1 pp. The
+larger parser finding moved to the audit's forensic addendum (below).
 
 ### 2. The cap experiment does not measure a literal truncated tail — **accepted, verified, remeasured**
 
@@ -107,6 +108,48 @@ input hashes, line indices, model digests, and per-condition counts; raw respons
 written to `Tests/` (gitignored) and regenerate deterministically enough for audit purposes
 from the committed scripts. An auditor with repository access and a GPU reproduces
 everything; nothing sensitive ships. The maintainer can override this trade-off.
+
+## Response to the forensic addendum (same day)
+
+The audit was updated after our initial response with a DeepSeek deep-dive
+("DeepSeek cap-sensitivity forensic addendum"). We verified its quantitative claims against
+the raw artifacts (`verify_audit_findings.py`, sections 6–10); **every number reproduced
+exactly**: the query-level split (Query 1 +2.78 pp, Query 2 +17.59 pp), the drift counts
+(fences 132/800 → 338/800; numbered lists 130/800 → 208/800), the clean-subset collapse
+(Query 2: 15.09% at cap 64 versus 14.03% at cap 2048), the two outlier responses contributing
+171/805, and the unanchored-normalization corruption (`"33. docker-container-run"` →
+`"3docker-container-run"`; we add `"12. requests"` → `"1requests"` — a valid package scored
+as a hallucination).
+
+The addendum's conclusion is accepted: **the DeepSeek cap effect is predominantly parser
+contamination of format-drifted responses**, not truncation of genuine hallucinations.
+REPLICATION.md v3.1 §5.3 is rewritten around it, and the v3 inference that the paper's
+published rates are underestimates is withdrawn.
+
+Three supplementary measurements from our verification extend the addendum:
+
+- **The other runs are clean.** CodeLlama n=400: 8/3,200 responses flagged, clean-subset rate
+  identical (23.96%). gpt-oss:20b: 0/800 flagged. The CodeLlama replication and the gpt-oss
+  headline are robust to this failure mode.
+- **The CodeLlama positional gradient survives cleaning** (21.2% → 35.3% by position 5+), so
+  valid-first ordering stands for that model on uncontaminated data.
+- **The DeepSeek strict-prefix tail measurement does not survive cleaning**: restricted to
+  drift-free long responses, 17 qualifying pairs give a 1.03% head and a 5.88% tail (3
+  hallucinations). Our v3 figure of 38.8% was itself mostly contamination, and we withdraw it
+  as evidence of a large suppression effect.
+
+Two dispositions therefore amend our earlier table: "the cap changes the measured rate
+substantially" is downgraded for DeepSeek to *mostly an evaluator artifact with a small
+unidentified residual* (the reasoning-model zeroing in §5.4 is unaffected — empty responses
+are empty under any parser); and "models list valid packages first" is *supported for
+CodeLlama on clean data, unsupported as an explanation of the DeepSeek cap contrast*.
+
+The addendum's model-identity recommendations (DeepSeek-Coder-V2-Lite as the local successor,
+current hosted DeepSeek in a separate stratum, R1 distillations excluded as primary) and its
+seven-step follow-up protocol are adopted into the Track A/B plan as written. One small note
+in the same spirit: the addendum's quoted digest for the DeepSeek run is 62 hexadecimal
+characters — truncated in transcription — which is itself the argument for machine-recorded
+identity; manifests now capture digests automatically.
 
 ## On the audit's questions for the next reviewer
 

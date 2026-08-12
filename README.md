@@ -299,12 +299,15 @@ with `--parser-style {gpt,deepseek,mistral,wizardcoder,mixtral,magicoder,opencha
 if a model's output format needs one of the others. **Spot-check `PACKAGE_NAMES.csv` on a
 `--limit` run** — a parser mismatch shows up as junk tokens counted as hallucinated packages.
 
-> ⚠️ **Parser choice can move the measured rate by more than any other setting.** Re-scoring
-> one DeepSeek run's identical responses under three defensible parser interpretations gave
-> rates from 12.7% to 50.8% ([REPLICATION.md](REPLICATION.md) §5.2). If you are replicating a
-> model the paper tested with a family parser (DeepSeek, Mistral, WizardCoder, OpenChat on
-> Python), `auto` is **not** the paper's parser for that model — and no mechanical choice is
-> provably faithful for a different serving stack. State the parser with every result.
+> ⚠️ **The parser can manufacture hallucinations.** When a model drifts out of the requested
+> comma-list format (code fences, numbered lists — common at large response caps), the
+> permissive comma-splitter scores code and prose fragments as hallucinated packages: one
+> DeepSeek run's apparent rate doubled from this alone, and the unanchored numbered-list
+> normalization corrupts even valid names (`"12. requests"` → `"1requests"`). See
+> [REPLICATION.md](REPLICATION.md) §5.3. Check the format-drift rate of responses before
+> trusting a rate, and state the parser with every result. If you are replicating a model the
+> paper tested with a family parser (DeepSeek, Mistral, WizardCoder, OpenChat on Python),
+> `auto` is **not** the paper's parser for that model.
 
 ### Reliability
 

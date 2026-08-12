@@ -3,13 +3,14 @@
 **A partial replication of Spracklen et al., USENIX Security '25**
 
 *Technical report accompanying the API/Ollama extension in this repository.
-Version 3 — 2026-08-12.*
+Version 3.1 — 2026-08-12.*
 
 | Version | Date | Change |
 |---|---|---|
 | 1 | 2026-08-11 | Initial report: single CodeLlama 7B run at n=100 per dataset. |
 | 2 | 2026-08-12 | Two-model replication, response-cap finding, gpt-oss:20b measurement. |
 | 3 | 2026-08-12 | Response to an independent audit ([codex-experiment.md](codex-experiment.md)): DeepSeek reclassified as parser-confounded; the cap "tail" arithmetic withdrawn and re-measured on valid pairs; the run-to-run variance claim withdrawn (nested samples); prompt-cluster bootstrap intervals throughout; gpt-oss decoupled from the paper's scale; registry staleness quantified. Every audit claim was re-verified against the raw artifacts before adoption — see [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md). |
+| 3.1 | 2026-08-12 | Incorporates the audit's forensic addendum, verified exactly: the audit retracted its family-parser re-score (its corrected figures match ours), and the DeepSeek cap effect is reattributed to **parser contamination of format-drifted responses** (§5.3). Ordering evidence revised — the CodeLlama positional gradient survives cleaning; the DeepSeek tail measurement does not. CodeLlama and gpt-oss runs verified drift-free, so their headline numbers stand. |
 
 ---
 
@@ -31,29 +32,37 @@ Replicating CodeLlama 7B gives approximate agreement: 23.84% against a published
 (prompt-cluster 95% CI [22.18%, 25.47%], excluding the published value), with the same
 response parser as the original on both sides. A DeepSeek 6.7B run initially presented as a
 second replication is **reclassified**: an independent audit found it was scored with the
-generic parser where the original pipeline selects a DeepSeek-specific one, and re-scoring
-the identical response text under three defensible parser interpretations yields rates from
-**12.7% to 50.8%**. Parser choice — a co-evolved artifact of each model's output format — is
-the largest uncontrolled variable in this methodology, and family-specific parsers make the
-original artifact only partially portable to new serving stacks.
+generic parser where the original pipeline selects a DeepSeek-specific one. The audit's
+first re-score suggested a dramatic parser divergence; it later retracted those figures as a
+computation error, and its corrected numbers match ours exactly (generic 13.41%/24.89%
+versus family-parser 12.69%/20.76% at the two caps) — independent convergence on a modest
+parser delta.
 
-The paper's 64-token package-query cap remains a material instrument effect, now stated at
-the strength the evidence supports. Re-querying identical code with only the cap raised moves
-DeepSeek's measured rate by **+11.5 pp** under the generic parser (+8.1 pp under the repo's
-family-parser path). The audit showed our original "discarded tail" arithmetic was invalid —
-the paired responses are separate stochastic samples, not truncations of one sequence — so we
-re-measured on the 43 pairs where the long response is a literal extension of the short one:
-the tail runs **38.8% hallucinated against 5.0%** for the head. Position-in-response analysis
-shows the same ordering effect within single CodeLlama responses (21% at position 1 rising to
-~36% by position 5). The same cap fails completely on a reasoning model: on 15/15 queries
-gpt-oss:20b spent the entire budget on hidden reasoning and returned empty content — zero
-packages extracted — while a non-reasoning control was unaffected.
+The real instrument finding, from the audit's forensic addendum and verified here number for
+number, is an **interaction between the response cap and permissive parsing**. Raising the
+cap moves DeepSeek's measured rate by +11.5 pp, but the shift is concentrated in one query
+type (+17.6 pp versus +2.8 pp) and is predominantly **evaluator contamination**: at the
+larger budget DeepSeek drifts out of the requested comma-list grammar (code fences in
+338/800 long responses versus 132/800 short; numbered lists 208 versus 130), and the
+comma-splitting parser scores code fragments, arguments, and prose as hallucinated packages.
+Excluding format-failed responses, the cap contrast on that query collapses (15.09% versus
+14.03%), and two single responses account for 21% of the raised-cap "hallucinations". An
+unanchored normalization regex compounds it, corrupting even valid names
+(`"12. requests"` → `"1requests"`, scored hallucinated). A genuine truncation-suppression
+effect may exist — on the clean subset the literal tail still runs 5.9% against a 1.0% head,
+and within clean CodeLlama responses the hallucination rate rises from 21% at position 1 to
+~35% by position 5 — but it is small where measurable and not causally identified. The same
+cap fails completely on a reasoning model: on 15/15 queries gpt-oss:20b spent the entire
+64-token budget on hidden reasoning and returned empty content — zero packages extracted —
+while a non-reasoning control was unaffected.
 
 Measured under a modernized protocol (raised caps) rather than the paper's, gpt-oss:20b
 produces 89 flagged recommendations out of 3,071 (**2.90%**, cluster CI [2.18%, 3.64%]);
-re-checking its flagged names against the live registry reclassifies two, giving 2.83%. This
-result is not directly comparable to the paper's numbers and we make no ratio claims against
-them.
+re-checking its flagged names against the live registry reclassifies two, giving 2.83%. Its
+800 package-query responses contain zero code fences or numbered lists, so this number is
+unaffected by the contamination mechanism; the CodeLlama replication is likewise verified
+drift-free (8 of 3,200 responses flagged, clean-subset rate identical). The gpt-oss result
+is not directly comparable to the paper's numbers and we make no ratio claims against them.
 
 ---
 
@@ -205,9 +214,11 @@ component (§5.5).
 Zero failed requests. The better-powered run sits 2.28 pp below the published value with an
 interval excluding it: **approximate agreement with a low bias, not exact reproduction.**
 Both runs used the same parser the original used for this model, so parser choice is not a
-confound here; the remaining candidate explanations are checkpoint/quantization/template
-differences (§6) and truncation exposure (§5.3 — CodeLlama hit the 64-token cap on only 2.4%
-of package queries, consistent with its small deficit).
+confound here, and format-drift contamination is negligible for this model (8 of 3,200
+package responses contain a code fence or numbered list; the clean-subset rate is identical
+at 23.96%). With the truncation-suppression account of v2–v3 withdrawn (§5.3), the 2.3 pp
+gap is at present **unexplained**; checkpoint, quantization, and chat-template differences
+(§6) are the remaining candidates.
 
 Sub-rate composition still differs from the paper in ways we cannot fully explain (LLM-prompt
 sub-rate low at 17.50% vs 21.51%; Stack Overflow close at 31.57% vs 32.53%), and the run
@@ -222,38 +233,34 @@ pipeline routes DeepSeek through a family-specific pre/post parser (`(True, True
 report presented 13.41% as a replication of the paper's 16.61%; that presentation was wrong,
 and the claim is withdrawn.
 
-Re-scoring the **identical stored response text** under different parser interpretations:
+Re-scoring the **identical stored response text** under both parser paths:
 
 | Parser interpretation | cap 64 | cap 2048 |
 |---|---:|---:|
 | Generic default (as originally run) | 13.41% (411/3,064) | 24.89% (1,063/4,270) |
 | Family parser, repo's own code path¹ | 12.69% (466/3,672) | 20.76% (1,208/5,820) |
-| Family parser, audit's implementation² | 50.78% (1,566/3,084) | 51.23% (2,224/4,341) |
 
 ¹ `package_detection.detect_packages(..., overrides=(True, True, "DeepSeek"))` — reproduce
 with `verify_audit_findings.py`.
-² Reported in [codex-experiment.md](codex-experiment.md); we could **not** reproduce these
-figures through the repository's own detection path. The DeepSeek pre-parser's regexes match
-*escaped* newline sequences (`\n` as two characters), so its behaviour depends on whether
-text carries literal or real newlines when the parser runs — a serialization detail that
-differs between implementations of "the original parser."
 
-Three defensible readings of "score these responses the original way" span **12.7% to
-50.8%** on the same bytes. No interpretation is authoritative: each family parser was
-co-designed against its model's 2024 checkpoint output format, and Ollama's builds format
-output differently. Two conclusions follow. First, **parser choice is the dominant
-uncontrolled variable in this methodology** — larger than the cap effect, larger than any
-replication gap — and must be validated against manually labeled responses before any
-cross-implementation comparison. Second, the original artifact is only **partially portable**:
-models whose parsers encode format-specific assumptions (DeepSeek, Mistral, WizardCoder,
-OpenChat on Python) cannot be faithfully replicated on a different serving stack by any
-mechanical parser choice.
+The audit initially reported the family parser giving ~51% at both caps. It has since
+**retracted those figures** — they came from applying the parser a second time to
+list-valued fields already serialized in `*_results.csv` rather than to the raw responses —
+and its corrected numbers reproduce ours exactly. Two independent implementations now
+converge: family-versus-generic parsing shifts the DeepSeek result modestly (and narrows the
+cap contrast from 11.5 to 8.1 pp), rather than swinging it by 4×.
 
-CodeLlama measures above DeepSeek under both parser paths we computed, matching the paper's
-ordering; the audit's third interpretation would invert it — which is precisely why parser
-validation has to precede comparative claims.
+The consequential parser finding is elsewhere (§5.3): the generic parser's permissive comma
+splitting converts *format drift* into counted hallucinations, and its unanchored
+numbered-list normalization (`\d\. ` applied anywhere in the string) corrupts even valid
+names — `"12. requests"` becomes `"1requests"` and is scored as a hallucination. Parser
+behaviour therefore still has to be validated against manually labeled responses before any
+cross-implementation comparison, and the original artifact remains only **partially
+portable**: family parsers encode format assumptions about 2024 checkpoint output that a
+different serving stack need not honour. CodeLlama measures above DeepSeek under both parser
+paths, matching the paper's ordering.
 
-### 5.3 The response cap: a real effect, restated at the strength the evidence supports
+### 5.3 The cap and the parser interact: the measured cap effect is mostly an evaluator artifact
 
 The original caps package-query responses at 64 tokens (Table 6). DeepSeek hit that cap on
 34.5% of package queries against CodeLlama's 2.4%. Re-querying the same generated code with
@@ -264,35 +271,49 @@ only the cap changed:
 | 64 (paper's setting) | 13.41% | [11.60, 15.40] | 828/2,400 |
 | 2048 | 24.89% | [20.46, 29.91] | 1/2,400 |
 
-The paired shift is +11.48 pp under the generic parser (the audit's paired prompt-cluster
-bootstrap puts it at roughly +7 to +17 pp), and **+8.07 pp** under the repo's family-parser
-path — so the effect survives both parser interpretations we computed, though not the
-audit's third.
+Versions 2–3 attributed this +11.5 pp shift to truncation suppressing genuinely hallucinated
+tails. The audit's forensic addendum identified the dominant mechanism as something else, and
+we verified its decomposition exactly:
 
-Version 2 explained this with a "discarded tail" decomposition claiming the truncated tail
-was 54% hallucinated. **That arithmetic was invalid** — the audit showed the paired responses
-are separate stochastic samples (of 1,600 pairs: 628 identical, 242 strict textual
-extensions, 730 divergent), not truncations of one sequence, and we verified those counts
-exactly. Two valid measurements replace it:
+**The shift is concentrated where format compliance breaks down.** Query 1 ("packages
+required to run this code") moves +2.78 pp (11.18% → 13.96%); Query 2 ("packages useful for
+this problem") moves **+17.59 pp** (15.88% → 33.47%). At the larger budget, Query 2 responses
+drift out of the requested comma-list grammar — code fences appear in 338/800 long responses
+versus 132/800 short, numbered lists in 208 versus 130 — and the permissive comma-splitter
+then scores function arguments, string literals, and prose fragments as hallucinated
+packages. Two single responses contribute 171 of the 805 raised-cap Query 2 "hallucinations"
+(21%). The unanchored normalization regex adds corruption of its own: `"33.
+docker-container-run"` → `"3docker-container-run"`, and `"12. requests"` → `"1requests"` — a
+**real** package scored as a hallucination.
 
-- **Literal tails, where they exist.** On the 43 pairs where the long response's parsed list
-  cleanly extends the short one's: the head runs **4.98%** hallucinated (12/241), the tail
-  **38.78%** (38/98). Small n, and a subset biased toward the model's most deterministic
-  responses — indicative, not definitive.
-- **Position within single responses** (no pairing involved): CodeLlama's hallucination rate
-  rises monotonically from **21.1% at position 1 to ~36% at position 5+**. DeepSeek is flat
-  (~25%) under generic parsing — though comma-position is a poor proxy for recommendation
-  order in its prose-heavy responses. Reproduce with `analyze_hallucinations.py`.
+**Excluding format-failed responses collapses the effect.** On Query 2 responses with no code
+fence and no numbered list: 15.09% at cap 64 versus 14.03% at cap 2048. (Diagnostic, not a
+replacement estimate — format compliance is itself cap-dependent, so the conditioning can
+introduce selection bias. At the paper's own 64-token setting the contamination is modest:
+15.88% versus 15.09% clean.)
 
-So: models — at least these, in this configuration — do tend to name well-known packages
-before invented ones, truncation therefore removes hallucinations preferentially, and a fixed
-cap biases rates downward by an amount that scales with verbosity and confounds cross-model
-comparison. The paper's own published rates are plausibly underestimates for its more verbose
-models — consistent with its own "lower bound" framing, though for a different reason than it
-gives. What we can no longer claim is a precise decomposition or that this mechanism fully
-explains our replication gaps. The definitive experiment is the audit's design: capture full
-token sequences once and truncate offline at multiple budgets — which requires a runtime that
-exposes token sequences (Ollama's non-streaming API does not).
+**What survives of the ordering hypothesis.** The v2 "discarded tail is 54% hallucinated"
+arithmetic remains withdrawn (of 1,600 pairs: 628 identical, 242 strict extensions, 730
+divergent — verified). Re-measuring on clean data only: the CodeLlama within-response
+gradient **survives** (21.2% at position 1 rising to 35.3% at position 5+, on responses with
+no drift markers — CodeLlama barely drifts at all), while the DeepSeek strict-prefix tail
+measurement **collapses** from 38.8% to 5.88% (3/51) against a 1.03% head once format-failed
+long responses are excluded. Valid-first ordering is real for at least CodeLlama; as an
+explanation of large cap contrasts it is not supported.
+
+Conclusions, revised. The 64-token cap is a real instrument hazard in **two directions**: it
+silently zeroes reasoning models (§5.4), and *raising* it without a grammar-aware parser
+manufactures false hallucinations for format-drifting models — which is what our +11.5 pp
+mostly was. A genuine truncation-suppression effect may exist (the +2.78 pp Query 1 residual;
+the tiny clean-tail excess), but the present runs cannot identify it causally: 45.6% of
+paired responses diverge before the truncation point even at temperature 0.01, and the
+audit's seed probe found explicit seeds insufficient for paired trajectories in this Ollama
+configuration. v2–v3's inference that the paper's published rates are underestimates is
+**withdrawn**. The comparability warning changes shape rather than disappearing: a fixed cap
+plus a permissive parser confounds cross-model comparison through *format compliance*, not
+verbosity per se — and malformed-response rate should be reported as an outcome in its own
+right, exactly as the audit recommends. The definitive experiment remains offline truncation
+of captured token sequences with a grammar-aware, manually validated parser.
 
 ### 5.4 The same cap silently zeroes a reasoning model
 
@@ -346,11 +367,12 @@ its numbers**:
 | Responses hitting the cap | 3 |
 
 For orientation only: the original study's Python rates span 3.59% (GPT-4 Turbo) to 26.12%
-(CodeLlama 7B). gpt-oss:20b's 2.90% sits below that entire range, but the protocols differ in
-a direction that favours neither side cleanly (raised caps *increased* DeepSeek's measured
-rate by 8–11 pp in §5.3, and the 2024 baselines were themselves truncation-suppressed), so we
-make no ratio or ranking claims against the paper. A defensible cross-model statement
-requires the two-track design in §7.
+(CodeLlama 7B). gpt-oss:20b's 2.90% sits below that entire range, but the protocols differ,
+so we make no ratio or ranking claims against the paper. The contamination mechanism of §5.3
+does **not** inflate this number: all 800 of gpt-oss's package-query responses are clean
+comma lists — zero code fences, zero numbered lists — and the clean-subset rate is identical
+to the headline. A defensible cross-model statement still requires the two-track design in
+§7.
 
 Two of its 59 flagged names are now-registered packages: `python-design-patterns` (first
 upload 2024-10-18) and `pyjpeg` (first upload **2026-06-17** — roughly ten months after the
@@ -384,9 +406,14 @@ downloads list. The paper's own Figure 9 data carries internal inconsistencies d
 
 ## 6. Threats to validity
 
-**Parser–format co-evolution (now demonstrated, not hypothesized).** §5.2: three defensible
-parser interpretations span 12.7–50.8% on identical text. Affects any model whose original
-parser encoded format-specific assumptions; manual labeling is the only arbiter.
+**Permissive parsing converts format drift into counted hallucinations.** §5.3: at raised
+caps, DeepSeek's apparent rate doubles mostly because the comma-splitter scores code and
+prose fragments from format-failed responses as packages, and the unanchored numbered-list
+normalization corrupts even valid names (`"12. requests"` → `"1requests"`). Family-versus-
+generic parser choice shifts results modestly by comparison (§5.2). The binding requirement
+is a grammar-aware parser validated against manually labeled responses, with
+malformed-response rate reported as an outcome — until then, results are conditional on the
+parser stated alongside them.
 
 **The models are not provably the same checkpoints.** GPTQ 4-bit via `transformers` versus
 Ollama's independently built GGUFs with their own chat templates. Runs now record the served
@@ -426,9 +453,10 @@ replication claims where the original parser is the shared default.
 **It does not license:** exact-agreement claims against the paper (our best-powered
 replication excludes the published value); any DeepSeek fidelity claim pending
 manually-validated parsing; reading a single run at finer resolution than its prompt-cluster
-interval; cross-protocol ratios (gpt-oss versus the paper's table); Levenshtein proximity
-figures without a declared reference set; or treating two cells of a 30-cell grid as
-validation of the rest.
+interval; cross-protocol ratios (gpt-oss versus the paper's table); attributing a cap-contrast
+or any raised-cap rate increase to model behaviour without first auditing format drift
+(§5.3); Levenshtein proximity figures without a declared reference set; or treating two cells
+of a 30-cell grid as validation of the rest.
 
 The audit's recommended next iteration — a preregistered two-track design separating
 historical artifact replication from a modern-model benchmark, with parser validation against

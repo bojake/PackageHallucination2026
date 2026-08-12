@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -177,9 +178,164 @@ def tail_rate(prefix_pairs):
         print("  -> measured on valid pairs only; small n, so indicative rather than final.")
 
 
+GPT_OSS = os.path.join("Tests", "megatron_gpt-oss_20b_Python")
+
+
+def _has_fence(text):
+    return "```" in text
+
+
+def _has_numbered(text):
+    return re.search(r"(?m)^\s*\d+\.\s", text) is not None
+
+
+def _row_counts(row, mode):
+    h = ctp._count_cell(row[f"hallucinated_{mode}"])
+    return h, h + ctp._count_cell(row[f"valid_{mode}"])
+
+
+def _rows_with_text(run_dir):
+    """Yield (dataset, mode, raw_response_text, hallucinated, total) per response."""
+    for key in KEYS:
+        prefix = KEY_TO_PREFIX[key]
+        df = pd.read_csv(os.path.join(run_dir, f"{prefix}_results.csv"))
+        for mode in (1, 2):
+            raw = response_lines(run_dir, key, mode)
+            assert len(raw) == len(df)
+            for text, (_, row) in zip(raw, df.iterrows()):
+                h, t = _row_counts(row, mode)
+                yield key, mode, text, h, t
+
+
+def addendum_query_split():
+    print("\n== 6. Addendum check: cap effect split by query (DeepSeek) ==")
+    for run, label in [(DS_64, "cap 64  "), (DS_2048, "cap 2048")]:
+        totals = {1: [0, 0], 2: [0, 0]}
+        for _, mode, _, h, t in _rows_with_text(run):
+            totals[mode][0] += h
+            totals[mode][1] += t
+        print(f"  {label}  Q1 {100*totals[1][0]/totals[1][1]:5.2f}% "
+              f"({totals[1][0]}/{totals[1][1]})   "
+              f"Q2 {100*totals[2][0]/totals[2][1]:5.2f}% ({totals[2][0]}/{totals[2][1]})")
+
+
+def addendum_contamination():
+    print("\n== 7. Addendum check: format drift and the clean-subset diagnostic (DeepSeek Q2) ==")
+    for run, label in [(DS_64, "cap 64  "), (DS_2048, "cap 2048")]:
+        fence = numbered = n = 0
+        all_h = all_t = clean_h = clean_t = 0
+        per_row = []
+        for _, mode, text, h, t in _rows_with_text(run):
+            if mode != 2:
+                continue
+            n += 1
+            fence += _has_fence(text)
+            numbered += _has_numbered(text)
+            all_h += h
+            all_t += t
+            if not (_has_fence(text) or _has_numbered(text)):
+                clean_h += h
+                clean_t += t
+            per_row.append(h)
+        per_row.sort(reverse=True)
+        print(f"  {label}  fences {fence}/{n}  numbered {numbered}/{n}   "
+              f"all {100*all_h/all_t:5.2f}% ({all_h}/{all_t})   "
+              f"clean {100*clean_h/clean_t:5.2f}% ({clean_h}/{clean_t})   "
+              f"top-2 rows contribute {sum(per_row[:2])}")
+
+
+def normalize_bug():
+    print("\n== 8. Addendum check: unanchored numbered-list normalization ==")
+    for sample in ("33. docker-container-run", "12. requests", "1. numpy"):
+        print(f"  normalize_python({sample!r}) -> "
+              f"{package_detection.normalize_python(sample)!r}")
+
+
+def contamination_other_runs():
+    print("\n== 9. Contamination exposure of the OTHER runs (fence/numbered in responses) ==")
+    for run, label in [(CL_LARGE, "CodeLlama n=400 (cap 64)"), (GPT_OSS, "gpt-oss:20b (cap 2048)")]:
+        stats = {1: [0, 0], 2: [0, 0]}
+        all_h = all_t = clean_h = clean_t = 0
+        for _, mode, text, h, t in _rows_with_text(run):
+            flagged = _has_fence(text) or _has_numbered(text)
+            stats[mode][0] += flagged
+            stats[mode][1] += 1
+            all_h += h
+            all_t += t
+            if not flagged:
+                clean_h += h
+                clean_t += t
+        print(f"  {label}:")
+        print(f"    flagged responses  Q1 {stats[1][0]}/{stats[1][1]}   Q2 {stats[2][0]}/{stats[2][1]}")
+        print(f"    pooled queries-only rate: all {100*all_h/all_t:5.2f}% ({all_h}/{all_t})   "
+              f"clean subset {100*clean_h/clean_t:5.2f}% ({clean_h}/{clean_t})")
+
+
+def cleaned_positional_and_tail(prefix_pairs):
+    print("\n== 10. Do the v3 ordering measurements survive removing format-failed responses? ==")
+    master = pd.read_csv(os.path.join("Data", "Python", "pypi_package_names.csv"), header=None)
+    master_set = set(master[0].apply(package_detection.normalize_python).dropna())
+    false_positives = set(pd.read_csv(os.path.join("Data", "Python",
+                                                   "false_positive_packages.csv"),
+                                      header=None)[1])
+
+    position_total = {}
+    position_hallucinated = {}
+    for key in KEYS:
+        for mode in (1, 2):
+            path = os.path.join(CL_LARGE, f"{key}_packages_{mode}.json")
+            with open(path, encoding="utf-8") as handle:
+                for line in handle:
+                    if not line.strip():
+                        continue
+                    text = str(json.loads(line))
+                    if _has_fence(text) or _has_numbered(text):
+                        continue
+                    for index, name in enumerate(ordered_parse(text), 1):
+                        if name in false_positives and name not in master_set:
+                            continue
+                        bucket = min(index, 5)
+                        position_total[bucket] = position_total.get(bucket, 0) + 1
+                        position_hallucinated[bucket] = (position_hallucinated.get(bucket, 0)
+                                                         + (name not in master_set))
+    gradient = "  ".join(f"p{b}{'+' if b == 5 else ''}:{100*position_hallucinated[b]/position_total[b]:.1f}% "
+                         f"(n={position_total[b]})" for b in sorted(position_total))
+    print(f"  CodeLlama n=400 positional gradient, clean responses only:\n    {gradient}")
+
+    clean_pairs = [(s, l) for s, l in prefix_pairs
+                   if not (_has_fence(l) or _has_numbered(l))]
+    head_h = head_t = tail_h = tail_t = qualifying = 0
+    for short, long_ in clean_pairs:
+        short_items = ordered_parse(short)
+        long_items = ordered_parse(long_)
+        if not short_items or long_items[:len(short_items)] != short_items:
+            continue
+        qualifying += 1
+        for name in long_items[:len(short_items)]:
+            if name in false_positives and name not in master_set:
+                continue
+            head_t += 1
+            head_h += name not in master_set
+        for name in long_items[len(short_items):]:
+            if name in false_positives and name not in master_set:
+                continue
+            tail_t += 1
+            tail_h += name not in master_set
+    print(f"  DeepSeek strict-prefix tail, clean long responses only: "
+          f"{qualifying} qualifying pairs")
+    if head_t and tail_t:
+        print(f"    head {100*head_h/head_t:5.2f}% ({head_h}/{head_t})   "
+              f"tail {100*tail_h/tail_t:5.2f}% ({tail_h}/{tail_t})")
+
+
 if __name__ == "__main__":
     check_nesting()
     pairs = check_prefix_split()
     rescore_family_parser()
     partition_large_run()
     tail_rate(pairs)
+    addendum_query_split()
+    addendum_contamination()
+    normalize_bug()
+    contamination_other_runs()
+    cleaned_positional_and_tail(pairs)

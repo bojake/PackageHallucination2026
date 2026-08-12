@@ -15,9 +15,9 @@ The current report is not yet ready to support its strongest methodological or c
 claims, however. Four issues materially change the interpretation:
 
 1. The DeepSeek runs were scored with the generic parser, not the DeepSeek-specific parser
-   used by the original pipeline. Applying the original parser to the stored responses changes
-   the reported rates dramatically. This invalidates DeepSeek as a fidelity replication in its
-   current form.
+   used by the original pipeline. Re-scoring from the raw response JSON changes the package
+   universe and reduces, but does not eliminate, the apparent cap effect. This prevents the
+   current run from being called a parser-faithful replication.
 2. The 64-token and 2048-token package responses were independently sampled. Most differing
    pairs are not prefix-related, so subtracting their aggregate counts does not identify a
    literal "discarded tail." The cap may have a large effect, but the claimed 54.06% tail rate
@@ -121,16 +121,23 @@ The API runner instead defaults `--parser-style auto` to:
 Both committed DeepSeek manifests confirm the generic parser was used. This contradicts the
 claim that package extraction was left unchanged for the DeepSeek replication.
 
-Re-scoring the existing response text without regenerating it gives:
+Re-scoring the raw response JSON without regenerating it gives:
 
 | Cap | Reported generic-parser result | Original DeepSeek-parser result |
 |---|---:|---:|
-| 64 | 13.41% (411/3,064) | **50.78% (1,566/3,084)** |
-| 2048 | 24.89% (1,063/4,270) | **51.23% (2,224/4,341)** |
+| 64 | 13.41% (411/3,064) | **12.69% (466/3,672)** |
+| 2048 | 24.89% (1,063/4,270) | **20.76% (1,208/5,820)** |
 
-This does not establish that 50% is the semantically correct answer for the Ollama model. It
-establishes that parser choice is a large, uncontrolled measurement variable and that the
-13.41% result cannot be presented as a faithful DeepSeek replication.
+The historical parser therefore changes the cap contrast from 11.48 percentage points to
+8.07 points. It extracts substantially more candidate names from both runs and is not thereby
+proved semantically correct for the Ollama response format. Parser choice remains an
+uncontrolled measurement variable, but it is not the dominant explanation for the anomaly.
+
+**Correction to an earlier audit calculation:** the previously reported 50.78% and 51.23%
+figures were invalid. They resulted from applying the parser a second time to list-valued
+fields already serialized in `*_results.csv`, rather than rebuilding those files from the raw
+`*_packages_{1,2}.json` responses. The corrected figures above were reproduced through
+`package_detection.detect_packages()` on clean copies of the raw run directories.
 
 Recommended correction:
 
@@ -413,7 +420,7 @@ cross-model comparisons.
 |---|---|
 | Baseline appendix and pooled metric are reconstructed correctly | **Keep** |
 | CodeLlama approximately reproduces the historical magnitude | **Keep, with caveats** |
-| DeepSeek 13.41% is a faithful replication | **Withdraw pending parser-correct rerun** |
+| DeepSeek 13.41% is a parser-faithful replication | **Withdraw; raw re-score is 12.69% with the historical parser** |
 | The cap changes the measured rate substantially | **Retain as a hypothesis/association** |
 | The discarded tail is 54.06% hallucinated | **Withdraw** |
 | Models list valid packages first and hallucinations later | **Withdraw pending position-level experiment** |
@@ -443,6 +450,137 @@ The next review should challenge, in particular:
    hallucinated name later registered by an unrelated party?
 7. Should the historical false-positive list be preserved only in Track A and replaced by a
    reproducible rule-based classifier in Track B?
+
+## DeepSeek cap-sensitivity forensic addendum
+
+This addendum follows a query- and response-level inspection prompted by the position analysis.
+It supersedes the earlier suggestion that the DeepSeek cap result was merely unexplained after
+the lack of a position gradient. The dominant mechanism is now identifiable.
+
+### Finding: most of the dramatic effect is parser contamination after format failure
+
+The cap contrast is almost entirely confined to Query 2, which asks for packages useful for
+solving the original problem:
+
+| Query | Cap 64 | Cap 2048 | Difference |
+|---|---:|---:|---:|
+| Query 1: packages required by generated code | 11.18% (165/1,476) | 13.96% (233/1,669) | +2.78 pp |
+| Query 2: packages useful for the problem | 15.88% (221/1,392) | 33.47% (805/2,405) | **+17.59 pp** |
+
+The longer Query 2 responses frequently stop obeying the requested comma-list grammar. Code
+fences appear in 132/800 short responses and 338/800 long responses; numbered lists appear in
+130/800 and 208/800, respectively. The evaluator still splits these responses on commas and
+treats every surviving one-word fragment as a package candidate. As a result, function
+arguments, string literals, hostnames, field names, numeric values, and fragments of prose can
+be scored as hallucinated packages.
+
+This is not a small edge case:
+
+- Long Query 2 responses containing a code fence contribute 448 hallucinations among 599
+  extracted candidates, a 74.79% apparent rate. Responses without a code fence score 19.77%.
+- One numbered Docker response contributes 94 hallucinations. The unanchored normalization
+  regex `\d\. ` turns `33. docker-container-run` into `3docker-container-run` and similarly
+  corrupts multi-digit list items.
+- One prose-plus-code response contributes 77 hallucinations because real names such as
+  `"kafka-python"` and `"openpyxl"` retain quotation marks under the generic parser.
+- Those two responses alone contribute 171/805, or 21.2%, of all reported long-Query-2
+  hallucinations.
+
+As a diagnostic sensitivity analysis, exclude responses with an obvious code fence or a
+numbered-list marker while otherwise retaining the stored generic-parser classifications:
+
+| Query 2 subset | Cap 64 | Cap 2048 |
+|---|---:|---:|
+| All responses | 15.88% (221/1,392) | 33.47% (805/2,405) |
+| No code fence or numbered-list marker | **15.09% (195/1,292)** | **14.03% (216/1,540)** |
+
+This clean-subset comparison is diagnostic, not a replacement headline estimate: format
+compliance is itself affected by the cap, so conditioning on it can introduce selection bias.
+It nevertheless demonstrates that the claimed cap sensitivity is not robust to separating
+malformed responses from package-list responses. The main cap effect is that a larger budget
+lets DeepSeek continue into verbose explanations, numbered inventories, and code; the generic
+parser then mistakes the new syntax for package names.
+
+The flat position curve does not contradict this explanation. The current positional analyzer
+uses the same comma splitting and one-word filter, so a "position" inside a code block may be a
+function argument rather than a package. Format contamination occurs throughout a response,
+including the first extracted slot, and therefore need not produce a valid-first gradient.
+Position analysis should be restricted to grammar-valid package lists and reported separately
+for Query 1 and Query 2.
+
+### The two cap runs are not a causal comparison
+
+The historical pair still has 730/1,600 responses that diverge before the short response ends.
+The package temperature is 0.01 rather than greedy, no inference seed was sent to Ollama, two
+workers were used, and the calls were executed hours apart. Accordingly, the first-position
+jump in long Query 2 cannot be attributed to `num_predict` alone.
+
+A targeted 12-prompt probe used the same prompt, model, explicit seed, and sampling settings
+for paired 64- and 2048-token calls. Eleven short calls hit the cap; only two were exact
+prefixes of their long partner and nine diverged. On a repeated single-prompt test, temperature
+0.01 produced one warm/cache-state divergence and then stable prefixes, while temperature 0
+produced identical short replicates that were prefixes of the long response. This small,
+purposively selected probe is not an effect estimate. It shows that seed alone is insufficient
+to guarantee paired trajectories in this Ollama configuration and that a greedy, single-worker
+prefix audit is required before treating online calls as counterfactual caps.
+
+### Exact model identity and what “newer DeepSeek” should mean
+
+The local run is not a modern DeepSeek model. It used:
+
+- `deepseek-coder:6.7b-instruct`;
+- Ollama digest
+  `ce298d984115b93bb1b191b47fee6b39e4fbd5f18e651c02f9fa74e0edcd13`;
+- a 7B GGUF quantized at Q4_0, approximately 3.8 GB;
+- a 16,384-token context configuration; and
+- Ollama's `### Instruction` / `### Response` template.
+
+This is the original DeepSeek Coder generation, not the newer coder-specific release. Keep it
+in Track A for historical continuity, but add a newer model rather than silently replacing it:
+
+1. **Local DeepSeek extension:** `DeepSeek-Coder-V2-Lite-Instruct` (16B total, 2.4B active).
+   The official release reports 128K context; Ollama's current `deepseek-coder-v2:16b` artifact
+   is about 8.9 GB. Pin its full digest and quantization. This is the cleanest local successor
+   to the 6.7B coder model.
+2. **Current hosted DeepSeek:** use `deepseek-v4-flash` in non-thinking mode for a current
+   DeepSeek frontier cell, optionally adding `deepseek-v4-pro`. DeepSeek's official April 2026
+   changelog says V4 replaced the legacy `deepseek-chat`/`deepseek-reasoner` aliases, which were
+   scheduled for retirement on July 24, 2026. Pin the returned model identity and run date.
+3. **Do not use `deepseek-r1:latest` as the primary successor.** Local R1 tags are reasoning
+   distillations based on Qwen or Llama checkpoints, and a 64-token budget can be consumed by
+   reasoning before a package list appears. If included, place it in a separate reasoning-model
+   stratum with an adequate budget and separately recorded reasoning and visible-output tokens.
+
+Official references:
+[DeepSeek-Coder-V2 release](https://github.com/deepseek-ai/DeepSeek-Coder-V2),
+[DeepSeek-Coder-V2-Lite-Instruct model card](https://huggingface.co/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct),
+[Ollama DeepSeek-Coder-V2 tags](https://ollama.com/library/deepseek-coder-v2/tags), and
+[DeepSeek API changelog](https://api-docs.deepseek.com/updates/).
+
+### Required DeepSeek follow-up
+
+The next DeepSeek experiment should be a compact diagnostic before another full 800-prompt run:
+
+1. Use 50-100 fixed prompts, stratified across all four datasets and both package queries.
+2. Run the 6.7B historical model and Coder-V2 Lite 16B with one worker, temperature 0, explicit
+   seed, pinned digest/template/runtime, and counterbalanced cap order.
+3. For the cleanest cap estimand, generate one 2048-token trajectory and create 64/128/256/512
+   views offline at exact tokenizer boundaries. Report head and incremental-band results.
+4. Separately repeat online hard-cap calls at the paper's temperature across at least five
+   seeds. Verify prefix identity; treat non-prefix pairs as repeated-generation observations,
+   not truncated tails.
+5. Replace permissive comma splitting with a grammar-aware parser. Strip only anchored list
+   numbering and balanced wrappers; reject code/prose fragments. Unit-test at least
+   `33. docker-container-run`, `"openpyxl"`, and `port=3306`.
+6. Report malformed-response rate as an outcome, not as hallucinated package names. Publish
+   package-occurrence, prompt-level, macro response-level, and outlier-robust rates.
+7. Manually label a stratified sample containing compliant lists, numbered lists, prose, and
+   code. Report parser precision and recall before using it for model comparisons.
+
+**Forensic verdict:** there is no evidence here of provider or model tampering. There is strong
+evidence of an evaluator interaction: a longer cap greatly increases DeepSeek's format drift,
+and the generic parser converts that drift into false package candidates. A smaller genuine
+model-quality or cap effect may remain, but the present runs cannot identify it causally.
 
 ## Bottom line
 

@@ -190,14 +190,15 @@ prompts per dataset gave **23.84%** (6,258 packages), 2.28 pp *below* the publis
 with an interval excluding it. A second model, DeepSeek 6.7B, came in 3.20 pp low. Both
 replications are biased low; the initial agreement was a small sample landing well.
 
-Version 3 revised this account again after an independent audit (§10): the "discarded tail"
+Version 3 revised this account again after an independent audit (§9): the "discarded tail"
 arithmetic behind the cap explanation was invalid (the paired responses are separate samples,
 not truncations of one sequence), the "±3 pp run-to-run variance" rule conflated prompt
 composition with regeneration noise, and the DeepSeek run had been scored with the generic
-parser where the original pipeline selects a DeepSeek-specific one. The cap effect itself
-survives (+8 to +11.5 pp paired shift depending on parser; tail measured at 38.8% vs 5.0% on
-the pairs where a literal tail exists), but the authoritative statement of every result is
-now REPLICATION.md v3, not this file.
+parser where the original pipeline selects a DeepSeek-specific one. Version 3.1 revised the
+cap story once more: the audit's forensic addendum showed — and we verified exactly — that
+the +11.5 pp cap shift was predominantly *parser contamination* of format-drifted responses,
+not suppression of genuine hallucinations. The authoritative statement of every result is
+REPLICATION.md, not this file.
 
 ### Known differences from the original setup
 
@@ -229,10 +230,14 @@ Its material findings — an undisclosed parser mismatch in the DeepSeek replica
 causal decomposition in the cap experiment, a variance claim confounded by nested prompt
 samples, and inconsistent cross-protocol framing of the gpt-oss result — were each verified
 against the raw artifacts ([verify_audit_findings.py](verify_audit_findings.py)) and accepted.
-One audit re-computation did not reproduce through the repository's own code path (the
-DeepSeek family-parser re-score: 12.69%/20.76% here vs 50.78%/51.23% in the audit), a
-discrepancy that itself demonstrates the parser-sensitivity finding. Point-by-point
-disposition: [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md). Report: REPLICATION.md v3.
+One audit re-computation initially did not reproduce (its DeepSeek family-parser re-score);
+the audit traced its own error and its corrected figures match ours exactly. The audit then
+added a **forensic addendum** identifying the dominant mechanism behind the DeepSeek cap
+sensitivity as parser contamination of format-drifted responses — verified here
+number-for-number, with the supplementary findings that the CodeLlama and gpt-oss runs are
+drift-free and that the CodeLlama positional gradient survives cleaning while the DeepSeek
+tail measurement does not. Point-by-point disposition: [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md).
+Report: REPLICATION.md v3.1.
 
 Changes landed with the response: prompt-cluster bootstrap intervals in `compare_to_paper.py`
 (default on), positional-gradient analysis in `analyze_hallucinations.py`, the cap experiment
