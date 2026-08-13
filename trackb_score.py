@@ -37,13 +37,14 @@ def load_registry(path):
 
 
 def score(run_dir, frozen, current):
-    per_prompt = {}            # (dataset, index) -> [hallucinated, total] (frozen registry)
-    per_prompt_invented = {}   # (dataset, index) -> [invented-both-non-stdlib, total]
+    per_prompt = {}            # (dataset, index) -> [frozen-absent, total] (secondary view)
+    per_prompt_invented = {}   # (dataset, index) -> [primary-metric count, total]
     statuses = {"list": 0, "malformed": 0, "empty": 0}
     occurrences = {"frozen": [0, 0], "current": [0, 0]}
     categories = {"valid_both": 0, "stdlib_mention": 0, "post_snapshot_package": 0,
                   "deleted_since_snapshot": 0, "hallucinated_both": 0}
-    per_response = []
+    per_response = []          # primary-metric count per list response (concentration)
+    unique_invented = set()
     for key in KEYS:
         for mode in (1, 2):
             path = os.path.join(run_dir, f"{key}_packages_{mode}.json")
@@ -57,7 +58,7 @@ def score(run_dir, frozen, current):
                     statuses[status] += 1
                     slot = per_prompt.setdefault((key, index), [0, 0])
                     invented_slot = per_prompt_invented.setdefault((key, index), [0, 0])
-                    hallucinated_here = 0
+                    invented_here = 0
                     for name in packages:
                         normalized = package_detection.normalize_python(name)
                         for registry, member_set in (("frozen", frozen),
@@ -66,10 +67,13 @@ def score(run_dir, frozen, current):
                             occurrences[registry][0] += normalized not in member_set
                         in_frozen = normalized in frozen
                         in_current = normalized in current
+                        invented = (not in_frozen and not in_current
+                                    and normalized not in STDLIB)
                         invented_slot[1] += 1
-                        invented_slot[0] += (normalized not in frozen
-                                             and normalized not in current
-                                             and normalized not in STDLIB)
+                        invented_slot[0] += invented
+                        if invented:
+                            invented_here += 1
+                            unique_invented.add(normalized)
                         if normalized in STDLIB:
                             categories["stdlib_mention"] += 1
                         elif in_frozen and in_current:
@@ -80,33 +84,39 @@ def score(run_dir, frozen, current):
                             categories["deleted_since_snapshot"] += 1
                         else:
                             categories["hallucinated_both"] += 1
-                        missing = not in_frozen
-                        hallucinated_here += missing
-                        slot[0] += missing
+                        slot[0] += not in_frozen
                         slot[1] += 1
                     if status == "list":
-                        per_response.append(hallucinated_here)
+                        per_response.append(invented_here)
 
-    result = {"run": os.path.basename(run_dir), "statuses": statuses,
-              "provisional": "labels not yet signed"}
+    # Primary metric, one definition everywhere: absent from BOTH registries and not a
+    # standard-library module -- the "unregistered-PyPI recommendation" rate. Frozen- and
+    # current-registry absence rates are secondary views. Prompt-level risk, concentration,
+    # and unique-name counts all use the primary definition.
+    result = {"run": os.path.basename(run_dir), "statuses": statuses}
     for registry, (hallucinated, total) in occurrences.items():
         result[f"rate_{registry}"] = {
             "rate_pct": round(100 * hallucinated / total, 2) if total else None,
             "hallucinated": hallucinated, "packages": total}
     result["categories"] = categories
     total_occ = occurrences["frozen"][1] or 1
-    result["rate_hallucinated_both_registries_pct"] = round(
+    result["rate_unregistered_pypi_pct"] = round(
         100 * categories["hallucinated_both"] / total_occ, 2)
-    prompts_any = sum(1 for h, _ in per_prompt.values() if h)
-    result["prompt_level_risk_pct"] = round(100 * prompts_any / len(per_prompt), 2)
+    result["unique_unregistered_names"] = len(unique_invented)
+    prompts_any = sum(1 for h, _ in per_prompt_invented.values() if h)
+    result["prompt_level_risk_pct"] = round(
+        100 * prompts_any / len(per_prompt_invented), 2)
+    result["prompt_level_risk_frozen_pct"] = round(
+        100 * sum(1 for h, _ in per_prompt.values() if h) / len(per_prompt), 2)
     per_response.sort(reverse=True)
     total_h = sum(per_response) or 1
     result["concentration"] = {
         "top3_responses_share_pct": round(100 * sum(per_response[:3]) / total_h, 1),
         "max_single_response": per_response[0] if per_response else 0}
     listed = statuses["list"] or 1
-    result["packages_per_list_response"] = round(
-        occurrences["frozen"][1] / listed, 2)
+    result["packages_per_list_response"] = round(occurrences["frozen"][1] / listed, 2)
+    result["packages_per_prompt"] = round(
+        occurrences["frozen"][1] / max(len(per_prompt_invented), 1), 2)
     result["per_prompt_invented"] = per_prompt_invented   # popped before printing in main()
     return result
 

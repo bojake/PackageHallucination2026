@@ -117,7 +117,25 @@ as such.
    in `parser_v2_validation.json`, which the maintainer's delegation makes final. Corrected
    recall decomposition and one new v2.1 candidate rule (cap-hit trailing items) recorded
    there. Phase 5 scoring is no longer provisional.
-5. **2026-08-12 (pre-execution) — cap-diagnostic code generation is deterministic.** Phase 2
+5. **2026-08-13 (post-analysis) — v4.1 correction pass, from the second independent
+   review.** Accepted and applied: (a) one consistent primary metric everywhere, named
+   the **unregistered-PyPI recommendation rate** (absent from both registries,
+   non-stdlib) — prompt-level risk and concentration previously mixed frozen-registry
+   absence into these outcomes; (b) paired bootstraps re-run **stratified by dataset** as
+   frozen (the first pass pooled strata) at 50,000 replicates — the opus-5 vs gpt-5.2
+   comparison does **not** reliably survive Holm correction (verified: raw p≈0.008,
+   Holm≈0.06–0.07), so seven, not eight, pairwise comparisons are significant;
+   (c) Track A acceptance evaluated under the **historical family parser**, where all
+   three DeepSeek seed CIs exclude the published value (verified) — ordering and
+   magnitude reproduce, exact replication does not; (d) missing preregistered outcomes
+   added (unique names, packages per prompt, per-phase cap hits, Track A Parser-v2
+   malformed rates, Phase 2 position bands, separate pip-install heuristic); (e) the
+   pre-campaign gpt-oss cell ran at n=100/dataset, violating the frozen 200-prompt
+   clause — an unlogged deviation, now replaced by a conforming n=200 rerun with
+   identity capture; (f) stale "provisional" markers removed now that labels are signed;
+   (g) parser-validation coverage limitation (sample predates hosted cells) disclosed in
+   the results artifact.
+6. **2026-08-12 (pre-execution) — cap-diagnostic code generation is deterministic.** Phase 2
    generates each model's code once at temperature 0 with `seed=7` (not the paper's 0.7),
    because the diagnostic conditions on *given* code and pairing requires determinism. This
    deviates from the paper's code-generation setting by design; Phase 2 is not a Track A
