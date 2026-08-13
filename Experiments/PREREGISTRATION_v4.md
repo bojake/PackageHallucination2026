@@ -110,7 +110,14 @@ as such.
    `Data/Python/pypi_package_names_2026-08-12.csv`, 869,894 names (the frozen 2024-01-10
    list has 500,513 — a 74% larger namespace, so Track B dual-registry deltas are expected
    to be material).
-4. **2026-08-12 (pre-execution) — cap-diagnostic code generation is deterministic.** Phase 2
+4. **2026-08-13 (post-collection) — label review delegated.** The maintainer delegated the
+   Parser v2 labeling-sample review to OpenAI Codex, which verified and signed all 200
+   records (`maintainer_verdict: ok` throughout). The reviewer is a different AI system from
+   the parser's author and label drafter; no human read all 200 records — recorded plainly
+   in `parser_v2_validation.json`, which the maintainer's delegation makes final. Corrected
+   recall decomposition and one new v2.1 candidate rule (cap-hit trailing items) recorded
+   there. Phase 5 scoring is no longer provisional.
+5. **2026-08-12 (pre-execution) — cap-diagnostic code generation is deterministic.** Phase 2
    generates each model's code once at temperature 0 with `seed=7` (not the paper's 0.7),
    because the diagnostic conditions on *given* code and pairing requires determinism. This
    deviates from the paper's code-generation setting by design; Phase 2 is not a Track A

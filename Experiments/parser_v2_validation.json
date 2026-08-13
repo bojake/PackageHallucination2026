@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-13T00:32:54+00:00",
-  "status": "PROVISIONAL -- awaiting maintainer sign-off (PREREGISTRATION_v4.md, Phase 1)",
+  "generated_at": "2026-08-13T13:07:03+00:00",
+  "status": "FINAL -- labels signed 2026-08-13",
   "method": "Assistant verification-style review of all 200 records: response text read alongside parser output; agreement recorded unless the frozen grammar contract was misapplied. Drafted by the same assistant that wrote the parser; maintainer review is the independence check.",
   "sample_size": 200,
   "response_status_accuracy": {
@@ -22,6 +22,27 @@
   "v2_1_candidate_rules_NOT_applied_this_campaign": [
     "strip matched wrappers at response level before splitting (fixes all 4 errors)",
     "when a response hit its token cap, drop a trailing invalid item instead of rejecting the response (cap-64 lists cut mid-name currently score malformed -- biases Track A malformed rates upward)",
-    "classify no-packages-required prose and refusals as empty-equivalent rather than malformed"
-  ]
+    "classify no-packages-required prose and refusals as empty-equivalent rather than malformed",
+    "when a response hit its token cap, drop the trailing item even if it matches the name grammar -- truncation fragments like 'twe' are syntactically valid and currently score as (hallucinated) packages [reviewer catch]"
+  ],
+  "review": {
+    "reviewer": "OpenAI Codex, at the maintainer direction (delegated sign-off)",
+    "independence_note": "Reviewer is a different AI system from the parser author and label drafter (Claude); no human read all 200 records. The maintainer authorized the delegation and accepts the verdicts.",
+    "verdicts": "200/200 ok",
+    "reviewer_verified": {
+      "response_status_accuracy": "196/200",
+      "extraction_precision": "100%, zero extra tokens",
+      "grammar_valid_occurrence_recall": "441/451 = 97.78%",
+      "parser_unit_tests": "21/21"
+    }
+  },
+  "recall_decomposition_corrected": {
+    "note": "The earlier field recommendation_occurrences_not_scored=112 INCLUDED the 10 parser-defect packages; the reviewer message quoted end-to-end figures (78.33%/80.11%) inheriting that double-count. Corrected split below.",
+    "extracted_from_grammar_valid": 441,
+    "missed_parser_defect_wrappers": 10,
+    "missed_deliberate_grammar_abstention": 102,
+    "grammar_valid_recall_pct": 97.78,
+    "end_to_end_semantic_recall_pct": 79.75,
+    "end_to_end_after_wrapper_fix_pct": 81.56
+  }
 }
