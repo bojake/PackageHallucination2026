@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-08-13T00:32:54+00:00",
+  "status": "PROVISIONAL -- awaiting maintainer sign-off (PREREGISTRATION_v4.md, Phase 1)",
+  "method": "Assistant verification-style review of all 200 records: response text read alongside parser output; agreement recorded unless the frozen grammar contract was misapplied. Drafted by the same assistant that wrote the parser; maintainer review is the independence check.",
+  "sample_size": 200,
+  "response_status_accuracy": {
+    "agree": 196,
+    "disagree": 4,
+    "pct": 98.0
+  },
+  "parser_errors": {
+    "count": 4,
+    "root_cause": "wrapper characters around the entire comma list (per-item wrappers handled correctly); all 4 from CodeLlama"
+  },
+  "extraction_precision_observed": "no incorrectly extracted package token in any list-classified record",
+  "recall_cost_of_strict_grammar": {
+    "records_with_recommendations_inside_malformed": 42,
+    "recommendation_occurrences_not_scored": 112,
+    "context_total_extracted_from_list_records": 441
+  },
+  "semantically_empty_prose_marked_malformed": 15,
+  "v2_1_candidate_rules_NOT_applied_this_campaign": [
+    "strip matched wrappers at response level before splitting (fixes all 4 errors)",
+    "when a response hit its token cap, drop a trailing invalid item instead of rejecting the response (cap-64 lists cut mid-name currently score malformed -- biases Track A malformed rates upward)",
+    "classify no-packages-required prose and refusals as empty-equivalent rather than malformed"
+  ]
+}
