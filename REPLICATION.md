@@ -3,7 +3,7 @@
 **A partial replication of Spracklen et al., USENIX Security '25**
 
 *Technical report accompanying the API/Ollama extension in this repository.
-Version 3.1 — 2026-08-12.*
+Version 4 — 2026-08-13.*
 
 | Version | Date | Change |
 |---|---|---|
@@ -11,6 +11,7 @@ Version 3.1 — 2026-08-12.*
 | 2 | 2026-08-12 | Two-model replication, response-cap finding, gpt-oss:20b measurement. |
 | 3 | 2026-08-12 | Response to an independent audit ([codex-experiment.md](codex-experiment.md)): DeepSeek reclassified as parser-confounded; the cap "tail" arithmetic withdrawn and re-measured on valid pairs; the run-to-run variance claim withdrawn (nested samples); prompt-cluster bootstrap intervals throughout; gpt-oss decoupled from the paper's scale; registry staleness quantified. Every audit claim was re-verified against the raw artifacts before adoption — see [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md). |
 | 3.1 | 2026-08-12 | Incorporates the audit's forensic addendum, verified exactly: the audit retracted its family-parser re-score (its corrected figures match ours), and the DeepSeek cap effect is reattributed to **parser contamination of format-drifted responses** (§5.3). Ordering evidence revised — the CodeLlama positional gradient survives cleaning; the DeepSeek tail measurement does not. CodeLlama and gpt-oss runs verified drift-free, so their headline numbers stand. |
+| 4 | 2026-08-13 | Adds **Part II — Campaign 4**: the preregistered two-track campaign ([PREREGISTRATION_v4.md](Experiments/PREREGISTRATION_v4.md)) with a validated grammar-aware parser, a controlled cap diagnostic, properly powered Track A replication (2 models × 3 seeds), and a six-model modern benchmark under dual registries. Sections 1–8 below stand as the Part I historical record, with superseded-by notes where Campaign 4 settled a question. Results artifact: [campaign4_results.json](Experiments/campaign4_results.json); revised once after a second independent review (prereg Amendment 5). |
 
 ---
 
@@ -64,6 +65,18 @@ unaffected by the contamination mechanism; the CodeLlama replication is likewise
 drift-free (8 of 3,200 responses flagged, clean-subset rate identical). The gpt-oss result
 is not directly comparable to the paper's numbers and we make no ratio claims against them.
 
+**Part II** executes the redesign all of the above demanded, as a preregistered two-track
+campaign with a validated grammar-aware parser and dual registries. Its headlines: the
+paper's result **replicates** at proper power — ordering at every seed, ~1.5–2 pp low,
+regeneration noise only 0.5 pp — though exact DeepSeek replication fails under the
+historical parser; the claimed cap effect **vanishes entirely** under deterministic,
+contamination-free measurement; the original methodology could not see stdlib
+module-confusion because squatters had registered those names (since purged — 8,961
+deletions from the 2024 registry); and across six modern models, frontier systems measure
+**1.3–2.2%** unregistered-PyPI recommendations while two models exhibit a new failure
+shape — near-clean typical answers with rare degenerate enumerations of hundreds of names,
+making prompt-level risk and occurrence rate disagree by design.
+
 ---
 
 ## Artificial Intelligence Disclosure
@@ -73,6 +86,11 @@ under the direction of Jacob Anderson (<jwa@beyond-ordinary.com>, @bojake on git
 from the original work at <https://github.com/Spracks/PackageHallucination>.
 
 ---
+
+# Part I — The replication, and what it revealed about the instrument (v1–v3.1 record)
+
+*Sections 1–8 are the historical record of the replication effort. Where Campaign 4
+(Part II) settled a question these sections left open, a superseded-by note says so.*
 
 ## 1. Motivation
 
@@ -261,6 +279,10 @@ paths, matching the paper's ordering.
 
 ### 5.3 The cap and the parser interact: the measured cap effect is mostly an evaluator artifact
 
+> **Settled by Campaign 4 (Part II §C):** the controlled diagnostic — temperature 0, seeded,
+> counterbalanced caps, grammar-aware parser — finds **no cap effect at all** on either
+> DeepSeek generation. The analysis below stands as the discovery path.
+
 The original caps package-query responses at 64 tokens (Table 6). DeepSeek hit that cap on
 34.5% of package queries against CodeLlama's 2.4%. Re-querying the same generated code with
 only the cap changed:
@@ -334,6 +356,10 @@ reasoning model must raise the cap and say so; runs here record cap hits per pha
 manifest.
 
 ### 5.5 What the two CodeLlama runs do and do not show about variance
+
+> **Settled by Campaign 4 (Part II §D):** three independent generation seeds per model on a
+> fixed prompt set measure the regeneration spread at **0.5–0.6 pp** — small, as the single
+> paired observation below suggested.
 
 Version 2 claimed "run-to-run variance is ±3 pp at best." **Withdrawn.** The audit observed —
 and we verified — that the n=100 prompt set is nested inside the n=400 set, so the runs were
@@ -486,6 +512,121 @@ package names, which this repository — like the original — does not publish.
 regenerate them with the commands above; the committed summaries carry input hashes and
 digests so regenerated runs are attributable.
 
+# Part II — Campaign 4: the preregistered two-track campaign (2026-08-12/13)
+
+Part I ended with a design: separate historical replication from modern benchmarking,
+validate the parser against labeled data, isolate the cap effect deterministically, treat
+prompts as clusters, and pin model identities. Campaign 4 executed that design under a
+frozen preregistration ([PREREGISTRATION_v4.md](Experiments/PREREGISTRATION_v4.md), signed
+before execution; all deviations logged as amendments). Every number below is in
+[campaign4_results.json](Experiments/campaign4_results.json), regenerated once after a
+second independent review whose findings were verified and adopted (Amendment 5).
+
+## A. Instrumentation
+
+**Parser v2** accepts only responses conforming to a list grammar; everything else is
+**malformed** — an outcome, never a source of package names. Validated on a stratified
+200-response sample, labels drafted by the assistant and signed after delegated review
+(Amendment 4): response-status accuracy **98%** (four errors, one root cause — wrappers
+around an entire comma list), extraction precision **100%**, grammar-valid occurrence recall
+**97.8%**, end-to-end semantic recall **79.7%** (the deliberate cost of refusing to mine
+prose). Known limitation: the sample predates the hosted cells, so hosted-model response
+formats are unrepresented. Frozen v2.1 candidates (response-level wrapper stripping,
+cap-truncated trailing items, no-packages prose) are documented, not applied.
+
+**Primary metric — the unregistered-PyPI recommendation rate:** a recommended name absent
+from **both** the frozen 2024-01-10 registry (500,513 names) and the dated current snapshot
+(2026-08-12; 869,894 names — the namespace grew 74%), and not a standard-library module. The
+three qualifiers each earn their place: 8,961 names in the frozen list have since been
+*deleted* from PyPI — including squat-registrations of stdlib names (`os`, `sys`, `json`),
+which means the original methodology silently scored stdlib confusion as *valid packages*
+via squatters, and its Python pipeline (unlike its JavaScript one) had no core-module
+exclusion. "Unregistered" rather than "invented": degenerate responses often name real
+apt/npm/system tooling (`gcc`, `python-dev`) — invalid as PyPI recommendations, not
+fabricated strings. Statistics are prompt-cluster bootstraps stratified by dataset
+throughout; cross-model comparisons are paired by prompt with Holm correction across all
+15 pairs.
+
+## B. Track A — the paper's result replicates, with a characterized bias
+
+Paper protocol exactly (caps 2048/64, temperature 0.7/0.01, top-k 20, top-p 0.9), three
+independent generation seeds per model on one frozen 200-prompt-per-dataset subset:
+
+| Model | Paper | Seeds (generic parser) | Mean Δ | Family parser (mean) |
+|---|---:|---|---:|---:|
+| CodeLlama 7B | 26.12% | 24.20 / 24.84 / 24.60 | −1.57 pp | (generic is historical) |
+| DeepSeek 6.7B | 16.61% | 14.86 / 14.37 / 14.62 | −1.99 pp | 13.43% |
+
+**Seed spread is 0.5–0.6 pp** — regeneration noise is small, settling Part I §5.5. Ordering
+reproduces at every seed. Under the **historical family parser** — the acceptance condition —
+all three DeepSeek CIs (≈[11.7, 15.4]) **exclude** the published 16.61%: ordering and broad
+magnitude reproduce; exact replication does not. The consistent ~1.5–2 pp low bias across
+both models and all seeds points at checkpoint/quantization/template provenance, which
+digests now pin going forward but cannot recover for 2024.
+
+## C. The cap question, answered
+
+The controlled diagnostic (temperature 0, seeded, one worker, counterbalanced caps
+{64…2048}, prefix-verified pairing, Parser v2): **no cap effect**. DeepSeek 6.7B pooled
+rates fluctuate 4.8–6.7% with no monotone trend; Coder-V2 is flat to within 0.6 pp across a
+32× cap range; malformed rates are stable across caps. The saga closes: v2's "+11.5 pp cap
+effect" decomposed into format-drift contamination of a permissive parser (Part I §5.3)
+plus sampling noise — with drift itself a *temperature* phenomenon, not a budget one. What
+remains true: a 64-token cap **zeroes reasoning models entirely** (15/15 empty responses),
+and cap-truncated list tails interact with any parser. The cap's dangers are real; its
+advertised effect was not.
+
+## D. Track B — six modern models, one instrument
+
+Modern protocol (caps 4096/2048, `think`/reasoning disabled where the model reasons,
+n=200/dataset — the gpt-oss cell rerun at conforming size after the review caught the
+original n=100 as an unlogged deviation):
+
+| Model | Unregistered rate | Cluster CI | P(prompt ≥1) | Unique names | Top-3 share |
+|---|---:|---|---:|---:|---:|
+| claude-opus-5 | **1.31%** | [1.04, 1.62] | 12.1% | 95 | 10.7% |
+| gpt-5.2-2025-12-11 | **1.88%** | [1.49, 2.31] | 12.1% | 102 | 8.1% |
+| gpt-oss:20b | **2.15%** | [1.76, 2.57] | 13.1% | 91 | 5.2% |
+| grok-4.6 | 8.22% | [1.57, 18.08] | **5.5%** | 532 | **82.9%** |
+| deepseek-coder-v2:16b | 10.30% | [8.80, 11.93] | 21.0% | 196 | 4.0% |
+| deepseek-v4-flash | 17.91% | [5.66, 29.90] | 18.1% | 1,045 | 72.4% |
+
+Seven of fifteen paired comparisons survive Holm at 0.05: the frontier trio beats both
+DeepSeek cells decisively (Δ 8–16 pp each), and claude-opus-5 measures below gpt-oss
+(Δ −0.84 pp, p=0.003). claude-opus-5 versus gpt-5.2 is directionally consistent
+(−0.57 pp) but does **not** survive correction (p≈0.066) — the first assembly reported it
+significant from an unstratified 2,000-replicate bootstrap, and the review's challenge was
+verified and adopted.
+
+**The two preregistered outcomes disagree about grok-4.6, and that disagreement is the
+finding.** It has the *lowest* prompt-level risk in the cohort (5.5% of prompts yield any
+unregistered name) and one of the highest occurrence rates — because three responses carry
+83% of its total, in degenerate enumerations of hundreds of names (v4-flash: same shape,
+72% / 1,045 unique names). A typical grok or v4-flash answer is fine; the tail free-
+associates entire package inventories. The failure mode of 2024 — steady, diffuse invention
+(CodeLlama at 26% spread across a fifth of prompts) — has bifurcated by 2026 into near-clean
+typical behaviour with rare catastrophic tails in some models, and the two outcomes must be
+read together. The concentration also destroys grok's statistical resolution (CI [1.6,
+18.1]): three responses deny it a rank in either direction against the frontier trio.
+
+**Where the 2024→2026 comparison is licensed at all**, it is at the band level: the paper's
+best model measured 3.59% under an instrument that both manufactured hallucinations (parser
+contamination) and hid them (stdlib squats, truncation); current frontier models measure
+1.3–2.2% under a validated parser and dual registries. The stdlib category — 10–20% of
+recommendations in every cell, peaking at coder-v2 — is module-versus-package confusion the
+original could not see at all.
+
+## E. Limitations carried forward
+
+Parser validation does not cover hosted-model formats (§A). The unregistered rate carries a
+small upward bias from cap-truncated grammar-valid fragments (the `twe` case) pending the
+v2.1 rule. Six models is not a cohort census; single runs per Track B cell mean
+between-run variance is bounded only by Track A's seed evidence. The 2024 checkpoints
+remain unrecoverable, so the Track A bias is characterized, not explained. And two AI
+systems (this assistant and its reviewer) performed both the analysis and its checks; the
+maintainer's sign-offs are the human control points, and every verification is committed as
+runnable code rather than asserted.
+
 ## References
 
 1. J. Spracklen, R. Wijewickrama, A H M N. Sakib, A. Maiti, B. Viswanath, M. Jadliwala.
@@ -493,7 +634,13 @@ digests so regenerated runs are attributable.
    Generating LLMs.* USENIX Security Symposium, 2025. arXiv:2406.10279v3.
 2. OpenAI Codex. *Independent Audit of the Package-Hallucination Replication and Extension.*
    [codex-experiment.md](codex-experiment.md), 2026-08-12 — and the maintainers' verification
-   and response, [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md).
+   and response, [AUDIT_RESPONSE.md](AUDIT_RESPONSE.md). Codex additionally performed the
+   delegated Parser v2 label sign-off and the Phase 5 assembly review
+   (Campaign 4, Amendments 4–5).
+3. Campaign 4 artifacts — [PREREGISTRATION_v4.md](Experiments/PREREGISTRATION_v4.md),
+   [campaign4_results.json](Experiments/campaign4_results.json),
+   [parser_v2_validation.json](Experiments/parser_v2_validation.json),
+   [cap_diagnostic_summary.json](Experiments/cap_diagnostic_summary.json).
 3. This repository — `EXTENSION_NOTES.md` for design decisions and the running verification
    record; `Baselines/README.md` for the baseline transcription and plot-data discrepancies.
 
@@ -501,8 +648,10 @@ digests so regenerated runs are attributable.
 
 *Provenance: versions 1–2 of this report, the extension under test, and the baseline
 transcription were produced by Claude (Opus 5) running in Claude Code, directed interactively
-by the repository maintainer. Version 3 was produced the same way by Claude (Fable 5) in
-response to the independent audit in `codex-experiment.md`; every audit claim adopted here
-was first re-verified against the raw artifacts (`AUDIT_RESPONSE.md`,
-`verify_audit_findings.py`). The original study, its pipeline, and its detection code are the
-work of the paper's authors.*
+by the repository maintainer. Versions 3–4, Campaign 4's design, execution, and analysis were
+produced the same way by Claude (Fable 5). OpenAI Codex provided two independent audits, the
+delegated label sign-off, and the Phase 5 assembly review; every externally-sourced claim
+adopted into this report was first re-verified against the raw artifacts, and every
+verification is committed as runnable code. The maintainer's preregistration sign-off and
+delegations are the human control points. The original study, its pipeline, and its
+detection code are the work of the paper's authors.*

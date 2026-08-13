@@ -245,7 +245,22 @@ promoted to a committed script (`cap_experiment.py`) with provenance and digests
 model identity in run manifests, per-phase truncation counters, and `rapidfuzz` in
 `requirements-api.txt`.
 
-## 10. Pre-existing issues noted during review
+## 10. Campaign 4 (2026-08-12/13)
+
+The preregistered two-track campaign that Part II of REPLICATION.md v4 reports:
+[PREREGISTRATION_v4.md](Experiments/PREREGISTRATION_v4.md) (frozen with maintainer sign-off,
+six amendments logged), Parser v2 with signed validation, the controlled cap diagnostic
+(no cap effect), Track A at three seeds per model (replication confirmed at the ordering/
+magnitude level; exact DeepSeek replication excluded under the historical parser), and the
+six-model Track B benchmark ([campaign4_results.json](Experiments/campaign4_results.json)).
+Two operational incidents during execution, both documented in commits: a PowerShell 5.1
+argument-mangling launcher bug that idled a GPU hour, and an Ollama string-form error body
+that crashed the first Ollama 400 ever encountered. The Phase 5 assembly was independently
+reviewed; all eight findings verified, seven adopted as stated and one sharpened (the
+gpt-oss n=100 cell was a prereg violation, not merely non-uniform — replaced by a
+conforming rerun).
+
+## 11. Pre-existing issues noted during review
 
 Found while reading the repository, **not fixed** — they predate this work and are the
 authors' call:
