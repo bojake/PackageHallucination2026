@@ -1,0 +1,499 @@
+{
+  "generated_at": "2026-08-13T13:09:15+00:00",
+  "preregistration": "Experiments/PREREGISTRATION_v4.md",
+  "parser_validation": "Experiments/parser_v2_validation.json (FINAL, signed)",
+  "phase2_cap_diagnostic": "Experiments/cap_diagnostic_summary.json",
+  "track_a": {
+    "codellama:7b-instruct": {
+      "paper": {
+        "name": "CodeLlama 7B",
+        "rate_pct": 26.12
+      },
+      "seeds": [
+        {
+          "run": "trackA_codellama_7b-instruct_s101_Python",
+          "legacy_rate_pct": 24.2,
+          "cluster_ci": [
+            22.09,
+            26.45
+          ],
+          "packages": 3099,
+          "ci_contains_paper": true
+        },
+        {
+          "run": "trackA_codellama_7b-instruct_s102_Python",
+          "legacy_rate_pct": 24.84,
+          "cluster_ci": [
+            22.55,
+            27.26
+          ],
+          "packages": 3080,
+          "ci_contains_paper": true
+        },
+        {
+          "run": "trackA_codellama_7b-instruct_s103_Python",
+          "legacy_rate_pct": 24.6,
+          "cluster_ci": [
+            22.23,
+            27.09
+          ],
+          "packages": 3000,
+          "ci_contains_paper": true
+        }
+      ],
+      "seed_mean_pct": 24.55,
+      "seed_spread_pp": 0.64,
+      "mean_delta_vs_paper_pp": -1.57
+    },
+    "deepseek-coder:6.7b-instruct": {
+      "paper": {
+        "name": "DeepSeek 6B",
+        "rate_pct": 16.61
+      },
+      "seeds": [
+        {
+          "run": "trackA_deepseek-coder_6_7b-instruct_s101_Python",
+          "legacy_rate_pct": 14.86,
+          "cluster_ci": [
+            12.81,
+            17.12
+          ],
+          "packages": 3122,
+          "ci_contains_paper": true,
+          "family_parser_rate_pct": 13.54
+        },
+        {
+          "run": "trackA_deepseek-coder_6_7b-instruct_s102_Python",
+          "legacy_rate_pct": 14.37,
+          "cluster_ci": [
+            12.39,
+            16.49
+          ],
+          "packages": 3048,
+          "ci_contains_paper": false,
+          "family_parser_rate_pct": 13.28
+        },
+        {
+          "run": "trackA_deepseek-coder_6_7b-instruct_s103_Python",
+          "legacy_rate_pct": 14.62,
+          "cluster_ci": [
+            12.52,
+            16.75
+          ],
+          "packages": 3016,
+          "ci_contains_paper": true,
+          "family_parser_rate_pct": 13.47
+        }
+      ],
+      "seed_mean_pct": 14.62,
+      "seed_spread_pp": 0.49,
+      "mean_delta_vs_paper_pp": -1.99
+    }
+  },
+  "track_b": {
+    "claude-opus-5": {
+      "run": "trackB_anthropic_claude-opus-5_Python",
+      "statuses": {
+        "list": 1535,
+        "malformed": 60,
+        "empty": 5
+      },
+      "provisional": "labels not yet signed",
+      "rate_frozen": {
+        "rate_pct": 1.64,
+        "hallucinated": 152,
+        "packages": 9280
+      },
+      "rate_current": {
+        "rate_pct": 10.77,
+        "hallucinated": 999,
+        "packages": 9280
+      },
+      "categories": {
+        "valid_both": 7748,
+        "stdlib_mention": 1376,
+        "post_snapshot_package": 15,
+        "deleted_since_snapshot": 19,
+        "hallucinated_both": 122
+      },
+      "rate_hallucinated_both_registries_pct": 1.31,
+      "prompt_level_risk_pct": 14.75,
+      "concentration": {
+        "top3_responses_share_pct": 8.6,
+        "max_single_response": 7
+      },
+      "packages_per_list_response": 6.05,
+      "invented_cluster_ci": [
+        1.03,
+        1.62
+      ]
+    },
+    "gpt-5.2-2025-12-11": {
+      "run": "trackB_openai_gpt-5.2_Python",
+      "statuses": {
+        "list": 1591,
+        "malformed": 9,
+        "empty": 0
+      },
+      "provisional": "labels not yet signed",
+      "rate_frozen": {
+        "rate_pct": 2.12,
+        "hallucinated": 153,
+        "packages": 7222
+      },
+      "rate_current": {
+        "rate_pct": 6.63,
+        "hallucinated": 479,
+        "packages": 7222
+      },
+      "categories": {
+        "valid_both": 6351,
+        "stdlib_mention": 718,
+        "post_snapshot_package": 10,
+        "deleted_since_snapshot": 7,
+        "hallucinated_both": 136
+      },
+      "rate_hallucinated_both_registries_pct": 1.88,
+      "prompt_level_risk_pct": 13.25,
+      "concentration": {
+        "top3_responses_share_pct": 8.5,
+        "max_single_response": 5
+      },
+      "packages_per_list_response": 4.54,
+      "invented_cluster_ci": [
+        1.52,
+        2.29
+      ]
+    },
+    "gpt-oss:20b": {
+      "run": "megatron_gpt-oss_20b_Python",
+      "statuses": {
+        "list": 749,
+        "malformed": 2,
+        "empty": 49
+      },
+      "provisional": "labels not yet signed",
+      "rate_frozen": {
+        "rate_pct": 2.81,
+        "hallucinated": 87,
+        "packages": 3091
+      },
+      "rate_current": {
+        "rate_pct": 12.58,
+        "hallucinated": 389,
+        "packages": 3091
+      },
+      "categories": {
+        "valid_both": 2440,
+        "stdlib_mention": 566,
+        "post_snapshot_package": 2,
+        "deleted_since_snapshot": 5,
+        "hallucinated_both": 78
+      },
+      "rate_hallucinated_both_registries_pct": 2.52,
+      "prompt_level_risk_pct": 15.75,
+      "concentration": {
+        "top3_responses_share_pct": 12.6,
+        "max_single_response": 5
+      },
+      "packages_per_list_response": 4.13,
+      "invented_cluster_ci": [
+        1.89,
+        3.26
+      ]
+    },
+    "grok-4.6": {
+      "run": "trackB_xai_grok-4.6_Python",
+      "statuses": {
+        "list": 1398,
+        "malformed": 201,
+        "empty": 1
+      },
+      "provisional": "labels not yet signed",
+      "rate_frozen": {
+        "rate_pct": 8.75,
+        "hallucinated": 591,
+        "packages": 6754
+      },
+      "rate_current": {
+        "rate_pct": 16.42,
+        "hallucinated": 1109,
+        "packages": 6754
+      },
+      "categories": {
+        "valid_both": 5243,
+        "stdlib_mention": 923,
+        "post_snapshot_package": 28,
+        "deleted_since_snapshot": 5,
+        "hallucinated_both": 555
+      },
+      "rate_hallucinated_both_registries_pct": 8.22,
+      "prompt_level_risk_pct": 6.38,
+      "concentration": {
+        "top3_responses_share_pct": 79.9,
+        "max_single_response": 350
+      },
+      "packages_per_list_response": 4.83,
+      "invented_cluster_ci": [
+        1.57,
+        18.21
+      ]
+    },
+    "deepseek-coder-v2:16b": {
+      "run": "trackB_deepseek-coder-v2_16b_Python",
+      "statuses": {
+        "list": 1308,
+        "malformed": 292,
+        "empty": 0
+      },
+      "provisional": "labels not yet signed",
+      "rate_frozen": {
+        "rate_pct": 10.79,
+        "hallucinated": 263,
+        "packages": 2437
+      },
+      "rate_current": {
+        "rate_pct": 24.25,
+        "hallucinated": 591,
+        "packages": 2437
+      },
+      "categories": {
+        "valid_both": 1683,
+        "stdlib_mention": 482,
+        "post_snapshot_package": 9,
+        "deleted_since_snapshot": 12,
+        "hallucinated_both": 251
+      },
+      "rate_hallucinated_both_registries_pct": 10.3,
+      "prompt_level_risk_pct": 21.62,
+      "concentration": {
+        "top3_responses_share_pct": 3.8,
+        "max_single_response": 4
+      },
+      "packages_per_list_response": 1.86,
+      "invented_cluster_ci": [
+        8.78,
+        11.93
+      ]
+    },
+    "deepseek-v4-flash": {
+      "run": "trackB_deepseek-v4-flash_Python",
+      "statuses": {
+        "list": 1418,
+        "malformed": 166,
+        "empty": 16
+      },
+      "provisional": "labels not yet signed",
+      "rate_frozen": {
+        "rate_pct": 18.2,
+        "hallucinated": 1102,
+        "packages": 6054
+      },
+      "rate_current": {
+        "rate_pct": 25.98,
+        "hallucinated": 1573,
+        "packages": 6054
+      },
+      "categories": {
+        "valid_both": 4169,
+        "stdlib_mention": 773,
+        "post_snapshot_package": 14,
+        "deleted_since_snapshot": 14,
+        "hallucinated_both": 1084
+      },
+      "rate_hallucinated_both_registries_pct": 17.91,
+      "prompt_level_risk_pct": 19.0,
+      "concentration": {
+        "top3_responses_share_pct": 71.4,
+        "max_single_response": 334
+      },
+      "packages_per_list_response": 4.27,
+      "invented_cluster_ci": [
+        5.7,
+        29.46
+      ]
+    }
+  },
+  "track_b_paired_holm": [
+    {
+      "pair": "claude-opus-5 vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "diff_pp": -8.98,
+      "diff_ci": [
+        -10.6,
+        -7.41
+      ],
+      "p_raw": 0.0005,
+      "p_holm": 0.0075,
+      "significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "diff_pp": -16.34,
+      "diff_ci": [
+        -28.62,
+        -4.89
+      ],
+      "p_raw": 0.0005,
+      "p_holm": 0.0075,
+      "significant_05": true
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "diff_pp": -8.39,
+      "diff_ci": [
+        -9.93,
+        -6.97
+      ],
+      "p_raw": 0.0005,
+      "p_holm": 0.0075,
+      "significant_05": true
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "diff_pp": -15.55,
+      "diff_ci": [
+        -28.18,
+        -3.72
+      ],
+      "p_raw": 0.0005,
+      "p_holm": 0.0075,
+      "significant_05": true
+    },
+    {
+      "pair": "gpt-oss:20b vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 400,
+      "diff_pp": -7.08,
+      "diff_ci": [
+        -9.25,
+        -4.89
+      ],
+      "p_raw": 0.0005,
+      "p_holm": 0.0075,
+      "significant_05": true
+    },
+    {
+      "pair": "gpt-oss:20b vs deepseek-v4-flash",
+      "n_shared_prompts": 400,
+      "diff_pp": -18.87,
+      "diff_ci": [
+        -38.14,
+        -2.09
+      ],
+      "p_raw": 0.0005,
+      "p_holm": 0.0075,
+      "significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs gpt-5.2-2025-12-11",
+      "n_shared_prompts": 800,
+      "diff_pp": -0.56,
+      "diff_ci": [
+        -0.98,
+        -0.13
+      ],
+      "p_raw": 0.005,
+      "p_holm": 0.045,
+      "significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs gpt-oss:20b",
+      "n_shared_prompts": 400,
+      "diff_pp": -1.1,
+      "diff_ci": [
+        -1.84,
+        -0.36
+      ],
+      "p_raw": 0.006,
+      "p_holm": 0.048,
+      "significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs grok-4.6",
+      "n_shared_prompts": 800,
+      "diff_pp": -6.54,
+      "diff_ci": [
+        -16.6,
+        -0.2
+      ],
+      "p_raw": 0.033,
+      "p_holm": 0.231,
+      "significant_05": false
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs gpt-oss:20b",
+      "n_shared_prompts": 400,
+      "diff_pp": -0.75,
+      "diff_ci": [
+        -1.48,
+        -0.05
+      ],
+      "p_raw": 0.035,
+      "p_holm": 0.231,
+      "significant_05": false
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs grok-4.6",
+      "n_shared_prompts": 800,
+      "diff_pp": -5.85,
+      "diff_ci": [
+        -16.6,
+        0.38
+      ],
+      "p_raw": 0.117,
+      "p_holm": 0.585,
+      "significant_05": false
+    },
+    {
+      "pair": "grok-4.6 vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "diff_pp": -9.69,
+      "diff_ci": [
+        -24.75,
+        5.19
+      ],
+      "p_raw": 0.212,
+      "p_holm": 0.848,
+      "significant_05": false
+    },
+    {
+      "pair": "deepseek-coder-v2:16b vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "diff_pp": -7.06,
+      "diff_ci": [
+        -19.73,
+        4.18
+      ],
+      "p_raw": 0.255,
+      "p_holm": 0.848,
+      "significant_05": false
+    },
+    {
+      "pair": "grok-4.6 vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "diff_pp": -2.44,
+      "diff_ci": [
+        -9.01,
+        7.85
+      ],
+      "p_raw": 0.517,
+      "p_holm": 1.0,
+      "significant_05": false
+    },
+    {
+      "pair": "gpt-oss:20b vs grok-4.6",
+      "n_shared_prompts": 400,
+      "diff_pp": -0.85,
+      "diff_ci": [
+        -5.25,
+        1.97
+      ],
+      "p_raw": 0.752,
+      "p_holm": 1.0,
+      "significant_05": false
+    }
+  ]
+}

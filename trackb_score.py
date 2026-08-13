@@ -37,7 +37,8 @@ def load_registry(path):
 
 
 def score(run_dir, frozen, current):
-    per_prompt = {}   # (dataset, index) -> [hallucinated, total] (frozen registry)
+    per_prompt = {}            # (dataset, index) -> [hallucinated, total] (frozen registry)
+    per_prompt_invented = {}   # (dataset, index) -> [invented-both-non-stdlib, total]
     statuses = {"list": 0, "malformed": 0, "empty": 0}
     occurrences = {"frozen": [0, 0], "current": [0, 0]}
     categories = {"valid_both": 0, "stdlib_mention": 0, "post_snapshot_package": 0,
@@ -55,6 +56,7 @@ def score(run_dir, frozen, current):
                     status, packages = parser_v2.classify(str(json.loads(line)))
                     statuses[status] += 1
                     slot = per_prompt.setdefault((key, index), [0, 0])
+                    invented_slot = per_prompt_invented.setdefault((key, index), [0, 0])
                     hallucinated_here = 0
                     for name in packages:
                         normalized = package_detection.normalize_python(name)
@@ -64,6 +66,10 @@ def score(run_dir, frozen, current):
                             occurrences[registry][0] += normalized not in member_set
                         in_frozen = normalized in frozen
                         in_current = normalized in current
+                        invented_slot[1] += 1
+                        invented_slot[0] += (normalized not in frozen
+                                             and normalized not in current
+                                             and normalized not in STDLIB)
                         if normalized in STDLIB:
                             categories["stdlib_mention"] += 1
                         elif in_frozen and in_current:
@@ -101,6 +107,7 @@ def score(run_dir, frozen, current):
     listed = statuses["list"] or 1
     result["packages_per_list_response"] = round(
         occurrences["frozen"][1] / listed, 2)
+    result["per_prompt_invented"] = per_prompt_invented   # popped before printing in main()
     return result
 
 
@@ -112,6 +119,7 @@ def main():
         if result is None:
             print(f"{run_dir}: response files missing")
             continue
+        result.pop("per_prompt_invented", None)
         print(json.dumps(result, indent=2))
 
 
