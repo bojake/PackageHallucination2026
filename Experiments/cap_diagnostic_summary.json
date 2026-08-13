@@ -1,0 +1,262 @@
+{
+  "generated_at": "2026-08-12T23:45:37+00:00",
+  "preregistration": "Experiments/PREREGISTRATION_v4.md (Phase 2)",
+  "base_url": "http://megatron:11434",
+  "caps": [
+    64,
+    128,
+    256,
+    512,
+    2048
+  ],
+  "per_dataset": 25,
+  "seed": 7,
+  "parser_version": "2.0",
+  "registry": "Data/Python/pypi_package_names.csv (frozen 2024-01-10)",
+  "models": {
+    "deepseek-coder:6.7b-instruct": {
+      "ollama_version": "0.32.8",
+      "digest": "ce298d984115b93bb1b191b47fee6b39e4e9fbd5f18e651c02f9fa74e0edcd13",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "7B",
+        "quantization_level": "Q4_0",
+        "context_length": 16384,
+        "embedding_length": 4096
+      }
+    },
+    "deepseek-coder-v2:16b": {
+      "ollama_version": "0.32.8",
+      "digest": "63fb193b3a9b4322a18e8c6b250ca2e70a5ff531e962dbf95ba089b2566f2fa5",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "deepseek2",
+        "families": [
+          "deepseek2"
+        ],
+        "parameter_size": "15.7B",
+        "quantization_level": "Q4_0",
+        "context_length": 163840,
+        "embedding_length": 2048
+      }
+    }
+  },
+  "cells": {
+    "deepseek-coder:6.7b-instruct": {
+      "cap=64|q1": {
+        "responses": 100,
+        "list": 65,
+        "malformed": 35,
+        "empty": 0,
+        "packages": 133,
+        "hallucinated": 9
+      },
+      "cap=64|q2": {
+        "responses": 100,
+        "list": 30,
+        "malformed": 70,
+        "empty": 0,
+        "packages": 132,
+        "hallucinated": 5
+      },
+      "cap=128|q1": {
+        "responses": 100,
+        "list": 66,
+        "malformed": 34,
+        "empty": 0,
+        "packages": 133,
+        "hallucinated": 10
+      },
+      "cap=128|q2": {
+        "responses": 100,
+        "list": 29,
+        "malformed": 71,
+        "empty": 0,
+        "packages": 125,
+        "hallucinated": 5
+      },
+      "cap=256|q1": {
+        "responses": 100,
+        "list": 66,
+        "malformed": 34,
+        "empty": 0,
+        "packages": 127,
+        "hallucinated": 9
+      },
+      "cap=256|q2": {
+        "responses": 100,
+        "list": 28,
+        "malformed": 72,
+        "empty": 0,
+        "packages": 111,
+        "hallucinated": 7
+      },
+      "cap=512|q1": {
+        "responses": 100,
+        "list": 65,
+        "malformed": 35,
+        "empty": 0,
+        "packages": 129,
+        "hallucinated": 8
+      },
+      "cap=512|q2": {
+        "responses": 100,
+        "list": 29,
+        "malformed": 71,
+        "empty": 0,
+        "packages": 125,
+        "hallucinated": 5
+      },
+      "cap=2048|q1": {
+        "responses": 100,
+        "list": 66,
+        "malformed": 34,
+        "empty": 0,
+        "packages": 133,
+        "hallucinated": 9
+      },
+      "cap=2048|q2": {
+        "responses": 100,
+        "list": 27,
+        "malformed": 73,
+        "empty": 0,
+        "packages": 118,
+        "hallucinated": 3
+      }
+    },
+    "deepseek-coder-v2:16b": {
+      "cap=64|q1": {
+        "responses": 100,
+        "list": 93,
+        "malformed": 7,
+        "empty": 0,
+        "packages": 161,
+        "hallucinated": 10
+      },
+      "cap=64|q2": {
+        "responses": 100,
+        "list": 82,
+        "malformed": 18,
+        "empty": 0,
+        "packages": 162,
+        "hallucinated": 13
+      },
+      "cap=128|q1": {
+        "responses": 100,
+        "list": 93,
+        "malformed": 7,
+        "empty": 0,
+        "packages": 160,
+        "hallucinated": 10
+      },
+      "cap=128|q2": {
+        "responses": 100,
+        "list": 83,
+        "malformed": 17,
+        "empty": 0,
+        "packages": 160,
+        "hallucinated": 13
+      },
+      "cap=256|q1": {
+        "responses": 100,
+        "list": 93,
+        "malformed": 7,
+        "empty": 0,
+        "packages": 161,
+        "hallucinated": 10
+      },
+      "cap=256|q2": {
+        "responses": 100,
+        "list": 83,
+        "malformed": 17,
+        "empty": 0,
+        "packages": 163,
+        "hallucinated": 13
+      },
+      "cap=512|q1": {
+        "responses": 100,
+        "list": 93,
+        "malformed": 7,
+        "empty": 0,
+        "packages": 161,
+        "hallucinated": 11
+      },
+      "cap=512|q2": {
+        "responses": 100,
+        "list": 82,
+        "malformed": 18,
+        "empty": 0,
+        "packages": 160,
+        "hallucinated": 13
+      },
+      "cap=2048|q1": {
+        "responses": 100,
+        "list": 92,
+        "malformed": 8,
+        "empty": 0,
+        "packages": 160,
+        "hallucinated": 10
+      },
+      "cap=2048|q2": {
+        "responses": 100,
+        "list": 83,
+        "malformed": 17,
+        "empty": 0,
+        "packages": 162,
+        "hallucinated": 13
+      }
+    }
+  },
+  "prefix_pairing": {
+    "deepseek-coder:6.7b-instruct": {
+      "cap=64_vs_2048": {
+        "equal": 107,
+        "prefix": 67,
+        "diverge": 26
+      },
+      "cap=128_vs_2048": {
+        "equal": 124,
+        "prefix": 38,
+        "diverge": 38
+      },
+      "cap=256_vs_2048": {
+        "equal": 125,
+        "prefix": 25,
+        "diverge": 50
+      },
+      "cap=512_vs_2048": {
+        "equal": 162,
+        "prefix": 4,
+        "diverge": 34
+      }
+    },
+    "deepseek-coder-v2:16b": {
+      "cap=64_vs_2048": {
+        "equal": 188,
+        "prefix": 3,
+        "diverge": 9
+      },
+      "cap=128_vs_2048": {
+        "equal": 187,
+        "prefix": 3,
+        "diverge": 10
+      },
+      "cap=256_vs_2048": {
+        "equal": 185,
+        "prefix": 2,
+        "diverge": 13
+      },
+      "cap=512_vs_2048": {
+        "equal": 185,
+        "prefix": 3,
+        "diverge": 12
+      }
+    }
+  }
+}

@@ -1,6 +1,10 @@
 # Campaign 4 GPU pipeline for megatron (PREREGISTRATION_v4.md phases 2-4, serialized).
 # Everything here is resumable: re-running the script skips completed work.
-#   powershell -File run_campaign4_megatron.ps1
+#   pwsh -File run_campaign4_megatron.ps1
+#
+# REQUIRES PowerShell 7+ (pwsh). Windows PowerShell 5.1 mangles the embedded double
+# quotes in --extra-body JSON arguments, which silently fails every run.
+#Requires -Version 7
 
 $ErrorActionPreference = "Continue"
 $py = "$env:USERPROFILE\miniconda3\envs\imagegen\python.exe"
@@ -12,8 +16,13 @@ function Step($name, $block) {
     if ($LASTEXITCODE -ne 0) { Write-Output "!! $name exited $LASTEXITCODE (continuing; runs are resumable)" }
 }
 
-# ---- Phase 2: controlled cap diagnostic ----
-Step "Phase 2: cap diagnostic" { & $py cap_diagnostic.py }
+# ---- Phase 2: controlled cap diagnostic (not internally resumable -- skip if complete) ----
+$capSummary = "Experiments/cap_diagnostic_summary.json"
+if ((Test-Path $capSummary) -and ((Get-Content $capSummary -Raw) -match "deepseek-coder-v2:16b")) {
+    Write-Output "Phase 2 already complete (both cells in $capSummary) -- skipping."
+} else {
+    Step "Phase 2: cap diagnostic" { & $py cap_diagnostic.py }
+}
 
 # ---- Phase 3: Track A -- 2 historical models x 3 seeds, paper protocol ----
 foreach ($m in @("codellama:7b-instruct", "deepseek-coder:6.7b-instruct")) {
