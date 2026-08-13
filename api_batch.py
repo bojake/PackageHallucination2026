@@ -82,7 +82,8 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
                     index = futures[future]
                     try:
                         index, text = future.result()
-                    except llm_api.ProviderError as exc:
+                    except Exception as exc:  # noqa: BLE001 -- any per-row failure must
+                        # be recorded and retried on resume, never crash a multi-hour run
                         # Keep row alignment: an empty response occupies the slot so every
                         # downstream join still lines up, and the failure is recorded
                         # loudly instead of silently deflating the hallucination counts.

@@ -255,6 +255,9 @@ class Client:
         Returns True if the payload was changed and the call is worth retrying.
         """
         error = (body or {}).get("error") or {}
+        if isinstance(error, str):
+            # Ollama returns {"error": "<text>"}; OpenAI-style APIs return an object.
+            error = {"message": error}
         message = error.get("message") or json.dumps(body)[:400]
 
         if "max_completion_tokens" in message and "max_tokens" in payload:
