@@ -4,3 +4,6 @@ pandas>=2.0
 requests>=2.31
 tqdm>=4.66
 rapidfuzz>=3.0   # analyze_hallucinations.py (Levenshtein distances)
+stdlib-list>=0.10,<0.12  # Churilov-compatible Python 3.11 stdlib filtering
+tree-sitter>=0.25,<0.26  # tolerant import extraction for the Churilov bridge
+tree-sitter-python>=0.25,<0.26

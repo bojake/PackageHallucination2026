@@ -1,0 +1,534 @@
+{
+  "generated_at": "2026-08-14T21:58:13+00:00",
+  "status": "POST-HOC bridge analysis; frozen Campaign 4 outputs",
+  "model_count": 6,
+  "source": "Churilov public artifact extraction design, ported with attribution",
+  "extractor": {
+    "pip_regex": "pip\\s+install\\s+(?P<package>\\S+)",
+    "imports": "AST first; fenced-block AST then tree-sitter fallback",
+    "tree_sitter_available": true,
+    "stdlib_source": "stdlib-list 3.11 (matching Churilov artifact)",
+    "false_positive_sha256": "ba6ca534dd5de212326de8d1636357d20c44cc012701c37441dd5e35324b7aad"
+  },
+  "registries": {
+    "frozen": "Data/Python/pypi_package_names.csv",
+    "current": "Data/Python/pypi_package_names_2026-08-12.csv"
+  },
+  "bootstrap": {
+    "cluster": "prompt",
+    "stratified_by_dataset": true,
+    "replicates": 50000,
+    "seed": 20260814
+  },
+  "code_bridge": {
+    "claude-opus-5": {
+      "prompts": 800,
+      "extracted_mentions": 788,
+      "channel_mentions": {
+        "import": 752,
+        "pip_install": 36
+      },
+      "frozen_absence_by_channel": {
+        "import": 75
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 75
+      },
+      "prompts_with_any_extracted_reference": 404,
+      "reference_coverage_pct": 50.5,
+      "churilov_compatible_frozen_absence_count": 75,
+      "churilov_compatible_frozen_absence_rate_pct": 9.518,
+      "churilov_compatible_frozen_cluster_ci": [
+        6.041,
+        13.715
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 75,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 9.518,
+      "dual_registry_nonstdlib_cluster_ci": [
+        6.041,
+        13.715
+      ],
+      "prompt_risk_pct": 6.125,
+      "unique_dual_registry_nonstdlib_names": 50,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 288,
+          "frozen_absence_rate_pct": 9.722,
+          "dual_registry_nonstdlib_rate_pct": 9.722
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 311,
+          "frozen_absence_rate_pct": 13.826,
+          "dual_registry_nonstdlib_rate_pct": 13.826
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 133,
+          "frozen_absence_rate_pct": 2.256,
+          "dual_registry_nonstdlib_rate_pct": 2.256
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 56,
+          "frozen_absence_rate_pct": 1.786,
+          "dual_registry_nonstdlib_rate_pct": 1.786
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "gpt-5.2-2025-12-11": {
+      "prompts": 800,
+      "extracted_mentions": 759,
+      "channel_mentions": {
+        "pip_install": 81,
+        "import": 678
+      },
+      "frozen_absence_by_channel": {
+        "import": 60,
+        "pip_install": 3
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 60,
+        "pip_install": 3
+      },
+      "prompts_with_any_extracted_reference": 394,
+      "reference_coverage_pct": 49.25,
+      "churilov_compatible_frozen_absence_count": 63,
+      "churilov_compatible_frozen_absence_rate_pct": 8.3,
+      "churilov_compatible_frozen_cluster_ci": [
+        5.66,
+        11.409
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 63,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 8.3,
+      "dual_registry_nonstdlib_cluster_ci": [
+        5.66,
+        11.409
+      ],
+      "prompt_risk_pct": 6.0,
+      "unique_dual_registry_nonstdlib_names": 44,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 309,
+          "frozen_absence_rate_pct": 11.327,
+          "dual_registry_nonstdlib_rate_pct": 11.327
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 291,
+          "frozen_absence_rate_pct": 8.247,
+          "dual_registry_nonstdlib_rate_pct": 8.247
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 104,
+          "frozen_absence_rate_pct": 1.923,
+          "dual_registry_nonstdlib_rate_pct": 1.923
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 55,
+          "frozen_absence_rate_pct": 3.636,
+          "dual_registry_nonstdlib_rate_pct": 3.636
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "gpt-oss:20b": {
+      "prompts": 800,
+      "extracted_mentions": 782,
+      "channel_mentions": {
+        "import": 722,
+        "pip_install": 60
+      },
+      "frozen_absence_by_channel": {
+        "import": 76,
+        "pip_install": 8
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 75,
+        "pip_install": 8
+      },
+      "prompts_with_any_extracted_reference": 423,
+      "reference_coverage_pct": 52.875,
+      "churilov_compatible_frozen_absence_count": 84,
+      "churilov_compatible_frozen_absence_rate_pct": 10.742,
+      "churilov_compatible_frozen_cluster_ci": [
+        8.344,
+        13.276
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 83,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 10.614,
+      "dual_registry_nonstdlib_cluster_ci": [
+        8.219,
+        13.137
+      ],
+      "prompt_risk_pct": 8.5,
+      "unique_dual_registry_nonstdlib_names": 51,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 319,
+          "frozen_absence_rate_pct": 11.912,
+          "dual_registry_nonstdlib_rate_pct": 11.912
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 291,
+          "frozen_absence_rate_pct": 13.746,
+          "dual_registry_nonstdlib_rate_pct": 13.402
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 106,
+          "frozen_absence_rate_pct": 2.83,
+          "dual_registry_nonstdlib_rate_pct": 2.83
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 66,
+          "frozen_absence_rate_pct": 4.545,
+          "dual_registry_nonstdlib_rate_pct": 4.545
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "grok-4.6": {
+      "prompts": 800,
+      "extracted_mentions": 766,
+      "channel_mentions": {
+        "import": 752,
+        "pip_install": 14
+      },
+      "frozen_absence_by_channel": {
+        "import": 139
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 134
+      },
+      "prompts_with_any_extracted_reference": 388,
+      "reference_coverage_pct": 48.5,
+      "churilov_compatible_frozen_absence_count": 139,
+      "churilov_compatible_frozen_absence_rate_pct": 18.146,
+      "churilov_compatible_frozen_cluster_ci": [
+        12.449,
+        23.916
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 134,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 17.493,
+      "dual_registry_nonstdlib_cluster_ci": [
+        11.914,
+        23.178
+      ],
+      "prompt_risk_pct": 7.0,
+      "unique_dual_registry_nonstdlib_names": 95,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 301,
+          "frozen_absence_rate_pct": 14.286,
+          "dual_registry_nonstdlib_rate_pct": 13.289
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 344,
+          "frozen_absence_rate_pct": 27.035,
+          "dual_registry_nonstdlib_rate_pct": 26.453
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 83,
+          "frozen_absence_rate_pct": 1.205,
+          "dual_registry_nonstdlib_rate_pct": 1.205
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 38,
+          "frozen_absence_rate_pct": 5.263,
+          "dual_registry_nonstdlib_rate_pct": 5.263
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "deepseek-coder-v2:16b": {
+      "prompts": 800,
+      "extracted_mentions": 778,
+      "channel_mentions": {
+        "import": 739,
+        "pip_install": 39
+      },
+      "frozen_absence_by_channel": {
+        "import": 69,
+        "pip_install": 2
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 67,
+        "pip_install": 2
+      },
+      "prompts_with_any_extracted_reference": 448,
+      "reference_coverage_pct": 56.0,
+      "churilov_compatible_frozen_absence_count": 71,
+      "churilov_compatible_frozen_absence_rate_pct": 9.126,
+      "churilov_compatible_frozen_cluster_ci": [
+        7.022,
+        11.376
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 69,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 8.869,
+      "dual_registry_nonstdlib_cluster_ci": [
+        6.8,
+        11.083
+      ],
+      "prompt_risk_pct": 7.875,
+      "unique_dual_registry_nonstdlib_names": 48,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 280,
+          "frozen_absence_rate_pct": 9.643,
+          "dual_registry_nonstdlib_rate_pct": 9.643
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 275,
+          "frozen_absence_rate_pct": 10.909,
+          "dual_registry_nonstdlib_rate_pct": 10.545
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 143,
+          "frozen_absence_rate_pct": 5.594,
+          "dual_registry_nonstdlib_rate_pct": 4.895
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 80,
+          "frozen_absence_rate_pct": 7.5,
+          "dual_registry_nonstdlib_rate_pct": 7.5
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "deepseek-v4-flash": {
+      "prompts": 800,
+      "extracted_mentions": 742,
+      "channel_mentions": {
+        "import": 734,
+        "pip_install": 8
+      },
+      "frozen_absence_by_channel": {
+        "import": 66
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 66
+      },
+      "prompts_with_any_extracted_reference": 416,
+      "reference_coverage_pct": 52.0,
+      "churilov_compatible_frozen_absence_count": 66,
+      "churilov_compatible_frozen_absence_rate_pct": 8.895,
+      "churilov_compatible_frozen_cluster_ci": [
+        6.729,
+        11.234
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 66,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 8.895,
+      "dual_registry_nonstdlib_cluster_ci": [
+        6.729,
+        11.234
+      ],
+      "prompt_risk_pct": 7.375,
+      "unique_dual_registry_nonstdlib_names": 44,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 303,
+          "frozen_absence_rate_pct": 10.891,
+          "dual_registry_nonstdlib_rate_pct": 10.891
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 262,
+          "frozen_absence_rate_pct": 10.687,
+          "dual_registry_nonstdlib_rate_pct": 10.687
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 120,
+          "frozen_absence_rate_pct": 2.5,
+          "dual_registry_nonstdlib_rate_pct": 2.5
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 57,
+          "frozen_absence_rate_pct": 3.509,
+          "dual_registry_nonstdlib_rate_pct": 3.509
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    }
+  },
+  "bridge_summary": {
+    "dual_rate_range_pct": [
+      8.3,
+      17.493
+    ],
+    "total_frozen_absence_mentions": 498,
+    "total_dual_registry_nonstdlib_mentions": 490,
+    "removed_by_current_registry_or_stdlib": 8,
+    "import_share_of_dual_flags_pct": 97.347,
+    "llm_dataset_rate_range_pct": [
+      8.247,
+      26.453
+    ],
+    "stackoverflow_dataset_rate_range_pct": [
+      1.205,
+      7.5
+    ]
+  },
+  "prompt_conditioned_overlap": {
+    "model_unique_name_counts": {
+      "claude-opus-5": 95,
+      "gpt-5.2-2025-12-11": 102,
+      "gpt-oss:20b": 91,
+      "grok-4.6": 532,
+      "deepseek-coder-v2:16b": 196,
+      "deepseek-v4-flash": 1045
+    },
+    "pairwise": [
+      {
+        "pair": "claude-opus-5 vs gpt-5.2-2025-12-11",
+        "shared_unique_names": 21,
+        "name_jaccard": 0.11932,
+        "shared_names_with_same_prompt_support": 17,
+        "same_prompt_share_of_shared_names_pct": 80.952,
+        "prompt_aligned_occurrence_jaccard": 0.11872
+      },
+      {
+        "pair": "claude-opus-5 vs gpt-oss:20b",
+        "shared_unique_names": 16,
+        "name_jaccard": 0.09412,
+        "shared_names_with_same_prompt_support": 12,
+        "same_prompt_share_of_shared_names_pct": 75.0,
+        "prompt_aligned_occurrence_jaccard": 0.09545
+      },
+      {
+        "pair": "claude-opus-5 vs grok-4.6",
+        "shared_unique_names": 12,
+        "name_jaccard": 0.01951,
+        "shared_names_with_same_prompt_support": 9,
+        "same_prompt_share_of_shared_names_pct": 75.0,
+        "prompt_aligned_occurrence_jaccard": 0.02599
+      },
+      {
+        "pair": "claude-opus-5 vs deepseek-coder-v2:16b",
+        "shared_unique_names": 14,
+        "name_jaccard": 0.05054,
+        "shared_names_with_same_prompt_support": 10,
+        "same_prompt_share_of_shared_names_pct": 71.429,
+        "prompt_aligned_occurrence_jaccard": 0.03245
+      },
+      {
+        "pair": "claude-opus-5 vs deepseek-v4-flash",
+        "shared_unique_names": 23,
+        "name_jaccard": 0.02059,
+        "shared_names_with_same_prompt_support": 19,
+        "same_prompt_share_of_shared_names_pct": 82.609,
+        "prompt_aligned_occurrence_jaccard": 0.02058
+      },
+      {
+        "pair": "gpt-5.2-2025-12-11 vs gpt-oss:20b",
+        "shared_unique_names": 27,
+        "name_jaccard": 0.16265,
+        "shared_names_with_same_prompt_support": 23,
+        "same_prompt_share_of_shared_names_pct": 85.185,
+        "prompt_aligned_occurrence_jaccard": 0.14019
+      },
+      {
+        "pair": "gpt-5.2-2025-12-11 vs grok-4.6",
+        "shared_unique_names": 23,
+        "name_jaccard": 0.03764,
+        "shared_names_with_same_prompt_support": 19,
+        "same_prompt_share_of_shared_names_pct": 82.609,
+        "prompt_aligned_occurrence_jaccard": 0.03852
+      },
+      {
+        "pair": "gpt-5.2-2025-12-11 vs deepseek-coder-v2:16b",
+        "shared_unique_names": 22,
+        "name_jaccard": 0.07971,
+        "shared_names_with_same_prompt_support": 21,
+        "same_prompt_share_of_shared_names_pct": 95.455,
+        "prompt_aligned_occurrence_jaccard": 0.06647
+      },
+      {
+        "pair": "gpt-5.2-2025-12-11 vs deepseek-v4-flash",
+        "shared_unique_names": 38,
+        "name_jaccard": 0.03427,
+        "shared_names_with_same_prompt_support": 36,
+        "same_prompt_share_of_shared_names_pct": 94.737,
+        "prompt_aligned_occurrence_jaccard": 0.03559
+      },
+      {
+        "pair": "gpt-oss:20b vs grok-4.6",
+        "shared_unique_names": 18,
+        "name_jaccard": 0.02975,
+        "shared_names_with_same_prompt_support": 15,
+        "same_prompt_share_of_shared_names_pct": 83.333,
+        "prompt_aligned_occurrence_jaccard": 0.03555
+      },
+      {
+        "pair": "gpt-oss:20b vs deepseek-coder-v2:16b",
+        "shared_unique_names": 18,
+        "name_jaccard": 0.06691,
+        "shared_names_with_same_prompt_support": 17,
+        "same_prompt_share_of_shared_names_pct": 94.444,
+        "prompt_aligned_occurrence_jaccard": 0.05758
+      },
+      {
+        "pair": "gpt-oss:20b vs deepseek-v4-flash",
+        "shared_unique_names": 35,
+        "name_jaccard": 0.03179,
+        "shared_names_with_same_prompt_support": 31,
+        "same_prompt_share_of_shared_names_pct": 88.571,
+        "prompt_aligned_occurrence_jaccard": 0.03301
+      },
+      {
+        "pair": "grok-4.6 vs deepseek-coder-v2:16b",
+        "shared_unique_names": 13,
+        "name_jaccard": 0.01818,
+        "shared_names_with_same_prompt_support": 10,
+        "same_prompt_share_of_shared_names_pct": 76.923,
+        "prompt_aligned_occurrence_jaccard": 0.01432
+      },
+      {
+        "pair": "grok-4.6 vs deepseek-v4-flash",
+        "shared_unique_names": 23,
+        "name_jaccard": 0.0148,
+        "shared_names_with_same_prompt_support": 15,
+        "same_prompt_share_of_shared_names_pct": 65.217,
+        "prompt_aligned_occurrence_jaccard": 0.01251
+      },
+      {
+        "pair": "deepseek-coder-v2:16b vs deepseek-v4-flash",
+        "shared_unique_names": 39,
+        "name_jaccard": 0.03245,
+        "shared_names_with_same_prompt_support": 34,
+        "same_prompt_share_of_shared_names_pct": 87.179,
+        "prompt_aligned_occurrence_jaccard": 0.02771
+      }
+    ],
+    "mean_pairwise_name_jaccard": 0.05415,
+    "all_model_universal_name_count": 5,
+    "all_model_same_prompt_universal_name_count": 4,
+    "same_prompt_share_of_universal_names_pct": 80.0,
+    "security_note": "Names are intentionally omitted. Counts show how much apparent cross-model universality can be induced by the same prompt."
+  },
+  "guardrails": [
+    "No Campaign 4 model exactly overlaps Churilov's five-model cohort.",
+    "The bridge uses Campaign 4's sampled prompts, not Churilov's full corpus.",
+    "Extracted references are package mentions; the inferential cluster is the prompt.",
+    "No candidate unregistered package names are published in this artifact."
+  ]
+}

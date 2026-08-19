@@ -189,7 +189,9 @@ That's `pandas`, `requests` and `tqdm` — no torch, no CUDA, no `text-generatio
 cp .env.example .env    # then fill in the keys you need
 ```
 
-`.env` is gitignored and real environment variables take precedence. Ollama needs no key.
+`.env` is gitignored and real environment variables take precedence. A local Ollama API
+needs no key. Ollama Cloud calls through the local daemon require `ollama signin`; direct
+calls to `https://ollama.com/api` require `OLLAMA_API_KEY`.
 
 ### 3) Run
 
@@ -208,6 +210,18 @@ python run_test_api.py anthropic:claude-sonnet-4-5-20250929 --language Javascrip
 ```bash
 python run_test_api.py xai:grok-4 --language Python --workers 8
 ```
+
+The separately preregistered Qwen/Kimi cloud extension has a smoke gate and resumable full
+runner:
+
+```powershell
+pwsh -File run_ollama_cloud_extension.ps1 -Mode smoke
+pwsh -File run_ollama_cloud_extension.ps1 -Mode full
+```
+
+The frozen tags are `qwen3.5:cloud` and `kimi-k3:cloud`. Kimi K3 requires Pro/Max plus an
+extra-usage balance; the runner fails on access or quota errors and never enables billing.
+See [PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md](Experiments/PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md).
 
 The model spec is always `provider:model_id`. Providers: `ollama`, `openai`, `xai` (alias
 `grok`), `anthropic` (alias `claude`), plus `openai_compatible` with `--base-url` for

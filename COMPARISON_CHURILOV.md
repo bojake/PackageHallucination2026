@@ -1,5 +1,13 @@
 # Comparison: Churilov (arXiv:2605.17062v3) vs this repository's Campaign 4
 
+> **2026-08-14 correction after direct bridge analysis:** This earlier draft overstated
+> agreement. The completed code-only rescore is authoritative:
+> [CHURILOV_BRIDGE_ANALYSIS.md](Experiments/CHURILOV_BRIDGE_ANALYSIS.md). Matching
+> Churilov's extractor does **not** reconcile the rates; Campaign 4's bridge spans
+> 8.30–17.49% under the dual-registry definition, above Churilov's 5.49–7.27% Python band.
+> The original “range compression” and “reconciles exactly” statements below have been
+> corrected accordingly.
+
 **Their paper:** Aleksandr Churilov, *The Range Shrinks, the Threat Remains: Re-evaluating
 LLM Package Hallucinations on the 2026 Frontier-Model Cohort.* Independent researcher,
 April 2026. Artifact: `github.com/churik5/slopsquatting-replication-2026`.
@@ -30,10 +38,11 @@ convergences below independent rather than shared-artifact.
 
 ## 2. Where we independently agree
 
-- **Range compression at the frontier.** Churilov: the 2024 spread of 5.2–21.7% compresses to
-  4.62–6.10%. Ours: frontier models cluster in a narrow band (see §3 for why our band sits
-  lower). Both find the open-source/commercial gap that drove Spracklen's upper end has
-  closed.
+- **A narrower selected cohort is not general range compression.** Churilov's five hosted
+  models occupy a 4.62–6.10% overall band, but the comparison uses the original study's
+  commercial/open-source category averages as endpoints rather than its model-level range.
+  Campaign 4's purposive modern cohort spans 1.31–17.91% under a different recommendation
+  estimand. Neither cohort is representative enough to establish frontier-wide compression.
 - **Standard-library filtering is necessary.** Churilov filters stdlib (CPython list +
   Node `core_modules.csv`). We reached the same correction from the other side — the original
   Python pipeline *didn't* exclude stdlib, and we found squatters had registered stdlib names
@@ -72,22 +81,25 @@ PyPI names against our six (different) models:
 model-agnostic universal-set claim with a cohort that shares no exact model with his —
 stronger evidence for his finding than his single-cohort data alone can provide.
 
-**(b) The apparent rate disagreement on deepseek-v4-flash reconciles exactly.** Both studies
-measured that model. Churilov reports ~5.89% (under the V3.2 label); our headline was 17.91%.
-The gap is entirely the extraction method, and our own data shows it:
+**(b) The direct code-only bridge does not reconcile the rates.** We initially treated our
+Q1 package query as a proxy for Churilov's import extractor. That was incorrect. We have now
+run the actual H1-plus-import bridge on the frozen generated code:
 
-| Our measurement of deepseek-v4-flash | Unregistered rate | Tail concentration |
-|---|---|---|
-| **Q1** (packages required by the code — the closest analog to Churilov's code-import extraction) | **2.77%** | top-3 responses = 10% of flagged |
-| **Q2** (packages recommended for the problem — open-ended) | 21.49% | top-3 responses = **74%** of flagged, max single response = 334 names |
+| Campaign 4 model | Churilov-compatible frozen rate | Dual-registry/non-stdlib rate |
+|---|---:|---:|
+| Claude Opus 5 | 9.52% | 9.52% |
+| GPT-5.2 | 8.30% | 8.30% |
+| gpt-oss 20B | 10.74% | 10.61% |
+| Grok 4.6 | 18.15% | 17.49% |
+| DeepSeek Coder V2 | 9.13% | 8.87% |
+| DeepSeek V4 Flash | 8.89% | 8.89% |
 
-Churilov extracts imports *from generated code*, which is bounded and tail-resistant — the
-analog of our Q1, where we measure **2.77%**, consistent with his band. Our higher pooled
-headline is driven by the open-ended recommendation query (Q2), which invites the degenerate
-enumerations we documented. **The studies do not actually disagree about the model** — they
-measure different things, and agree on the tail-resistant measurement. This is a methodological
-point neither study reveals alone: the code-grounded and recommendation-query extraction
-methods diverge sharply on enumeration-prone models.
+Thus extraction channel alone is not the explanation. Of 490 dual-registry bridge flags,
+477 arise from imports and only 13 from explicit install directives. Synthetic-prompt cells
+are also much higher than Stack Overflow cells. The remaining live explanations include
+genuine cohort behavior, prompt/source composition, stochastic sampling, and the semantic
+weakness of mapping an import module directly to a PyPI distribution or treating a local
+project module as an external dependency.
 
 ## 4. Where each study is ahead
 
@@ -132,16 +144,15 @@ would be a cheap addition to his artifact requiring no new model runs.
 
 ## 6. Bottom line
 
-The two studies are **complementary and mutually corroborating**. Churilov is broader (two
-languages, full scale, real disclosure, a novel cross-model attack-surface result); ours is
-more controlled (preregistered, clustered statistics, dual registries, contamination-decomposed,
-audited). Where they can be compared directly they **agree**: the frontier has compressed, the
-threat persists, stdlib and registry-time both matter, DeepSeek's alias is unstable — and, on
-the one model both measured, the numbers reconcile once the extraction method is accounted for.
-Each study catches something the other structurally cannot: he finds the model-agnostic
-universal set that only a multi-model study reveals; we find the extraction-method and
-parser-contamination effects that only a controlled decomposition reveals. Read together they
-are a stronger result than either alone.
+The studies are complementary but do not numerically reconcile. Churilov is broader in
+languages, corpus size, registrability testing, and disclosure; Campaign 4 is stronger on
+parser validation, dual registries, prompt-cluster inference, and failure shape. The direct
+bridge sharpens the disagreement rather than erasing it and identifies import semantics as
+the next validation target. Prompt-conditioned overlap also qualifies the shared-training
+interpretation: five names span all six Campaign 4 models, but four are emitted by every model
+on an identical prompt. The defensible synthesis is therefore not “the frontier compressed,”
+but “package-hallucination rates remain highly measurement- and corpus-dependent while the
+cross-model attack surface is operationally real.”
 
 *Two concrete things we could offer his effort: the completed current-registry revalidation he
 defers to future work, and a generation-clustered re-computation of his pairwise significance.*

@@ -437,6 +437,21 @@ def ollama_identity(base_url, model):
             identity["note"] = f"{model!r} not present in /api/tags at run time"
     except Exception as exc:                                       # noqa: BLE001
         identity["tags_error"] = str(exc)
+
+    # Cloud aliases often do not appear in /api/tags because no weights are stored on the
+    # local daemon. /api/show still resolves their provider-side metadata, which is the
+    # strongest identity evidence Ollama exposes for those cells.
+    try:
+        response = requests.post(f"{base}/api/show", json={"model": model}, timeout=30)
+        response.raise_for_status()
+        body = response.json()
+        identity["show"] = {
+            "modified_at": body.get("modified_at"),
+            "details": body.get("details"),
+            "model_info": body.get("model_info"),
+        }
+    except Exception as exc:                                       # noqa: BLE001
+        identity["show_error"] = str(exc)
     return identity
 
 

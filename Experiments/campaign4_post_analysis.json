@@ -1,0 +1,865 @@
+{
+  "generated_at": "2026-08-14T00:05:24+00:00",
+  "status": "POST-HOC sensitivity analysis; frozen model outputs and Parser v2",
+  "source_result": "Experiments/campaign4_results.json",
+  "bootstrap": {
+    "replicates": 50000,
+    "seed": 20260813,
+    "stratified_by_dataset": true,
+    "cluster": "prompt"
+  },
+  "track_b": {
+    "claude-opus-5": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1535,
+        "malformed": 60,
+        "empty": 5
+      },
+      "malformed_rate_pct": 3.75,
+      "malformed_cluster_ci": [
+        2.875,
+        4.688
+      ],
+      "empty_rate_pct": 0.312,
+      "coverage_list_pct": 95.938,
+      "unregistered_occurrences": 122,
+      "parsed_package_occurrences": 9280,
+      "unregistered_rate_pct": 1.315,
+      "unregistered_rate_cluster_ci": [
+        1.04,
+        1.626
+      ],
+      "unregistered_per_prompt": 0.1525,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.9001,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 1.0,
+        "p99_per_prompt": 2.0,
+        "max_per_prompt": 7,
+        "top1_response_share_pct": 5.74,
+        "top3_response_share_pct": 10.66,
+        "top10_response_share_pct": 22.13,
+        "prompts_needed_for_50pct": 36,
+        "leave_top1_rate_pct": 1.241,
+        "leave_top3_rate_pct": 1.178,
+        "leave_top10_rate_pct": 1.038,
+        "top_response_ids": [
+          "claude-opus-5:Stack_Overflow_Recent:q2:182",
+          "claude-opus-5:LLM_All_Time:q2:40",
+          "claude-opus-5:Stack_Overflow_Recent:q2:134",
+          "claude-opus-5:Stack_Overflow_All_Time:q2:14",
+          "claude-opus-5:LLM_All_Time:q2:83",
+          "claude-opus-5:Stack_Overflow_Recent:q2:55",
+          "claude-opus-5:LLM_Recent:q2:143",
+          "claude-opus-5:Stack_Overflow_Recent:q2:129",
+          "claude-opus-5:LLM_All_Time:q2:49",
+          "claude-opus-5:Stack_Overflow_All_Time:q2:195"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 3.75,
+        "eos_marker_adjusted_rate_pct": 1.315,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 0,
+        "semantic_sentinel_adjusted_rate_pct": 1.315,
+        "semantic_sentinel_removed_unregistered": 0,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      }
+    },
+    "gpt-5.2-2025-12-11": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1591,
+        "malformed": 9
+      },
+      "malformed_rate_pct": 0.562,
+      "malformed_cluster_ci": [
+        0.25,
+        0.938
+      ],
+      "empty_rate_pct": 0.0,
+      "coverage_list_pct": 99.438,
+      "unregistered_occurrences": 136,
+      "parsed_package_occurrences": 7222,
+      "unregistered_rate_pct": 1.883,
+      "unregistered_rate_cluster_ci": [
+        1.484,
+        2.303
+      ],
+      "unregistered_per_prompt": 0.17,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.9056,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 1.0,
+        "p99_per_prompt": 2.01,
+        "max_per_prompt": 4,
+        "top1_response_share_pct": 2.94,
+        "top3_response_share_pct": 8.09,
+        "top10_response_share_pct": 21.32,
+        "prompts_needed_for_50pct": 29,
+        "leave_top1_rate_pct": 1.83,
+        "leave_top3_rate_pct": 1.737,
+        "leave_top10_rate_pct": 1.503,
+        "top_response_ids": [
+          "gpt-5.2-2025-12-11:Stack_Overflow_Recent:q2:36",
+          "gpt-5.2-2025-12-11:Stack_Overflow_Recent:q2:25",
+          "gpt-5.2-2025-12-11:LLM_All_Time:q2:191",
+          "gpt-5.2-2025-12-11:Stack_Overflow_Recent:q2:40",
+          "gpt-5.2-2025-12-11:Stack_Overflow_All_Time:q2:134",
+          "gpt-5.2-2025-12-11:Stack_Overflow_Recent:q2:68",
+          "gpt-5.2-2025-12-11:Stack_Overflow_Recent:q2:55",
+          "gpt-5.2-2025-12-11:LLM_Recent:q2:80",
+          "gpt-5.2-2025-12-11:LLM_All_Time:q2:188",
+          "gpt-5.2-2025-12-11:Stack_Overflow_All_Time:q2:60"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 0.562,
+        "eos_marker_adjusted_rate_pct": 1.883,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 0,
+        "semantic_sentinel_adjusted_rate_pct": 1.883,
+        "semantic_sentinel_removed_unregistered": 0,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      }
+    },
+    "gpt-oss:20b": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1482,
+        "empty": 111,
+        "malformed": 7
+      },
+      "malformed_rate_pct": 0.438,
+      "malformed_cluster_ci": [
+        0.125,
+        0.75
+      ],
+      "empty_rate_pct": 6.938,
+      "coverage_list_pct": 92.625,
+      "unregistered_occurrences": 134,
+      "parsed_package_occurrences": 6223,
+      "unregistered_rate_pct": 2.153,
+      "unregistered_rate_cluster_ci": [
+        1.754,
+        2.579
+      ],
+      "unregistered_per_prompt": 0.1675,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.8898,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 1.0,
+        "p99_per_prompt": 2.0,
+        "max_per_prompt": 3,
+        "top1_response_share_pct": 2.24,
+        "top3_response_share_pct": 5.22,
+        "top10_response_share_pct": 15.67,
+        "prompts_needed_for_50pct": 38,
+        "leave_top1_rate_pct": 2.108,
+        "leave_top3_rate_pct": 2.053,
+        "leave_top10_rate_pct": 1.844,
+        "top_response_ids": [
+          "gpt-oss:20b:Stack_Overflow_All_Time:q2:134",
+          "gpt-oss:20b:Stack_Overflow_All_Time:q2:194",
+          "gpt-oss:20b:LLM_All_Time:q2:145",
+          "gpt-oss:20b:LLM_All_Time:q2:172",
+          "gpt-oss:20b:LLM_All_Time:q2:94",
+          "gpt-oss:20b:Stack_Overflow_All_Time:q2:60",
+          "gpt-oss:20b:Stack_Overflow_All_Time:q2:193",
+          "gpt-oss:20b:LLM_Recent:q2:127",
+          "gpt-oss:20b:LLM_All_Time:q2:191",
+          "gpt-oss:20b:Stack_Overflow_All_Time:q2:24"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 0.438,
+        "eos_marker_adjusted_rate_pct": 2.153,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 1,
+        "semantic_sentinel_adjusted_rate_pct": 2.138,
+        "semantic_sentinel_removed_unregistered": 1,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      }
+    },
+    "grok-4.6": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "malformed": 201,
+        "list": 1398,
+        "empty": 1
+      },
+      "malformed_rate_pct": 12.562,
+      "malformed_cluster_ci": [
+        11.125,
+        14.002
+      ],
+      "empty_rate_pct": 0.062,
+      "coverage_list_pct": 87.375,
+      "unregistered_occurrences": 555,
+      "parsed_package_occurrences": 6754,
+      "unregistered_rate_pct": 8.217,
+      "unregistered_rate_cluster_ci": [
+        1.535,
+        18.204
+      ],
+      "unregistered_per_prompt": 0.6937,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.9928,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 1.0,
+        "p99_per_prompt": 2.0,
+        "max_per_prompt": 350,
+        "top1_response_share_pct": 63.06,
+        "top3_response_share_pct": 82.88,
+        "top10_response_share_pct": 92.97,
+        "prompts_needed_for_50pct": 1,
+        "leave_top1_rate_pct": 3.211,
+        "leave_top3_rate_pct": 1.607,
+        "leave_top10_rate_pct": 0.798,
+        "top_response_ids": [
+          "grok-4.6:Stack_Overflow_Recent:q2:145",
+          "grok-4.6:Stack_Overflow_Recent:q2:155",
+          "grok-4.6:Stack_Overflow_All_Time:q2:134",
+          "grok-4.6:LLM_Recent:q2:176",
+          "grok-4.6:LLM_All_Time:q2:1",
+          "grok-4.6:Stack_Overflow_Recent:q2:78",
+          "grok-4.6:Stack_Overflow_All_Time:q2:15",
+          "grok-4.6:Stack_Overflow_Recent:q2:86",
+          "grok-4.6:LLM_All_Time:q1:23",
+          "grok-4.6:Stack_Overflow_All_Time:q2:170"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 184,
+        "eos_marker_adjusted_malformed_rate_pct": 1.062,
+        "eos_marker_adjusted_rate_pct": 7.91,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 262,
+        "collapsed_no_package_sentinel_responses": 0,
+        "semantic_sentinel_adjusted_rate_pct": 8.217,
+        "semantic_sentinel_removed_unregistered": 0,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      }
+    },
+    "deepseek-coder-v2:16b": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "malformed": 292,
+        "list": 1308
+      },
+      "malformed_rate_pct": 18.25,
+      "malformed_cluster_ci": [
+        16.375,
+        20.188
+      ],
+      "empty_rate_pct": 0.0,
+      "coverage_list_pct": 81.75,
+      "unregistered_occurrences": 251,
+      "parsed_package_occurrences": 2437,
+      "unregistered_rate_pct": 10.3,
+      "unregistered_rate_cluster_ci": [
+        8.758,
+        11.93
+      ],
+      "unregistered_per_prompt": 0.3137,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.8395,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 2.0,
+        "p99_per_prompt": 3.0,
+        "max_per_prompt": 5,
+        "top1_response_share_pct": 1.59,
+        "top3_response_share_pct": 3.98,
+        "top10_response_share_pct": 9.56,
+        "prompts_needed_for_50pct": 52,
+        "leave_top1_rate_pct": 10.152,
+        "leave_top3_rate_pct": 9.93,
+        "leave_top10_rate_pct": 9.431,
+        "top_response_ids": [
+          "deepseek-coder-v2:16b:Stack_Overflow_All_Time:q2:186",
+          "deepseek-coder-v2:16b:Stack_Overflow_All_Time:q1:127",
+          "deepseek-coder-v2:16b:Stack_Overflow_All_Time:q2:163",
+          "deepseek-coder-v2:16b:Stack_Overflow_All_Time:q2:127",
+          "deepseek-coder-v2:16b:LLM_All_Time:q1:86",
+          "deepseek-coder-v2:16b:LLM_Recent:q2:42",
+          "deepseek-coder-v2:16b:Stack_Overflow_Recent:q1:68",
+          "deepseek-coder-v2:16b:Stack_Overflow_Recent:q2:39",
+          "deepseek-coder-v2:16b:Stack_Overflow_Recent:q1:49",
+          "deepseek-coder-v2:16b:Stack_Overflow_All_Time:q2:105"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 18.25,
+        "eos_marker_adjusted_rate_pct": 10.3,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 11,
+        "semantic_sentinel_adjusted_rate_pct": 9.893,
+        "semantic_sentinel_removed_unregistered": 11,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      }
+    },
+    "deepseek-v4-flash": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1418,
+        "malformed": 166,
+        "empty": 16
+      },
+      "malformed_rate_pct": 10.375,
+      "malformed_cluster_ci": [
+        8.938,
+        11.875
+      ],
+      "empty_rate_pct": 1.0,
+      "coverage_list_pct": 88.625,
+      "unregistered_occurrences": 1084,
+      "parsed_package_occurrences": 6054,
+      "unregistered_rate_pct": 17.906,
+      "unregistered_rate_cluster_ci": [
+        5.719,
+        29.989
+      ],
+      "unregistered_per_prompt": 1.355,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.966,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 2.0,
+        "p99_per_prompt": 7.0,
+        "max_per_prompt": 334,
+        "top1_response_share_pct": 30.81,
+        "top3_response_share_pct": 72.42,
+        "top10_response_share_pct": 78.32,
+        "prompts_needed_for_50pct": 2,
+        "leave_top1_rate_pct": 13.149,
+        "leave_top3_rate_pct": 5.714,
+        "leave_top10_rate_pct": 4.958,
+        "top_response_ids": [
+          "deepseek-v4-flash:Stack_Overflow_All_Time:q2:186",
+          "deepseek-v4-flash:Stack_Overflow_All_Time:q2:192",
+          "deepseek-v4-flash:Stack_Overflow_Recent:q2:107",
+          "deepseek-v4-flash:LLM_All_Time:q2:62",
+          "deepseek-v4-flash:Stack_Overflow_Recent:q2:120",
+          "deepseek-v4-flash:LLM_All_Time:q2:37",
+          "deepseek-v4-flash:LLM_Recent:q2:196",
+          "deepseek-v4-flash:LLM_Recent:q2:16",
+          "deepseek-v4-flash:LLM_All_Time:q2:161",
+          "deepseek-v4-flash:Stack_Overflow_Recent:q2:54"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 10.375,
+        "eos_marker_adjusted_rate_pct": 17.906,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 0,
+        "semantic_sentinel_adjusted_rate_pct": 17.906,
+        "semantic_sentinel_removed_unregistered": 0,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      }
+    }
+  },
+  "paired_sensitivity": [
+    {
+      "pair": "claude-opus-5 vs gpt-5.2-2025-12-11",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -0.5685,
+      "percentile_ci": [
+        -1.0047,
+        -0.1469
+      ],
+      "bootstrap_tail_p": 0.00816,
+      "recentered_null_p": 0.00978,
+      "bootstrap_tail_holm_p": 0.06528,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.07824,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "claude-opus-5 vs gpt-oss:20b",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -0.8386,
+      "percentile_ci": [
+        -1.2846,
+        -0.3888
+      ],
+      "bootstrap_tail_p": 0.00032,
+      "recentered_null_p": 0.00022,
+      "bootstrap_tail_holm_p": 0.00288,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00264,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs grok-4.6",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -6.9027,
+      "percentile_ci": [
+        -16.8374,
+        -0.2391
+      ],
+      "bootstrap_tail_p": 0.0236,
+      "recentered_null_p": 0.08252,
+      "bootstrap_tail_holm_p": 0.1652,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.57764,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "claude-opus-5 vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -8.9849,
+      "percentile_ci": [
+        -10.5775,
+        -7.4544
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.0003,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0003,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -16.5909,
+      "percentile_ci": [
+        -28.6493,
+        -4.4322
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 0.00412,
+      "bootstrap_tail_holm_p": 0.0003,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.04532,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs gpt-oss:20b",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -0.2702,
+      "percentile_ci": [
+        -0.7239,
+        0.1927
+      ],
+      "bootstrap_tail_p": 0.24696,
+      "recentered_null_p": 0.2463,
+      "bootstrap_tail_holm_p": 0.8656,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.84024,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs grok-4.6",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -6.3342,
+      "percentile_ci": [
+        -16.3854,
+        0.304
+      ],
+      "bootstrap_tail_p": 0.09804,
+      "recentered_null_p": 0.12272,
+      "bootstrap_tail_holm_p": 0.58824,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.73632,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -8.4164,
+      "percentile_ci": [
+        -9.9783,
+        -6.8941
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.0003,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0003,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -16.0224,
+      "percentile_ci": [
+        -28.1663,
+        -3.8044
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 0.006,
+      "bootstrap_tail_holm_p": 0.0003,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0596,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "gpt-oss:20b vs grok-4.6",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -6.0641,
+      "percentile_ci": [
+        -16.0656,
+        0.5601
+      ],
+      "bootstrap_tail_p": 0.15184,
+      "recentered_null_p": 0.15,
+      "bootstrap_tail_holm_p": 0.7592,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.75,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "gpt-oss:20b vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -8.1462,
+      "percentile_ci": [
+        -9.7086,
+        -6.6502
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.0003,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0003,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-oss:20b vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -15.7522,
+      "percentile_ci": [
+        -27.7875,
+        -3.5381
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 0.00596,
+      "bootstrap_tail_holm_p": 0.0003,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0596,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "grok-4.6 vs deepseek-coder-v2:16b",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -2.0822,
+      "percentile_ci": [
+        -9.0655,
+        8.0221
+      ],
+      "bootstrap_tail_p": 0.55084,
+      "recentered_null_p": 0.6486,
+      "bootstrap_tail_holm_p": 0.8656,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.84024,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "grok-4.6 vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -9.6882,
+      "percentile_ci": [
+        -24.4296,
+        5.7202
+      ],
+      "bootstrap_tail_p": 0.2164,
+      "recentered_null_p": 0.21006,
+      "bootstrap_tail_holm_p": 0.8656,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.84024,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "deepseek-coder-v2:16b vs deepseek-v4-flash",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -7.606,
+      "percentile_ci": [
+        -19.4076,
+        4.3412
+      ],
+      "bootstrap_tail_p": 0.24632,
+      "recentered_null_p": 0.2174,
+      "bootstrap_tail_holm_p": 0.8656,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.84024,
+      "recentered_null_holm_significant_05": false
+    }
+  ],
+  "parser_track_b_audit": {
+    "file": "Tests/parser_v2_trackb_audit/sample.jsonl",
+    "sha256": "683c4db1f973936a1c52c35698d201af728b2849c10d448668a2591c4d8b5873",
+    "sample_size": 180,
+    "reviewed": 180,
+    "design": "20 uniform-random responses plus 10 format/tail challenges per model",
+    "status": "complete",
+    "status_accuracy_pct": 100.0,
+    "exact_extraction_agreement_pct": 100.0,
+    "by_selection_group": {
+      "random_core": {
+        "n": 120,
+        "status_agree": 120,
+        "extraction_agree": 120
+      },
+      "challenge": {
+        "n": 60,
+        "status_agree": 60,
+        "extraction_agree": 60
+      }
+    },
+    "by_model": {
+      "claude-opus-5": {
+        "n": 30,
+        "status_agree": 30,
+        "extraction_agree": 30
+      },
+      "gpt-5.2-2025-12-11": {
+        "n": 30,
+        "status_agree": 30,
+        "extraction_agree": 30
+      },
+      "gpt-oss:20b": {
+        "n": 30,
+        "status_agree": 30,
+        "extraction_agree": 30
+      },
+      "grok-4.6": {
+        "n": 30,
+        "status_agree": 30,
+        "extraction_agree": 30
+      },
+      "deepseek-coder-v2:16b": {
+        "n": 30,
+        "status_agree": 30,
+        "extraction_agree": 30
+      },
+      "deepseek-v4-flash": {
+        "n": 30,
+        "status_agree": 30,
+        "extraction_agree": 30
+      }
+    },
+    "semantic_anomalies": {
+      "no_package_prose": 4,
+      "literal_trailing_eos_transport_marker": 4,
+      "collapsed_no_package_sentinel": 1
+    },
+    "note": "Accuracy is reported separately for the random core and deliberately enriched challenges; the combined sample is not population weighted. Contract agreement does not erase separately annotated semantic and transport anomalies."
+  },
+  "provenance_checks": {
+    "claude-opus-5": {
+      "manifest": "Tests/trackB_anthropic_claude-opus-5_Python/run_manifest.json",
+      "run_invocations": 1,
+      "workers_seen_in_commands": [
+        "4"
+      ],
+      "num_ctx_seen_in_commands": [],
+      "aggregate_cap_hits_from_run_history": 66,
+      "top_level_workers": 4,
+      "mixed_operational_settings": false,
+      "model_digest": null
+    },
+    "gpt-5.2-2025-12-11": {
+      "manifest": "Tests/trackB_openai_gpt-5.2_Python/run_manifest.json",
+      "run_invocations": 1,
+      "workers_seen_in_commands": [
+        "4"
+      ],
+      "num_ctx_seen_in_commands": [],
+      "aggregate_cap_hits_from_run_history": 40,
+      "top_level_workers": 4,
+      "mixed_operational_settings": false,
+      "model_digest": null
+    },
+    "gpt-oss:20b": {
+      "manifest": "Tests/trackB_gptoss_20b_n200_Python/run_manifest.json",
+      "run_invocations": 1,
+      "workers_seen_in_commands": [
+        "2"
+      ],
+      "num_ctx_seen_in_commands": [
+        "32768"
+      ],
+      "aggregate_cap_hits_from_run_history": 6,
+      "top_level_workers": 2,
+      "mixed_operational_settings": false,
+      "model_digest": "17052f91a42e97930aa6e28a6c6c06a983e6a58dbb00434885a0cf5313e376f7"
+    },
+    "grok-4.6": {
+      "manifest": "Tests/trackB_xai_grok-4.6_Python/run_manifest.json",
+      "run_invocations": 1,
+      "workers_seen_in_commands": [
+        "4"
+      ],
+      "num_ctx_seen_in_commands": [],
+      "aggregate_cap_hits_from_run_history": 90,
+      "top_level_workers": 4,
+      "mixed_operational_settings": false,
+      "model_digest": null
+    },
+    "deepseek-coder-v2:16b": {
+      "manifest": "Tests/trackB_deepseek-coder-v2_16b_Python/run_manifest.json",
+      "run_invocations": 4,
+      "workers_seen_in_commands": [
+        "1",
+        "2"
+      ],
+      "num_ctx_seen_in_commands": [
+        "12288",
+        "16384",
+        "32768"
+      ],
+      "aggregate_cap_hits_from_run_history": 3,
+      "top_level_workers": 1,
+      "mixed_operational_settings": true,
+      "model_digest": "63fb193b3a9b4322a18e8c6b250ca2e70a5ff531e962dbf95ba089b2566f2fa5"
+    },
+    "deepseek-v4-flash": {
+      "manifest": "Tests/trackB_deepseek-v4-flash_Python/run_manifest.json",
+      "run_invocations": 1,
+      "workers_seen_in_commands": [
+        "4"
+      ],
+      "num_ctx_seen_in_commands": [],
+      "aggregate_cap_hits_from_run_history": 35,
+      "top_level_workers": 4,
+      "mixed_operational_settings": false,
+      "model_digest": null
+    }
+  },
+  "cap_diagnostic_paired_sensitivity": {
+    "deepseek-coder-v2_16b": {
+      "cells": {
+        "64": {
+          "packages": 323,
+          "unregistered_frozen": 23,
+          "rate_pct": 7.121,
+          "malformed_rate_pct": 12.5,
+          "delta_vs_2048_pp": -0.0221,
+          "delta_vs_2048_percentile_ci": [
+            -0.1986,
+            0.1146
+          ]
+        },
+        "128": {
+          "packages": 320,
+          "unregistered_frozen": 23,
+          "rate_pct": 7.188,
+          "malformed_rate_pct": 12.0,
+          "delta_vs_2048_pp": 0.0446,
+          "delta_vs_2048_percentile_ci": [
+            -0.1065,
+            0.2137
+          ]
+        },
+        "256": {
+          "packages": 324,
+          "unregistered_frozen": 23,
+          "rate_pct": 7.099,
+          "malformed_rate_pct": 12.0,
+          "delta_vs_2048_pp": -0.0441,
+          "delta_vs_2048_percentile_ci": [
+            -1.1908,
+            1.0577
+          ]
+        },
+        "512": {
+          "packages": 321,
+          "unregistered_frozen": 24,
+          "rate_pct": 7.477,
+          "malformed_rate_pct": 12.5,
+          "delta_vs_2048_pp": 0.3338,
+          "delta_vs_2048_percentile_ci": [
+            -0.0819,
+            1.0548
+          ]
+        },
+        "2048": {
+          "packages": 322,
+          "unregistered_frozen": 23,
+          "rate_pct": 7.143,
+          "malformed_rate_pct": 12.5
+        }
+      },
+      "spearman_rho_rate_vs_increasing_cap": 0.3,
+      "interpretation": "Paired descriptive sensitivity only. No equivalence margin was preregistered, so a non-significant or small delta is not proof of no effect."
+    },
+    "deepseek-coder_6.7b-instruct": {
+      "cells": {
+        "64": {
+          "packages": 265,
+          "unregistered_frozen": 14,
+          "rate_pct": 5.283,
+          "malformed_rate_pct": 52.5,
+          "delta_vs_2048_pp": 0.5021,
+          "delta_vs_2048_percentile_ci": [
+            -0.2259,
+            1.3506
+          ]
+        },
+        "128": {
+          "packages": 258,
+          "unregistered_frozen": 15,
+          "rate_pct": 5.814,
+          "malformed_rate_pct": 52.5,
+          "delta_vs_2048_pp": 1.0331,
+          "delta_vs_2048_percentile_ci": [
+            -0.2526,
+            2.6616
+          ]
+        },
+        "256": {
+          "packages": 238,
+          "unregistered_frozen": 16,
+          "rate_pct": 6.723,
+          "malformed_rate_pct": 53.0,
+          "delta_vs_2048_pp": 1.9418,
+          "delta_vs_2048_percentile_ci": [
+            -0.0364,
+            4.2858
+          ]
+        },
+        "512": {
+          "packages": 254,
+          "unregistered_frozen": 13,
+          "rate_pct": 5.118,
+          "malformed_rate_pct": 53.0,
+          "delta_vs_2048_pp": 0.3372,
+          "delta_vs_2048_percentile_ci": [
+            -1.9394,
+            2.8343
+          ]
+        },
+        "2048": {
+          "packages": 251,
+          "unregistered_frozen": 12,
+          "rate_pct": 4.781,
+          "malformed_rate_pct": 53.5
+        }
+      },
+      "spearman_rho_rate_vs_increasing_cap": -0.6,
+      "interpretation": "Paired descriptive sensitivity only. No equivalence margin was preregistered, so a non-significant or small delta is not proof of no effect."
+    }
+  },
+  "interpretive_guardrails": [
+    "Occurrence rates condition on package tokens accepted by Parser v2; report response coverage beside them.",
+    "Leave-top-k estimates are diagnostics, not replacement primary outcomes.",
+    "The recentered bootstrap is a post-hoc sensitivity test; the preregistered percentile intervals remain primary.",
+    "Absence from both PyPI snapshots means unregistered-PyPI recommendation, not necessarily a fabricated name."
+  ]
+}
