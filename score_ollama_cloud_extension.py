@@ -15,7 +15,7 @@ import post_campaign_analysis as campaign
 
 NEW_MODELS = [
     ("qwen3.5:cloud", "trackC_ollama_qwen3-5-cloud_Python"),
-    ("kimi-k3:cloud", "trackC_ollama_kimi-k3-cloud_Python"),
+    ("kimi-k2.7-code:cloud", "trackC_ollama_kimi-k2-7-code-cloud_Python"),
 ]
 OUT_JSON = os.path.join("Experiments", "ollama_cloud_extension_results.json")
 OUT_MD = os.path.join("Experiments", "OLLAMA_CLOUD_EXTENSION_RESULTS.md")
@@ -107,7 +107,7 @@ def write_markdown(result: dict) -> None:
 {os.linesep.join(rows)}
 
 Intervals are dataset-stratified prompt-cluster bootstrap intervals. Pairwise inference uses
-the 13 comparisons involving Qwen 3.5 Cloud or Kimi K3 Cloud; Holm correction is isolated
+the 13 comparisons involving Qwen 3.5 Cloud or Kimi K2.7 Code Cloud; Holm correction is isolated
 from Campaign 4's original family. {significant_tail} comparisons survive the original
 bootstrap-tail convention and {significant_centered} survive the recentered-null sensitivity.
 
@@ -170,7 +170,9 @@ def main() -> None:
         "registries": {"frozen": "Data/Python/pypi_package_names.csv",
                        "current": "Data/Python/pypi_package_names_2026-08-12.csv"},
         "bootstrap": {"cluster": "prompt", "stratified_by_dataset": True,
-                      "replicates": campaign.REPS, "seed_family": campaign.BOOTSTRAP_SEED},
+                      "cell_interval_replicates": campaign.REPS,
+                      "paired_comparison_replicates": campaign.REPS,
+                      "seed_family": campaign.BOOTSTRAP_SEED},
         "new_cells": new_summaries,
         "paired_comparisons": comparisons,
         "manifests": {model: manifest_summary(run) for model, run in NEW_MODELS},

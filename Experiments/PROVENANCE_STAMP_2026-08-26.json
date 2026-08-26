@@ -1,0 +1,419 @@
+{
+  "schema": "package-hallucination-retrospective-provenance-v1",
+  "created_at_utc": "2026-08-26T16:14:16.864214+00:00",
+  "status": "retrospective evidence stamp; not a cryptographic preregistration",
+  "git": {
+    "branch": "main",
+    "parent_commit_before_snapshot": "eac1434964427ad114b548e5327e54301e619ada",
+    "tracked_worktree_patch_sha256": "bcdef6df71bfd8482ac3c30b523a90232c16580977f6d6ac2b1c66d3e18dd884",
+    "tracked_worktree_patch_bytes": 112481,
+    "snapshot_file_count_excluding_stamp_outputs": 53
+  },
+  "attestation": {
+    "claim": "The substantive Kimi K3 design is the normalized-LF content before the Execution log heading in the current preregistration. The maintainer and experiment operator attest that this core preceded outcome inspection.",
+    "frozen_core_normalization": "UTF-8 text; CRLF normalized to LF; one final LF",
+    "frozen_core_lines": 78,
+    "frozen_core_sha256": "e36d1f78a536c8da5fc4d1df0f46578076b5511687424703a62908e4ef341930",
+    "limitations": [
+      "The preregistration, scorer, and results were not committed before inference.",
+      "The current preregistration was legitimately appended during and after collection.",
+      "Filesystem creation and modification times are local metadata and can be altered.",
+      "The current runner contains a post-launch artifact-index addition and is not byte-identical to the script parsed by the already-running PowerShell process.",
+      "This record cannot independently prove the design was frozen before data; it makes the present evidence and all future changes content-addressable."
+    ]
+  },
+  "local_timeline_evidence": [
+    {
+      "event": "Model identity snapshot written before the preregistration file.",
+      "path": "Experiments/kimi_k3_api_show_2026-08-25.json",
+      "local_filesystem_created_time_utc": "2026-08-26T00:13:39.865330+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T00:13:39.866851+00:00",
+      "sha256": "90da6c7b0a0a5ae517059863ddc007c515b5e886ae4b0a7103bc7dba545a2628"
+    },
+    {
+      "event": "Preregistration file created before analytic launch; later appended with execution results.",
+      "path": "Experiments/PREREGISTRATION_KIMI_K3_EXTENSION.md",
+      "local_filesystem_created_time_utc": "2026-08-26T00:16:43.846458+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T03:36:13.173975+00:00",
+      "sha256": "24391757874299b95c9791ad6a64e6f0decf2a88071043f818b74164bb7fe72e"
+    },
+    {
+      "event": "Analytic runner log created at launch; final mtime includes post-run scorer output.",
+      "path": "Experiments/kimi_k3_extension_run.log",
+      "local_filesystem_created_time_utc": "2026-08-26T00:26:16.738586+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:12.554121+00:00",
+      "sha256": "7a09a90e523c040ba5e56bfaf8b9c0bc65e64503a5bb0a5d6af53f686f93b73b"
+    },
+    {
+      "event": "Scorer last modified during code collection and before package-phase artifacts.",
+      "path": "score_kimi_k3_extension.py",
+      "local_filesystem_created_time_utc": "2026-08-26T00:17:00.647118+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T00:58:00.317081+00:00",
+      "sha256": "957ab2e346109dd8fef72e5f7f25c7e31fea341eaaad74eca5bd1619900f41f2"
+    },
+    {
+      "event": "First code phase finalized.",
+      "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_code.json",
+      "local_filesystem_created_time_utc": "2026-08-26T01:52:32.141400+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T01:52:32.146401+00:00",
+      "sha256": "38eb8bf50709628738c55adf193a3fa42b2ddc7ab5d3bb610e244ed9f01b4ce5"
+    },
+    {
+      "event": "First package phase finalized.",
+      "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_1.json",
+      "local_filesystem_created_time_utc": "2026-08-26T02:59:55.932169+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T02:59:55.933168+00:00",
+      "sha256": "d2cf92ddf0bb5ad7131c8d852afe85784c1837e36e14dafe56f97bd0475de5ed"
+    },
+    {
+      "event": "Last package phase finalized.",
+      "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_2.json",
+      "local_filesystem_created_time_utc": "2026-08-26T03:27:53.517095+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T03:27:53.518606+00:00",
+      "sha256": "caa5907b784c454007218c2fb5f82da73974bfdaea34ec642e68e7524c1ea781"
+    },
+    {
+      "event": "Run manifest finalized after collection.",
+      "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/run_manifest.json",
+      "local_filesystem_created_time_utc": "2026-08-26T03:28:04.255131+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:04.256130+00:00",
+      "sha256": "633c45b40734d674268c9ad410ffb598af6e031b8f00db3862e27886bbcc6f6d"
+    },
+    {
+      "event": "Scored result written after the run manifest.",
+      "path": "Experiments/kimi_k3_extension_results.json",
+      "local_filesystem_created_time_utc": "2026-08-26T03:28:12.304767+00:00",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:36.434268+00:00",
+      "sha256": "29c6cce5c7095c24a5aa793390cbe84add2fe565a6e3cd28b834dc86e1190200"
+    }
+  ],
+  "local_timeline_note": "Generated on Windows, where st_ctime is exposed as file creation time. Both creation and modification times are mutable local metadata, not trusted timestamps.",
+  "raw_artifact_index": {
+    "path": "Experiments/ollama_cloud_artifact_index.json",
+    "sha256": "ff53dd0080f1db11311855bc2a9ada614edadbed124fa66835b6bf0284bb1dad",
+    "indexed_files": 93,
+    "verification_command": "python build_ollama_artifact_index.py --verify",
+    "last_verified_result": "verified 93 files",
+    "note": "Raw response files remain git-ignored; this index commits their hashes, sizes, and row counts, not response content."
+  },
+  "commit_candidate_files": [
+    {
+      "path": ".gitignore",
+      "bytes": 567,
+      "sha256": "06929563c2a3621adb71aaed96f58ca0e796db1cf55aa5293b7ec59e47fbf422",
+      "local_filesystem_mtime_utc": "2026-08-26T16:05:36.738404+00:00"
+    },
+    {
+      "path": "COMPARISON_CHURILOV.md",
+      "bytes": 11855,
+      "sha256": "ea4b485e78c920007f256f28d10bd1c22f1731e306d544d38fa6f043f66a081b",
+      "local_filesystem_mtime_utc": "2026-08-26T03:44:21.611877+00:00"
+    },
+    {
+      "path": "COMPARISON_CHURILOV.pdf",
+      "bytes": 162612,
+      "sha256": "4fe2c3710e349ce9bf7434ba962362022b5669431277603f8f15d2f5c073a913",
+      "local_filesystem_mtime_utc": "2026-08-26T13:52:57.949508+00:00"
+    },
+    {
+      "path": "Experiments/CHURILOV_BRIDGE_ANALYSIS.md",
+      "bytes": 4403,
+      "sha256": "b1493a4a9b60e035f5c88cda5bf1a42ddd073c43ac63a46dbc40e45ce5dd5e1b",
+      "local_filesystem_mtime_utc": "2026-08-26T03:45:47.227474+00:00"
+    },
+    {
+      "path": "Experiments/COMPLETION_AUDIT.md",
+      "bytes": 8874,
+      "sha256": "33298e23324dcf64b9f0a37f78f1bdfdc15ae128ec4fca1140a8a1cec12a88d7",
+      "local_filesystem_mtime_utc": "2026-08-26T16:14:07.348504+00:00"
+    },
+    {
+      "path": "Experiments/KIMI_K2_7_VS_K3_POST_ANALYSIS.md",
+      "bytes": 3206,
+      "sha256": "7599c44779c7ea8749b91b44cb3169ff959a11c091b4d4a1f930616f9423b15a",
+      "local_filesystem_mtime_utc": "2026-08-26T03:32:57.271691+00:00"
+    },
+    {
+      "path": "Experiments/KIMI_K3_EXTENSION_RESULTS.md",
+      "bytes": 2697,
+      "sha256": "2027b035c3cace77a5e36138f5f3cecacdd468999f56963d7c5d531f7a5a77fc",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:36.442773+00:00"
+    },
+    {
+      "path": "Experiments/OLLAMA_CLOUD_EXTENSION_POST_ANALYSIS.md",
+      "bytes": 4655,
+      "sha256": "23c0a64671e0e39fedf9b518c89cf965752c70cc575e89c51bff40cb327e68b2",
+      "local_filesystem_mtime_utc": "2026-08-26T01:01:32.435484+00:00"
+    },
+    {
+      "path": "Experiments/OLLAMA_CLOUD_EXTENSION_RESULTS.md",
+      "bytes": 954,
+      "sha256": "b3997928cab58d2521827d71ea8c9d5e7a719f256955b00126f66f7d8f357caf",
+      "local_filesystem_mtime_utc": "2026-08-26T00:46:00.063475+00:00"
+    },
+    {
+      "path": "Experiments/PREREGISTRATION_KIMI_K3_EXTENSION.md",
+      "bytes": 10679,
+      "sha256": "24391757874299b95c9791ad6a64e6f0decf2a88071043f818b74164bb7fe72e",
+      "local_filesystem_mtime_utc": "2026-08-26T03:36:13.173975+00:00"
+    },
+    {
+      "path": "Experiments/PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md",
+      "bytes": 8153,
+      "sha256": "0485b73f78b498e82e7126e3638be77665e77d685992f9433cf59d42b28f53c0",
+      "local_filesystem_mtime_utc": "2026-08-26T00:46:51.038035+00:00"
+    },
+    {
+      "path": "Experiments/SLACK_UPDATE_DRAFT.md",
+      "bytes": 1950,
+      "sha256": "38a10b4589a88ae3fd5f18dc91886946aa904ed676f0ae33cbcd2fe0fd014904",
+      "local_filesystem_mtime_utc": "2026-08-26T03:41:35.504621+00:00"
+    },
+    {
+      "path": "Experiments/ZEN_DEEPSEEK_FEASIBILITY.md",
+      "bytes": 2145,
+      "sha256": "79d6b43d3da3268bafd5f92f5de903df06c3a7b6d804c17d3d431ef74fe39dd7",
+      "local_filesystem_mtime_utc": "2026-08-26T00:28:46.281003+00:00"
+    },
+    {
+      "path": "Experiments/campaign4_post_analysis.json",
+      "bytes": 29774,
+      "sha256": "7213ef0d32d93b40109b7ee663f86b2141241cc5051765cb48f95722d8f46bf3",
+      "local_filesystem_mtime_utc": "2026-08-26T00:45:49.541696+00:00"
+    },
+    {
+      "path": "Experiments/churilov_bridge_analysis.json",
+      "bytes": 31304,
+      "sha256": "9c63ea92976b6f8e844c4a4a64360a781d605026dda7cbc4e5635d3cb1e4ab4a",
+      "local_filesystem_mtime_utc": "2026-08-26T03:45:47.224464+00:00"
+    },
+    {
+      "path": "Experiments/figures/README.md",
+      "bytes": 924,
+      "sha256": "6b3f8ebe79d2fc71234d3c4218a176a178fa47f444788d20d9aafc8222efe1e7",
+      "local_filesystem_mtime_utc": "2026-08-26T00:40:17.514597+00:00"
+    },
+    {
+      "path": "Experiments/figures/kimi_k2_7_vs_k3_mechanism.pdf",
+      "bytes": 30968,
+      "sha256": "8fceb3226390c2ebb64dca331c7b93e8aa5e8363b0573a0dfcb851565f6960d1",
+      "local_filesystem_mtime_utc": "2026-08-26T03:32:58.716318+00:00"
+    },
+    {
+      "path": "Experiments/figures/kimi_k2_7_vs_k3_mechanism.png",
+      "bytes": 223667,
+      "sha256": "a8d6361fcec9ac305a6355d3434d385f7ffc3226f626a4d5ef95da2360818292",
+      "local_filesystem_mtime_utc": "2026-08-26T03:32:58.429719+00:00"
+    },
+    {
+      "path": "Experiments/figures/ollama_extension_position_volume.pdf",
+      "bytes": 31435,
+      "sha256": "22792ccde9fc5e0c83b992c610e8a27c1dd9a314382033d549579a1911b21884",
+      "local_filesystem_mtime_utc": "2026-08-26T00:39:46.476284+00:00"
+    },
+    {
+      "path": "Experiments/figures/ollama_extension_position_volume.png",
+      "bytes": 251406,
+      "sha256": "d54c6998a8fdacfa62aee35f6b0ef80e45cdb1b615e603123dd83660845a21c8",
+      "local_filesystem_mtime_utc": "2026-08-26T00:39:46.007585+00:00"
+    },
+    {
+      "path": "Experiments/kimi_k2_7_vs_k3_post_analysis.json",
+      "bytes": 8950,
+      "sha256": "d61c8663b0c19544bfd3cb099615cc846464b0a0c2e1ad67af2827de5efd47e9",
+      "local_filesystem_mtime_utc": "2026-08-26T03:32:57.267174+00:00"
+    },
+    {
+      "path": "Experiments/kimi_k3_api_show_2026-08-25.json",
+      "bytes": 530,
+      "sha256": "90da6c7b0a0a5ae517059863ddc007c515b5e886ae4b0a7103bc7dba545a2628",
+      "local_filesystem_mtime_utc": "2026-08-26T00:13:39.866851+00:00"
+    },
+    {
+      "path": "Experiments/kimi_k3_extension_results.json",
+      "bytes": 71940,
+      "sha256": "29c6cce5c7095c24a5aa793390cbe84add2fe565a6e3cd28b834dc86e1190200",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:36.434268+00:00"
+    },
+    {
+      "path": "Experiments/kimi_k3_extension_run.err.log",
+      "bytes": 185560,
+      "sha256": "189aaaa331bc88f9e240fd46fab69bfcaf100910f48e17029a7b203a012ddc94",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:04.258130+00:00"
+    },
+    {
+      "path": "Experiments/kimi_k3_extension_run.log",
+      "bytes": 695,
+      "sha256": "7a09a90e523c040ba5e56bfaf8b9c0bc65e64503a5bb0a5d6af53f686f93b73b",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:12.554121+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_artifact_index.json",
+      "bytes": 27143,
+      "sha256": "ff53dd0080f1db11311855bc2a9ada614edadbed124fa66835b6bf0284bb1dad",
+      "local_filesystem_mtime_utc": "2026-08-26T03:28:45.835491+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_extension_post_analysis.json",
+      "bytes": 116186,
+      "sha256": "c748233902fba85b319a1f1597df4e1308352542c403fb135902d550e2aa413f",
+      "local_filesystem_mtime_utc": "2026-08-26T01:01:32.430260+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_extension_results.json",
+      "bytes": 17996,
+      "sha256": "7be99f79aff4b64d9cf64b2c0b8c4d53265b3efc7e95ed921fa9bfd26c9edd58",
+      "local_filesystem_mtime_utc": "2026-08-26T00:46:00.059800+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_extension_run.err.log",
+      "bytes": 669,
+      "sha256": "f67490972fd720683dc739ffddcabcae4b688b62f30c2d1070a6ae43547186e7",
+      "local_filesystem_mtime_utc": "2026-08-19T23:28:32.862469+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_extension_run.log",
+      "bytes": 604,
+      "sha256": "b0edffd633556ccc38c9497beaf5c11e25dee2ccb1b526a5e9353f53da6e724e",
+      "local_filesystem_mtime_utc": "2026-08-19T23:28:32.332777+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_extension_run2.err.log",
+      "bytes": 360663,
+      "sha256": "ba588ba19656b684e9ceab41c71a36df1fd7a3a8aff7e382fcb7bf1d1d086d0e",
+      "local_filesystem_mtime_utc": "2026-08-20T01:29:55.810289+00:00"
+    },
+    {
+      "path": "Experiments/ollama_cloud_extension_run2.log",
+      "bytes": 1877,
+      "sha256": "800a2ac715f4c831e30f5adef0a86fa1f8f4c8a2072b22748cfa9dc2a7c5f5b1",
+      "local_filesystem_mtime_utc": "2026-08-20T01:30:18.978826+00:00"
+    },
+    {
+      "path": "PAPER_OUTLINE.md",
+      "bytes": 33571,
+      "sha256": "d30b35d97b6b31dd7112918a3d7c9bfde7816f788807bd557f1bf8b4c15d2ac7",
+      "local_filesystem_mtime_utc": "2026-08-26T16:06:02.838113+00:00"
+    },
+    {
+      "path": "README.md",
+      "bytes": 28246,
+      "sha256": "45b5df5f7e037c87a03aa78ecfea69485675ea9c9d91213c14fbc9d4c5c3aeb5",
+      "local_filesystem_mtime_utc": "2026-08-26T16:12:21.362499+00:00"
+    },
+    {
+      "path": "api_batch.py",
+      "bytes": 6686,
+      "sha256": "e7292469a7584dda0efeea12f737897267d8e745f3b4cc16e0b49b19a60a596b",
+      "local_filesystem_mtime_utc": "2026-08-26T00:12:19.263354+00:00"
+    },
+    {
+      "path": "build_ollama_artifact_index.py",
+      "bytes": 6419,
+      "sha256": "9a9d98eebea3893c30e6db3c8af958c4b0189a73dfee44271af9593fc1dd66d4",
+      "local_filesystem_mtime_utc": "2026-08-26T01:19:45.536065+00:00"
+    },
+    {
+      "path": "churilov_bridge_analysis.py",
+      "bytes": 25360,
+      "sha256": "c2a03f5ec48b8a85b5c9197e491c7dc58cde15617ca548efee1bc3bceb1d52cc",
+      "local_filesystem_mtime_utc": "2026-08-26T03:43:59.209092+00:00"
+    },
+    {
+      "path": "codex-experiment.md",
+      "bytes": 40238,
+      "sha256": "0804279b35c3a3e5e2c0cec6ac63eb41ebf4c6ad22618b1023204467fd3b953a",
+      "local_filesystem_mtime_utc": "2026-08-26T03:45:25.975079+00:00"
+    },
+    {
+      "path": "create_provenance_stamp.py",
+      "bytes": 10915,
+      "sha256": "441c002016f517059099798adb9c08d0942746b4ac4e71718ba54058b861cea3",
+      "local_filesystem_mtime_utc": "2026-08-26T16:10:53.411120+00:00"
+    },
+    {
+      "path": "experiment_gate.py",
+      "bytes": 9702,
+      "sha256": "fc61b33c311fa5fbda5db540b6615ee8bef4f24b8a948281cf7cfea8a338dc45",
+      "local_filesystem_mtime_utc": "2026-08-26T16:07:34.286824+00:00"
+    },
+    {
+      "path": "llm_api.py",
+      "bytes": 25872,
+      "sha256": "5b68084799affc4e4e9677a0b5c9eb6f032a0ffa9969dfccbea9e516371beeb6",
+      "local_filesystem_mtime_utc": "2026-08-26T00:35:03.332207+00:00"
+    },
+    {
+      "path": "plot_kimi_k3_mechanism.py",
+      "bytes": 4062,
+      "sha256": "4666fcb99e492d5cdb0d0e36ced8d579e67ad80587fcf400af698a898a9ccde6",
+      "local_filesystem_mtime_utc": "2026-08-26T03:32:45.758499+00:00"
+    },
+    {
+      "path": "plot_ollama_extension_diagnostics.py",
+      "bytes": 4040,
+      "sha256": "36926e086b605447232890ac2967da83f721f5ce59c31ff58c19f198a7eb7a22",
+      "local_filesystem_mtime_utc": "2026-08-26T00:39:36.606974+00:00"
+    },
+    {
+      "path": "post_campaign_analysis.py",
+      "bytes": 28120,
+      "sha256": "72035b9bc2833e6e501dcc1c6fb7c32e25276faabeab6d02cbbff7007d1f58a8",
+      "local_filesystem_mtime_utc": "2026-08-26T00:45:17.581302+00:00"
+    },
+    {
+      "path": "post_kimi_k3_analysis.py",
+      "bytes": 12846,
+      "sha256": "534806b229fc5f642faf6f8128b4d4140e86e104ff47b799bf52833bf3813a99",
+      "local_filesystem_mtime_utc": "2026-08-26T03:32:37.362745+00:00"
+    },
+    {
+      "path": "post_ollama_extension_analysis.py",
+      "bytes": 26266,
+      "sha256": "5ea5ae555be042344d65ac06c93d9da79ea29c52054e925d7bb74bb23ade9f62",
+      "local_filesystem_mtime_utc": "2026-08-26T01:00:59.179373+00:00"
+    },
+    {
+      "path": "run_kimi_k3_extension.ps1",
+      "bytes": 2492,
+      "sha256": "e4fab104cfc68bef827e0c31e8601d88b0f594cf511c0b683ab474f481be4133",
+      "local_filesystem_mtime_utc": "2026-08-26T01:23:10.273516+00:00"
+    },
+    {
+      "path": "run_ollama_cloud_extension.ps1",
+      "bytes": 2685,
+      "sha256": "d6b0db92aa722d3f7030e9af73afbefd2c4fe86d31e2acd064521e08a0c794f3",
+      "local_filesystem_mtime_utc": "2026-08-19T23:26:53.162604+00:00"
+    },
+    {
+      "path": "run_test_api.py",
+      "bytes": 24690,
+      "sha256": "fb3dba35a56277a784daacf6176f7bdbe13d63a62155ea14aee016fedd7ec2ec",
+      "local_filesystem_mtime_utc": "2026-08-26T16:06:20.528366+00:00"
+    },
+    {
+      "path": "score_kimi_k3_extension.py",
+      "bytes": 16703,
+      "sha256": "957ab2e346109dd8fef72e5f7f25c7e31fea341eaaad74eca5bd1619900f41f2",
+      "local_filesystem_mtime_utc": "2026-08-26T00:58:00.317081+00:00"
+    },
+    {
+      "path": "score_ollama_cloud_extension.py",
+      "bytes": 8800,
+      "sha256": "d0ff19a970bf8b59dd91f8782580465e3dc9588f64c98a017a8e2defcb19746c",
+      "local_filesystem_mtime_utc": "2026-08-26T00:45:26.022151+00:00"
+    },
+    {
+      "path": "test_api_response_metadata.py",
+      "bytes": 8765,
+      "sha256": "cc0464e3705d500935028dde4a07f234e0c60895fc1a0fa124862415271ac917",
+      "local_filesystem_mtime_utc": "2026-08-26T00:55:44.887042+00:00"
+    },
+    {
+      "path": "test_experiment_gate.py",
+      "bytes": 5881,
+      "sha256": "13f1452df7c81edac19195afa295e34b050fc36c9cbc1712411640162b9eb70a",
+      "local_filesystem_mtime_utc": "2026-08-26T16:06:57.746607+00:00"
+    }
+  ]
+}

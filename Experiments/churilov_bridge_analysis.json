@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-14T21:58:13+00:00",
+  "generated_at": "2026-08-26T03:45:46+00:00",
   "status": "POST-HOC bridge analysis; frozen Campaign 4 outputs",
-  "model_count": 6,
+  "model_count": 9,
   "source": "Churilov public artifact extraction design, ported with attribution",
   "extractor": {
     "pip_regex": "pip\\s+install\\s+(?P<package>\\S+)",
@@ -368,23 +368,194 @@
         }
       },
       "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "qwen3.5:cloud": {
+      "prompts": 800,
+      "extracted_mentions": 169,
+      "channel_mentions": {
+        "import": 167,
+        "pip_install": 2
+      },
+      "frozen_absence_by_channel": {
+        "import": 12
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 11
+      },
+      "prompts_with_any_extracted_reference": 113,
+      "reference_coverage_pct": 14.125,
+      "churilov_compatible_frozen_absence_count": 12,
+      "churilov_compatible_frozen_absence_rate_pct": 7.101,
+      "churilov_compatible_frozen_cluster_ci": [
+        3.571,
+        11.05
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 11,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 6.509,
+      "dual_registry_nonstdlib_cluster_ci": [
+        3.125,
+        10.383
+      ],
+      "prompt_risk_pct": 1.375,
+      "unique_dual_registry_nonstdlib_names": 7,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 63,
+          "frozen_absence_rate_pct": 14.286,
+          "dual_registry_nonstdlib_rate_pct": 12.698
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 81,
+          "frozen_absence_rate_pct": 3.704,
+          "dual_registry_nonstdlib_rate_pct": 3.704
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 12,
+          "frozen_absence_rate_pct": 0.0,
+          "dual_registry_nonstdlib_rate_pct": 0.0
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 13,
+          "frozen_absence_rate_pct": 0.0,
+          "dual_registry_nonstdlib_rate_pct": 0.0
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "kimi-k2.7-code:cloud": {
+      "prompts": 800,
+      "extracted_mentions": 745,
+      "channel_mentions": {
+        "pip_install": 24,
+        "import": 721
+      },
+      "frozen_absence_by_channel": {
+        "import": 55
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 55
+      },
+      "prompts_with_any_extracted_reference": 426,
+      "reference_coverage_pct": 53.25,
+      "churilov_compatible_frozen_absence_count": 55,
+      "churilov_compatible_frozen_absence_rate_pct": 7.383,
+      "churilov_compatible_frozen_cluster_ci": [
+        5.496,
+        9.456
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 55,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 7.383,
+      "dual_registry_nonstdlib_cluster_ci": [
+        5.496,
+        9.456
+      ],
+      "prompt_risk_pct": 6.5,
+      "unique_dual_registry_nonstdlib_names": 36,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 287,
+          "frozen_absence_rate_pct": 8.362,
+          "dual_registry_nonstdlib_rate_pct": 8.362
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 251,
+          "frozen_absence_rate_pct": 9.562,
+          "dual_registry_nonstdlib_rate_pct": 9.562
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 134,
+          "frozen_absence_rate_pct": 2.239,
+          "dual_registry_nonstdlib_rate_pct": 2.239
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 73,
+          "frozen_absence_rate_pct": 5.479,
+          "dual_registry_nonstdlib_rate_pct": 5.479
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
+    },
+    "kimi-k3:cloud": {
+      "prompts": 800,
+      "extracted_mentions": 777,
+      "channel_mentions": {
+        "import": 757,
+        "pip_install": 20
+      },
+      "frozen_absence_by_channel": {
+        "import": 67
+      },
+      "dual_registry_nonstdlib_by_channel": {
+        "import": 65
+      },
+      "prompts_with_any_extracted_reference": 421,
+      "reference_coverage_pct": 52.625,
+      "churilov_compatible_frozen_absence_count": 67,
+      "churilov_compatible_frozen_absence_rate_pct": 8.623,
+      "churilov_compatible_frozen_cluster_ci": [
+        6.566,
+        10.842
+      ],
+      "dual_registry_nonstdlib_unregistered_count": 65,
+      "dual_registry_nonstdlib_unregistered_rate_pct": 8.366,
+      "dual_registry_nonstdlib_cluster_ci": [
+        6.334,
+        10.566
+      ],
+      "prompt_risk_pct": 7.25,
+      "unique_dual_registry_nonstdlib_names": 41,
+      "by_dataset": {
+        "LLM_Recent": {
+          "prompts": 200,
+          "mentions": 294,
+          "frozen_absence_rate_pct": 10.884,
+          "dual_registry_nonstdlib_rate_pct": 10.204
+        },
+        "LLM_All_Time": {
+          "prompts": 200,
+          "mentions": 289,
+          "frozen_absence_rate_pct": 10.381,
+          "dual_registry_nonstdlib_rate_pct": 10.381
+        },
+        "Stack_Overflow_Recent": {
+          "prompts": 200,
+          "mentions": 124,
+          "frozen_absence_rate_pct": 1.613,
+          "dual_registry_nonstdlib_rate_pct": 1.613
+        },
+        "Stack_Overflow_All_Time": {
+          "prompts": 200,
+          "mentions": 70,
+          "frozen_absence_rate_pct": 4.286,
+          "dual_registry_nonstdlib_rate_pct": 4.286
+        }
+      },
+      "denominator_note": "Package mentions, not generations. Import names are deduplicated within a generation; pip-install and import channels are not deduplicated against each other, matching Churilov's artifact."
     }
   },
   "bridge_summary": {
     "dual_rate_range_pct": [
-      8.3,
+      6.509,
       17.493
     ],
-    "total_frozen_absence_mentions": 498,
-    "total_dual_registry_nonstdlib_mentions": 490,
-    "removed_by_current_registry_or_stdlib": 8,
-    "import_share_of_dual_flags_pct": 97.347,
+    "total_frozen_absence_mentions": 632,
+    "total_dual_registry_nonstdlib_mentions": 621,
+    "removed_by_current_registry_or_stdlib": 11,
+    "import_share_of_dual_flags_pct": 97.907,
     "llm_dataset_rate_range_pct": [
-      8.247,
+      3.704,
       26.453
     ],
     "stackoverflow_dataset_rate_range_pct": [
-      1.205,
+      0.0,
       7.5
     ]
   },
@@ -395,7 +566,10 @@
       "gpt-oss:20b": 91,
       "grok-4.6": 532,
       "deepseek-coder-v2:16b": 196,
-      "deepseek-v4-flash": 1045
+      "deepseek-v4-flash": 1045,
+      "qwen3.5:cloud": 71,
+      "kimi-k2.7-code:cloud": 21631,
+      "kimi-k3:cloud": 8361
     },
     "pairwise": [
       {
@@ -439,6 +613,30 @@
         "prompt_aligned_occurrence_jaccard": 0.02058
       },
       {
+        "pair": "claude-opus-5 vs qwen3.5:cloud",
+        "shared_unique_names": 14,
+        "name_jaccard": 0.09211,
+        "shared_names_with_same_prompt_support": 12,
+        "same_prompt_share_of_shared_names_pct": 85.714,
+        "prompt_aligned_occurrence_jaccard": 0.08242
+      },
+      {
+        "pair": "claude-opus-5 vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 39,
+        "name_jaccard": 0.0018,
+        "shared_names_with_same_prompt_support": 25,
+        "same_prompt_share_of_shared_names_pct": 64.103,
+        "prompt_aligned_occurrence_jaccard": 0.00124
+      },
+      {
+        "pair": "claude-opus-5 vs kimi-k3:cloud",
+        "shared_unique_names": 37,
+        "name_jaccard": 0.00439,
+        "shared_names_with_same_prompt_support": 26,
+        "same_prompt_share_of_shared_names_pct": 70.27,
+        "prompt_aligned_occurrence_jaccard": 0.00403
+      },
+      {
         "pair": "gpt-5.2-2025-12-11 vs gpt-oss:20b",
         "shared_unique_names": 27,
         "name_jaccard": 0.16265,
@@ -471,6 +669,30 @@
         "prompt_aligned_occurrence_jaccard": 0.03559
       },
       {
+        "pair": "gpt-5.2-2025-12-11 vs qwen3.5:cloud",
+        "shared_unique_names": 20,
+        "name_jaccard": 0.13072,
+        "shared_names_with_same_prompt_support": 19,
+        "same_prompt_share_of_shared_names_pct": 95.0,
+        "prompt_aligned_occurrence_jaccard": 0.11732
+      },
+      {
+        "pair": "gpt-5.2-2025-12-11 vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 55,
+        "name_jaccard": 0.00254,
+        "shared_names_with_same_prompt_support": 44,
+        "same_prompt_share_of_shared_names_pct": 80.0,
+        "prompt_aligned_occurrence_jaccard": 0.00205
+      },
+      {
+        "pair": "gpt-5.2-2025-12-11 vs kimi-k3:cloud",
+        "shared_unique_names": 45,
+        "name_jaccard": 0.00535,
+        "shared_names_with_same_prompt_support": 35,
+        "same_prompt_share_of_shared_names_pct": 77.778,
+        "prompt_aligned_occurrence_jaccard": 0.00495
+      },
+      {
         "pair": "gpt-oss:20b vs grok-4.6",
         "shared_unique_names": 18,
         "name_jaccard": 0.02975,
@@ -495,6 +717,30 @@
         "prompt_aligned_occurrence_jaccard": 0.03301
       },
       {
+        "pair": "gpt-oss:20b vs qwen3.5:cloud",
+        "shared_unique_names": 20,
+        "name_jaccard": 0.14085,
+        "shared_names_with_same_prompt_support": 18,
+        "same_prompt_share_of_shared_names_pct": 90.0,
+        "prompt_aligned_occurrence_jaccard": 0.12
+      },
+      {
+        "pair": "gpt-oss:20b vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 51,
+        "name_jaccard": 0.00235,
+        "shared_names_with_same_prompt_support": 31,
+        "same_prompt_share_of_shared_names_pct": 60.784,
+        "prompt_aligned_occurrence_jaccard": 0.00151
+      },
+      {
+        "pair": "gpt-oss:20b vs kimi-k3:cloud",
+        "shared_unique_names": 35,
+        "name_jaccard": 0.00416,
+        "shared_names_with_same_prompt_support": 26,
+        "same_prompt_share_of_shared_names_pct": 74.286,
+        "prompt_aligned_occurrence_jaccard": 0.00414
+      },
+      {
         "pair": "grok-4.6 vs deepseek-coder-v2:16b",
         "shared_unique_names": 13,
         "name_jaccard": 0.01818,
@@ -511,18 +757,114 @@
         "prompt_aligned_occurrence_jaccard": 0.01251
       },
       {
+        "pair": "grok-4.6 vs qwen3.5:cloud",
+        "shared_unique_names": 11,
+        "name_jaccard": 0.01858,
+        "shared_names_with_same_prompt_support": 10,
+        "same_prompt_share_of_shared_names_pct": 90.909,
+        "prompt_aligned_occurrence_jaccard": 0.02121
+      },
+      {
+        "pair": "grok-4.6 vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 85,
+        "name_jaccard": 0.00385,
+        "shared_names_with_same_prompt_support": 20,
+        "same_prompt_share_of_shared_names_pct": 23.529,
+        "prompt_aligned_occurrence_jaccard": 0.00103
+      },
+      {
+        "pair": "grok-4.6 vs kimi-k3:cloud",
+        "shared_unique_names": 52,
+        "name_jaccard": 0.00588,
+        "shared_names_with_same_prompt_support": 17,
+        "same_prompt_share_of_shared_names_pct": 32.692,
+        "prompt_aligned_occurrence_jaccard": 0.00274
+      },
+      {
         "pair": "deepseek-coder-v2:16b vs deepseek-v4-flash",
         "shared_unique_names": 39,
         "name_jaccard": 0.03245,
         "shared_names_with_same_prompt_support": 34,
         "same_prompt_share_of_shared_names_pct": 87.179,
         "prompt_aligned_occurrence_jaccard": 0.02771
+      },
+      {
+        "pair": "deepseek-coder-v2:16b vs qwen3.5:cloud",
+        "shared_unique_names": 17,
+        "name_jaccard": 0.068,
+        "shared_names_with_same_prompt_support": 15,
+        "same_prompt_share_of_shared_names_pct": 88.235,
+        "prompt_aligned_occurrence_jaccard": 0.05172
+      },
+      {
+        "pair": "deepseek-coder-v2:16b vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 71,
+        "name_jaccard": 0.00326,
+        "shared_names_with_same_prompt_support": 43,
+        "same_prompt_share_of_shared_names_pct": 60.563,
+        "prompt_aligned_occurrence_jaccard": 0.00185
+      },
+      {
+        "pair": "deepseek-coder-v2:16b vs kimi-k3:cloud",
+        "shared_unique_names": 39,
+        "name_jaccard": 0.00458,
+        "shared_names_with_same_prompt_support": 27,
+        "same_prompt_share_of_shared_names_pct": 69.231,
+        "prompt_aligned_occurrence_jaccard": 0.00329
+      },
+      {
+        "pair": "deepseek-v4-flash vs qwen3.5:cloud",
+        "shared_unique_names": 30,
+        "name_jaccard": 0.02762,
+        "shared_names_with_same_prompt_support": 28,
+        "same_prompt_share_of_shared_names_pct": 93.333,
+        "prompt_aligned_occurrence_jaccard": 0.02691
+      },
+      {
+        "pair": "deepseek-v4-flash vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 102,
+        "name_jaccard": 0.00452,
+        "shared_names_with_same_prompt_support": 76,
+        "same_prompt_share_of_shared_names_pct": 74.51,
+        "prompt_aligned_occurrence_jaccard": 0.00306
+      },
+      {
+        "pair": "deepseek-v4-flash vs kimi-k3:cloud",
+        "shared_unique_names": 64,
+        "name_jaccard": 0.00685,
+        "shared_names_with_same_prompt_support": 51,
+        "same_prompt_share_of_shared_names_pct": 79.688,
+        "prompt_aligned_occurrence_jaccard": 0.00582
+      },
+      {
+        "pair": "qwen3.5:cloud vs kimi-k2.7-code:cloud",
+        "shared_unique_names": 34,
+        "name_jaccard": 0.00157,
+        "shared_names_with_same_prompt_support": 26,
+        "same_prompt_share_of_shared_names_pct": 76.471,
+        "prompt_aligned_occurrence_jaccard": 0.00108
+      },
+      {
+        "pair": "qwen3.5:cloud vs kimi-k3:cloud",
+        "shared_unique_names": 32,
+        "name_jaccard": 0.00381,
+        "shared_names_with_same_prompt_support": 28,
+        "same_prompt_share_of_shared_names_pct": 87.5,
+        "prompt_aligned_occurrence_jaccard": 0.00358
+      },
+      {
+        "pair": "kimi-k2.7-code:cloud vs kimi-k3:cloud",
+        "shared_unique_names": 662,
+        "name_jaccard": 0.02257,
+        "shared_names_with_same_prompt_support": 98,
+        "same_prompt_share_of_shared_names_pct": 14.804,
+        "prompt_aligned_occurrence_jaccard": 0.00321
       }
     ],
-    "mean_pairwise_name_jaccard": 0.05415,
-    "all_model_universal_name_count": 5,
-    "all_model_same_prompt_universal_name_count": 4,
-    "same_prompt_share_of_universal_names_pct": 80.0,
+    "mean_pairwise_name_jaccard": 0.03799,
+    "all_model_universal_name_count": 2,
+    "all_model_same_prompt_universal_name_count": 1,
+    "same_prompt_share_of_universal_names_pct": 50.0,
     "security_note": "Names are intentionally omitted. Counts show how much apparent cross-model universality can be induced by the same prompt."
   },
   "guardrails": [

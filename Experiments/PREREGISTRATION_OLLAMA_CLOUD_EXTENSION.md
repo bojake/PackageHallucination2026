@@ -45,7 +45,7 @@ Catalog and `/api/show` metadata were checked on 2026-08-14 before execution:
 | Cell | Requested tag | Resolved architecture | Parameters | Context | Quantization |
 |---|---|---:|---:|---:|---:|
 | Qwen 3.5 Cloud | `qwen3.5:cloud` | `qwen3.5` | 397B | 262,144 | BF16 |
-| Kimi K3 Cloud | `kimi-k3:cloud` | `kimi-k3` | 2.812T | 1,048,576 | MXFP4 |
+| Kimi K2.7 Code Cloud | `kimi-k2.7-code:cloud` | `kimi-k2` | 1.042T | 262,144 | INT4 |
 
 Both cells use:
 
@@ -74,13 +74,19 @@ verify access, output shape, reasoning control, and manifest identity. Smoke res
 stored under separate names and never enter the analysis. Full collection begins only with
 `-Mode full`; the runner is resumable.
 
-Kimi K3 currently requires an Ollama Pro or Max account and consumes extra usage credits.
-An access or quota failure is an execution limitation, not an outcome, and must not be
-replaced by a different Kimi version without an amendment recorded here first.
+An access or quota failure is an execution limitation, not an outcome. A model substitution
+must be recorded here before any analytic responses are collected under the replacement.
 
 ## Amendments
 
-None.
+1. **2026-08-19 (before full analytic collection) — Kimi K3 replaced with Kimi K2.7
+   Code at maintainer direction.** The Kimi K3 smoke gate on 2026-08-14 returned HTTP 402
+   before every attempted generation because the account had no extra-usage balance. It
+   produced zero successful responses and never entered an analytic cell. The maintainer
+   selected `kimi-k2.7-code:cloud`, the current coding-specific Kimi model, on 2026-08-19.
+   A fresh `/api/show` probe resolved architecture `kimi-k2`, 1.042T parameters, 262,144
+   context, INT4, provider modification timestamp `2026-06-12T00:00:00Z`. All prompts,
+   settings, outcomes, inference, and the 13-comparison Holm family remain unchanged.
 
 ## Execution log
 
@@ -90,3 +96,34 @@ None.
   before generation because the account's extra-usage balance was empty. Kimi therefore has
   zero successful or billable responses and remains pending. Enabling billing or substituting
   another Kimi model requires maintainer action; the runner does neither automatically.
+- **2026-08-19 replacement smoke gate:** Kimi K2.7 Code completed 12/12 transport calls,
+  served as `kimi-k2.7-code`, with metadata matching Amendment 1 and no request errors or
+  sampling adjustments. One `Stack_Overflow_All_Time` query-2 response hit the frozen
+  2,048-token package cap. The cap and response are retained unchanged as an observed
+  tail-format outcome; full collection proceeds under the preregistered settings.
+- **2026-08-19 full-run launch:** The first wrapper launch stopped before generation because
+  a clean PowerShell process resolved the base Conda interpreter, which lacked `pandas`.
+  It created no analytic responses; its stdout and stderr are retained as
+  `ollama_cloud_extension_run.log` and `ollama_cloud_extension_run.err.log`. The campaign was
+  relaunched at 16:30 PDT as process 45208 with the explicitly pinned, smoke-tested interpreter
+  `C:\Users\JacobAnderson\miniconda3\envs\trading\python.exe`; progress was verified from
+  successful Qwen generations. Its live logs are `ollama_cloud_extension_run2.log` and
+  `ollama_cloud_extension_run2.err.log`.
+- **2026-08-19 completion:** Both cells completed 2,400/2,400 calls with zero request errors
+  and no sampling adjustments. Qwen served as `qwen3.5`, used 731,235 prompt and 92,619
+  completion tokens, and recorded one code-response cap hit and zero package-response cap
+  hits. Kimi served as `kimi-k2.7-code`, used 1,026,611 prompt and 1,134,677 completion
+  tokens, and recorded 10 code-response plus 323 package-response cap hits. All 12 raw phase
+  files per model contain exactly 200 ordered rows and no error sidecars. The frozen scorer
+  and Churilov bridge completed automatically.
+- **2026-08-25 post-hoc diagnostic:** Kimi's cap and response-volume mechanism is quantified
+  without altering the preregistered result in
+  `Experiments/OLLAMA_CLOUD_EXTENSION_POST_ANALYSIS.md`. The first runner did not retain exact
+  cap-hit response ids, so that artifact labels its longest-response exclusion as a proxy.
+- **2026-08-25 bootstrap implementation audit:** Pairwise comparisons already used the frozen
+  50,000 replicates, but `summarize_cell` inherited a 20,000-replicate default for cell-level
+  cluster intervals while the result artifact labeled the analysis 50,000. The default was
+  corrected to 50,000 and affected summaries regenerated. Point estimates and inferential
+  decisions are unchanged; Qwen's interval moved from 2.06–3.55 to 2.07–3.54 and Kimi's from
+  20.20–26.15 to 20.19–26.19. The Campaign 4 post-analysis metadata now separately records
+  50,000 cell/pairwise replicates and the 20,000-replicate cap diagnostic.

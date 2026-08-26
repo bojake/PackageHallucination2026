@@ -1,9 +1,11 @@
 {
-  "generated_at": "2026-08-14T00:05:24+00:00",
+  "generated_at": "2026-08-26T00:45:49+00:00",
   "status": "POST-HOC sensitivity analysis; frozen model outputs and Parser v2",
   "source_result": "Experiments/campaign4_results.json",
   "bootstrap": {
-    "replicates": 50000,
+    "cell_interval_replicates": 50000,
+    "paired_sensitivity_replicates": 50000,
+    "cap_diagnostic_pair_replicates": 20000,
     "seed": 20260813,
     "stratified_by_dataset": true,
     "cluster": "prompt"
@@ -28,8 +30,8 @@
       "parsed_package_occurrences": 9280,
       "unregistered_rate_pct": 1.315,
       "unregistered_rate_cluster_ci": [
-        1.04,
-        1.626
+        1.038,
+        1.619
       ],
       "unregistered_per_prompt": 0.1525,
       "tail": {
@@ -88,8 +90,8 @@
       "parsed_package_occurrences": 7222,
       "unregistered_rate_pct": 1.883,
       "unregistered_rate_cluster_ci": [
-        1.484,
-        2.303
+        1.494,
+        2.304
       ],
       "unregistered_per_prompt": 0.17,
       "tail": {
@@ -141,7 +143,7 @@
       "malformed_rate_pct": 0.438,
       "malformed_cluster_ci": [
         0.125,
-        0.75
+        0.812
       ],
       "empty_rate_pct": 6.938,
       "coverage_list_pct": 92.625,
@@ -149,8 +151,8 @@
       "parsed_package_occurrences": 6223,
       "unregistered_rate_pct": 2.153,
       "unregistered_rate_cluster_ci": [
-        1.754,
-        2.579
+        1.751,
+        2.577
       ],
       "unregistered_per_prompt": 0.1675,
       "tail": {
@@ -201,8 +203,8 @@
       },
       "malformed_rate_pct": 12.562,
       "malformed_cluster_ci": [
-        11.125,
-        14.002
+        11.062,
+        14.062
       ],
       "empty_rate_pct": 0.062,
       "coverage_list_pct": 87.375,
@@ -210,8 +212,8 @@
       "parsed_package_occurrences": 6754,
       "unregistered_rate_pct": 8.217,
       "unregistered_rate_cluster_ci": [
-        1.535,
-        18.204
+        1.552,
+        18.27
       ],
       "unregistered_per_prompt": 0.6937,
       "tail": {
@@ -270,8 +272,8 @@
       "parsed_package_occurrences": 2437,
       "unregistered_rate_pct": 10.3,
       "unregistered_rate_cluster_ci": [
-        8.758,
-        11.93
+        8.766,
+        11.888
       ],
       "unregistered_per_prompt": 0.3137,
       "tail": {
@@ -322,7 +324,7 @@
       },
       "malformed_rate_pct": 10.375,
       "malformed_cluster_ci": [
-        8.938,
+        8.875,
         11.875
       ],
       "empty_rate_pct": 1.0,
@@ -331,8 +333,8 @@
       "parsed_package_occurrences": 6054,
       "unregistered_rate_pct": 17.906,
       "unregistered_rate_cluster_ci": [
-        5.719,
-        29.989
+        5.708,
+        29.858
       ],
       "unregistered_per_prompt": 1.355,
       "tail": {

@@ -25,3 +25,6 @@ Data/Javascript/npm_package_names.csv
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Downloaded/unpacked reference artifacts used only for local comparison work
+tmp/

@@ -93,8 +93,20 @@ run the actual H1-plus-import bridge on the frozen generated code:
 | Grok 4.6 | 18.15% | 17.49% |
 | DeepSeek Coder V2 | 9.13% | 8.87% |
 | DeepSeek V4 Flash | 8.89% | 8.89% |
+| Qwen 3.5 Cloud (separate extension) | 7.10% | 6.51% |
+| Kimi K2.7 Code Cloud (separate extension) | 7.38% | 7.38% |
+| Kimi K3 Cloud (successor extension) | 8.62% | 8.37% |
 
-Thus extraction channel alone is not the explanation. Of 490 dual-registry bridge flags,
+The three later extension cells sharpen the picture. Qwen's dual-registry bridge rate falls
+inside Churilov's reported 5.49–7.27% Python band, and Kimi K2.7 sits 0.11 points above its
+upper edge; Kimi K3 scores 8.37%. There is still no exact model overlap, and the original
+six-cell bridge remains 8.30–17.49%, so this is cohort-sensitive partial convergence rather
+than numerical reconciliation. The Kimi package-query aggregates are different estimands
+dominated by extreme Query 2 enumeration and must not be compared directly with Churilov's
+code imports.
+
+Thus extraction channel alone is not the explanation. Of the original six cells' 490
+dual-registry bridge flags,
 477 arise from imports and only 13 from explicit install directives. Synthetic-prompt cells
 are also much higher than Stack Overflow cells. The remaining live explanations include
 genuine cohort behavior, prompt/source composition, stochastic sampling, and the semantic
@@ -110,7 +122,7 @@ project module as an external dependency.
 - **Real security follow-through**: the universal set → coordinated disclosure with PyPI
   Security and Socket.dev → a registrable attack surface of 53 names. Genuinely novel and
   operationally valuable; we did no cross-model intersection.
-- **Jaccard overlap matrix** and the DeepSeek/GPT-5.4-mini training-origin hint.
+- **A full-corpus Jaccard overlap matrix** and the DeepSeek/GPT-5.4-mini training-origin hint.
 - A named cohort of **current commercial frontier** models; ours mixed in local/open-weight
   and some idiosyncratic picks.
 
@@ -123,6 +135,10 @@ project module as an external dependency.
 - **Concentration / prompt-level-risk split**, which separates a model's typical behavior from
   its catastrophic tail (§3b). His pooled rate would hide such a tail — though his code-import
   extraction is far less tail-prone than our Q2, so the risk is smaller for his design.
+- **Prompt-conditioned overlap analysis** over names and aligned
+  `(name, dataset, prompt-index)` occurrences: five names span all six original Track B cells,
+  but four have same-prompt support across every cell. This directly tests shared elicitation
+  as an alternative to a training-origin explanation.
 - **Two independent adversarial audits** and a verified-not-asserted correction trail.
 
 ## 5. One specific, checkable caution on his statistics
@@ -144,11 +160,13 @@ would be a cheap addition to his artifact requiring no new model runs.
 
 ## 6. Bottom line
 
-The studies are complementary but do not numerically reconcile. Churilov is broader in
+The studies are complementary but do not generally numerically reconcile. Churilov is broader in
 languages, corpus size, registrability testing, and disclosure; Campaign 4 is stronger on
 parser validation, dual registries, prompt-cluster inference, and failure shape. The direct
-bridge sharpens the disagreement rather than erasing it and identifies import semantics as
-the next validation target. Prompt-conditioned overlap also qualifies the shared-training
+bridge sharpens the original six-cell disagreement, while Qwen 3.5's later extension cell
+lands inside Churilov's Python band, Kimi K2.7 lands just above it, and Kimi K3 reaches 8.37%.
+That cohort-sensitive partial convergence identifies cohort composition and import semantics as joint next
+validation targets. Prompt-conditioned overlap also qualifies the shared-training
 interpretation: five names span all six Campaign 4 models, but four are emitted by every model
 on an identical prompt. The defensible synthesis is therefore not “the frontier compressed,”
 but “package-hallucination rates remain highly measurement- and corpus-dependent while the

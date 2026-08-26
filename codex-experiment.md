@@ -590,3 +590,90 @@ and the gpt-oss result warrants a better-controlled follow-up. The next iteratio
 spend its budget merely increasing sample size. Its first priority should be controlling parser,
 cap, model identity, registry time, and prompt-level dependence. Once those are fixed, a modern
 multi-provider run can produce conclusions substantially stronger than the present report.
+
+## 2026-08-25 implementation and evidence update
+
+This section is a dated addendum. It does not rewrite the repository state or judgments audited
+on 2026-08-12; it records which recommendations were subsequently implemented and which claims
+are now superseded by stronger evidence.
+
+### What the next iteration accomplished
+
+- The study was separated into a historical replication track, a deterministic cap diagnostic,
+  and a modern benchmark. Prompt-cluster inference, dual 2024/2026 registries, immutable model
+  identity where available, phase-level cap counts, and a frozen grammar-aware Parser v2 are
+  now part of the analysis.
+- Parser v2 achieved 98% response-status agreement on the 200-response validation sample and
+  made zero incorrect extractions. Its strict-abstention recall cost is reported rather than
+  hidden. The post-campaign hosted-format audit agreed with the frozen contract on all 180
+  reviewed responses.
+- The controlled cap diagnostic does not support a general monotone cap effect. DeepSeek Coder
+  V2 ranges only 7.10–7.48% across 64–2,048 tokens; DeepSeek 6.7B is hump-shaped rather than
+  monotone; every paired interval includes zero. This confirms the forensic conclusion that
+  the earlier dramatic DeepSeek association was principally a format/parser interaction, not
+  an identified causal tail effect.
+- The withdrawn “valid packages first” mechanism is model-specific rather than universally
+  false. CodeLlama shows a clean position gradient from 21.1% at position 1 to approximately
+  36% at position 5 and later. DeepSeek's grammar-valid lists are flat near 25%, so that
+  mechanism does not explain DeepSeek's historical cap sensitivity.
+- Campaign 4 supplies the modern hosted/local benchmark that was absent on 2026-08-12. Its six
+  frozen cells range from 1.31% to 17.91% under the primary dual-registry occurrence estimand,
+  with prompt risk, coverage, malformed/empty rates, concentration, and paired comparisons
+  co-reported. Rare recommendation floods, not a single ranking axis, distinguish the failure
+  regimes.
+- A code-import bridge on identical outputs partially reconciles the concurrent Churilov study:
+  the original six Campaign 4 cells remain 8.30–17.49%, while the later Qwen 3.5 and Kimi K2.7
+  cells score 6.51% and 7.38%; the completed Kimi K3 successor scores 8.37%. The nine-cell range
+  overlaps Churilov's 5.49–7.27% Python band only at its lower end. Extractor choice matters,
+  but cohort composition and output behavior remain material.
+- The separately preregistered Qwen 3.5 / Kimi K2.7 Ollama Cloud extension completed 4,800
+  calls with zero transport errors. Qwen scores 2.768% (95% prompt-cluster interval
+  2.067–3.543). Kimi K2.7's 23.102% aggregate is dominated by 107,955 Query 2 occurrences,
+  315 Query 2 cap hits, and late-list degradation; lists of at most ten packages score 4.95%.
+
+### Kimi K2.7 parser and list-volume verdict
+
+Parser noise is a mediator, not a sufficient explanation. The 323 phase-matched cap-proxy
+responses are malformed at 26.935% versus 11.668% elsewhere, so longer responses do stress
+the grammar. Yet 236 proxy responses still parse as lists and supply 104,420 package
+occurrences. After every proxy is excluded, Query 2 still rises from roughly 5–7% through
+position 25 to 22.03%, 36.94%, and 41.38% in positions 26–50, 51–100, and 101+. Those late
+clean-proxy bins contain only 16, 12, and 10 contributing responses and are mechanism evidence,
+not stable population estimates. The best explanation is a Kimi-specific instruction-following
+failure that triggers extreme enumeration, followed by a late-list validity collapse, with
+truncation and strict parsing biasing the measured aggregate in both directions.
+
+### Kimi K3 successor result
+
+Kimi K3 was preregistered as a successor/mechanism test before analytic scoring. Its 2,400-call
+cell passed all 12 ordered response-sidecar gates with zero errors, one served identity, no
+request adjustments, exact finish/cap metadata, and $16.271841 token-derived analytic spend.
+The primary occurrence-weighted rate is 33.30% (95% prompt-cluster interval 27.22–38.81),
+higher than K2.7's 23.10%; all eight separately adjusted comparisons place K3 above the
+comparator on this estimand.
+
+That headline masks an aggregation reversal. K3's prompt risk is 21.50% versus K2.7's 43.00%,
+its response-macro mean is 4.18% versus 8.36%, and it produces 54 Query 2 responses above 100
+packages versus K2.7's 234. However, K3's 46 exact package cap hits—only 2.88% of its package
+responses—supply 51.79% of parsed occurrences and 81.02% of unregistered occurrences, at a
+52.10% within-tail rate. Excluding exact K3 cap hits and K2.7's documented cap proxy only as a
+post-hoc diagnostic makes their rates nearly identical, 13.11% and 13.18%.
+
+The K3 data sharpen the mechanism. Runaway enumeration is less frequent than in K2.7 but more
+contaminated when it occurs, and validity still deteriorates with package position after exact
+cap exclusion: Query 2 rises from roughly 3–6% through position 25 to 9.06%, 11.22%, and
+36.75% at positions 26–50, 51–100, and 101+. The cap is therefore an influential observation
+boundary, not an established root cause. A future within-prompt cap-by-bounded-list factorial
+is justified; another unconstrained model cell is not needed for the present paper.
+
+### Updated bottom line
+
+The original audit's implementation priorities were productive: once parser abstention,
+prompt clustering, cap provenance, registry time, and model identity were controlled, several
+apparently simple rankings resolved into distinct measurement and behavioral mechanisms. The
+paper should lead with that result. It should preserve the frozen primary estimands, report
+coverage and response volume beside every occurrence rate, separate confirmatory families from
+post-hoc diagnostics, and describe Kimi K2.7 as a list-volume failure rather than an ordinary
+23.10% recommendation rate. Kimi K3 should be the paper's clearest demonstration that the
+occurrence-weighted rate, prompt risk, and response-macro rate answer different operational
+questions and can reverse a model ranking.

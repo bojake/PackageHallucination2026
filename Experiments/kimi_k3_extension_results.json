@@ -1,0 +1,2384 @@
+{
+  "generated_at": "2026-08-26T03:28:36+00:00",
+  "status": "complete preregistered Kimi K3 extension",
+  "preregistration": "Experiments/PREREGISTRATION_KIMI_K3_EXTENSION.md",
+  "primary": {
+    "responses": 1600,
+    "prompts": 800,
+    "statuses": {
+      "list": 1533,
+      "malformed": 67
+    },
+    "malformed_rate_pct": 4.188,
+    "malformed_cluster_ci": [
+      3.25,
+      5.188
+    ],
+    "empty_rate_pct": 0.0,
+    "coverage_list_pct": 95.812,
+    "unregistered_occurrences": 8621,
+    "parsed_package_occurrences": 25889,
+    "unregistered_rate_pct": 33.3,
+    "unregistered_rate_cluster_ci": [
+      27.222,
+      38.813
+    ],
+    "unregistered_per_prompt": 10.7762,
+    "tail": {
+      "gini_prompt_unregistered_counts": 0.9567,
+      "median_per_prompt": 0.0,
+      "p95_per_prompt": 37.75,
+      "p99_per_prompt": 293.0,
+      "max_per_prompt": 450,
+      "top1_response_share_pct": 5.22,
+      "top3_response_share_pct": 14.88,
+      "top10_response_share_pct": 40.59,
+      "prompts_needed_for_50pct": 14,
+      "leave_top1_rate_pct": 32.165,
+      "leave_top3_rate_pct": 30.242,
+      "leave_top10_rate_pct": 24.465,
+      "top_response_ids": [
+        "kimi-k3:cloud:Stack_Overflow_All_Time:q2:36",
+        "kimi-k3:cloud:LLM_All_Time:q2:185",
+        "kimi-k3:cloud:Stack_Overflow_All_Time:q2:57",
+        "kimi-k3:cloud:LLM_Recent:q2:62",
+        "kimi-k3:cloud:Stack_Overflow_All_Time:q2:128",
+        "kimi-k3:cloud:Stack_Overflow_All_Time:q2:175",
+        "kimi-k3:cloud:LLM_Recent:q2:130",
+        "kimi-k3:cloud:Stack_Overflow_Recent:q2:153",
+        "kimi-k3:cloud:LLM_All_Time:q2:199",
+        "kimi-k3:cloud:Stack_Overflow_All_Time:q2:49"
+      ]
+    },
+    "parser_sensitivity": {
+      "trailing_eos_marker_rescued_responses": 0,
+      "eos_marker_adjusted_malformed_rate_pct": 4.188,
+      "eos_marker_adjusted_rate_pct": 33.3,
+      "eos_marker_added_unregistered": 0,
+      "eos_marker_added_packages": 0,
+      "collapsed_no_package_sentinel_responses": 0,
+      "semantic_sentinel_adjusted_rate_pct": 33.3,
+      "semantic_sentinel_removed_unregistered": 0,
+      "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+    },
+    "prompt_risk_pct": 21.5
+  },
+  "prespecified_mechanism_diagnostics": {
+    "overall_response_and_volume_summary": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1533,
+        "malformed": 67
+      },
+      "list_coverage_pct": 95.812,
+      "malformed_rate_pct": 4.188,
+      "parsed_package_occurrences": 25889,
+      "unregistered_occurrences": 8621,
+      "unregistered_rate_pct": 33.3,
+      "prompt_risk_pct": 21.5,
+      "macro_rates": {
+        "response_mean_pct": 4.179,
+        "response_median_pct": 0.0,
+        "response_p90_pct": 10.0,
+        "prompt_mean_pct": 5.775,
+        "prompt_median_pct": 0.0,
+        "prompts_with_denominator": 789
+      },
+      "packages_per_response": {
+        "median": 3.0,
+        "p90": 10.0,
+        "p95": 20.0,
+        "p99": 403.12,
+        "max": 671,
+        "responses_ge_25": 68,
+        "responses_ge_50": 60,
+        "responses_ge_100": 54,
+        "responses_ge_200": 44
+      },
+      "characters_per_response": {
+        "median": 38.0,
+        "p95": 349.9,
+        "max": 9544
+      }
+    },
+    "by_query": {
+      "query_1": {
+        "responses": 800,
+        "prompts": 800,
+        "statuses": {
+          "list": 754,
+          "malformed": 46
+        },
+        "list_coverage_pct": 94.25,
+        "malformed_rate_pct": 5.75,
+        "parsed_package_occurrences": 1303,
+        "unregistered_occurrences": 23,
+        "unregistered_rate_pct": 1.765,
+        "prompt_risk_pct": 2.625,
+        "macro_rates": {
+          "response_mean_pct": 1.783,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 0.0,
+          "prompt_mean_pct": 1.783,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 587
+        },
+        "packages_per_response": {
+          "median": 1.0,
+          "p90": 4.0,
+          "p95": 5.0,
+          "p99": 8.01,
+          "max": 13,
+          "responses_ge_25": 0,
+          "responses_ge_50": 0,
+          "responses_ge_100": 0,
+          "responses_ge_200": 0
+        },
+        "characters_per_response": {
+          "median": 12.0,
+          "p95": 90.0,
+          "max": 629
+        }
+      },
+      "query_2": {
+        "responses": 800,
+        "prompts": 800,
+        "statuses": {
+          "list": 779,
+          "malformed": 21
+        },
+        "list_coverage_pct": 97.375,
+        "malformed_rate_pct": 2.625,
+        "parsed_package_occurrences": 24586,
+        "unregistered_occurrences": 8598,
+        "unregistered_rate_pct": 34.971,
+        "prompt_risk_pct": 20.5,
+        "macro_rates": {
+          "response_mean_pct": 5.984,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 20.0,
+          "prompt_mean_pct": 5.984,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 779
+        },
+        "packages_per_response": {
+          "median": 8.0,
+          "p90": 20.0,
+          "p95": 259.1,
+          "p99": 486.18,
+          "max": 671,
+          "responses_ge_25": 68,
+          "responses_ge_50": 60,
+          "responses_ge_100": 54,
+          "responses_ge_200": 44
+        },
+        "characters_per_response": {
+          "median": 80.0,
+          "p95": 5315.6,
+          "max": 9544
+        }
+      }
+    },
+    "by_dataset": {
+      "LLM_Recent": {
+        "responses": 400,
+        "prompts": 200,
+        "statuses": {
+          "list": 392,
+          "malformed": 8
+        },
+        "list_coverage_pct": 98.0,
+        "malformed_rate_pct": 2.0,
+        "parsed_package_occurrences": 6979,
+        "unregistered_occurrences": 2263,
+        "unregistered_rate_pct": 32.426,
+        "prompt_risk_pct": 19.5,
+        "macro_rates": {
+          "response_mean_pct": 3.603,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.0,
+          "prompt_mean_pct": 5.228,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 199
+        },
+        "packages_per_response": {
+          "median": 4.0,
+          "p90": 10.0,
+          "p95": 21.05,
+          "p99": 393.75,
+          "max": 620,
+          "responses_ge_25": 19,
+          "responses_ge_50": 16,
+          "responses_ge_100": 15,
+          "responses_ge_200": 11
+        },
+        "characters_per_response": {
+          "median": 41.5,
+          "p95": 501.65,
+          "max": 8373
+        }
+      },
+      "LLM_All_Time": {
+        "responses": 400,
+        "prompts": 200,
+        "statuses": {
+          "list": 389,
+          "malformed": 11
+        },
+        "list_coverage_pct": 97.25,
+        "malformed_rate_pct": 2.75,
+        "parsed_package_occurrences": 7919,
+        "unregistered_occurrences": 2707,
+        "unregistered_rate_pct": 34.184,
+        "prompt_risk_pct": 21.5,
+        "macro_rates": {
+          "response_mean_pct": 3.723,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.0,
+          "prompt_mean_pct": 5.525,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 200
+        },
+        "packages_per_response": {
+          "median": 4.0,
+          "p90": 10.0,
+          "p95": 93.3,
+          "p99": 403.18,
+          "max": 518,
+          "responses_ge_25": 23,
+          "responses_ge_50": 22,
+          "responses_ge_100": 20,
+          "responses_ge_200": 16
+        },
+        "characters_per_response": {
+          "median": 40.5,
+          "p95": 2165.95,
+          "max": 8794
+        }
+      },
+      "Stack_Overflow_Recent": {
+        "responses": 400,
+        "prompts": 200,
+        "statuses": {
+          "list": 378,
+          "malformed": 22
+        },
+        "list_coverage_pct": 94.5,
+        "malformed_rate_pct": 5.5,
+        "parsed_package_occurrences": 4558,
+        "unregistered_occurrences": 856,
+        "unregistered_rate_pct": 18.78,
+        "prompt_risk_pct": 25.5,
+        "macro_rates": {
+          "response_mean_pct": 5.757,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.492,
+          "prompt_mean_pct": 6.928,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 193
+        },
+        "packages_per_response": {
+          "median": 3.0,
+          "p90": 10.0,
+          "p95": 20.0,
+          "p99": 269.03,
+          "max": 671,
+          "responses_ge_25": 14,
+          "responses_ge_50": 11,
+          "responses_ge_100": 8,
+          "responses_ge_200": 6
+        },
+        "characters_per_response": {
+          "median": 35.0,
+          "p95": 281.2,
+          "max": 9544
+        }
+      },
+      "Stack_Overflow_All_Time": {
+        "responses": 400,
+        "prompts": 200,
+        "statuses": {
+          "list": 374,
+          "malformed": 26
+        },
+        "list_coverage_pct": 93.5,
+        "malformed_rate_pct": 6.5,
+        "parsed_package_occurrences": 6433,
+        "unregistered_occurrences": 2795,
+        "unregistered_rate_pct": 43.448,
+        "prompt_risk_pct": 19.5,
+        "macro_rates": {
+          "response_mean_pct": 3.939,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.0,
+          "prompt_mean_pct": 5.451,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 197
+        },
+        "packages_per_response": {
+          "median": 2.5,
+          "p90": 10.0,
+          "p95": 10.0,
+          "p99": 486.18,
+          "max": 649,
+          "responses_ge_25": 12,
+          "responses_ge_50": 11,
+          "responses_ge_100": 11,
+          "responses_ge_200": 11
+        },
+        "characters_per_response": {
+          "median": 31.0,
+          "p95": 200.4,
+          "max": 8989
+        }
+      }
+    },
+    "by_dataset_and_query": {
+      "LLM_Recent": {
+        "query_1": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 196,
+            "malformed": 4
+          },
+          "list_coverage_pct": 98.0,
+          "malformed_rate_pct": 2.0,
+          "parsed_package_occurrences": 442,
+          "unregistered_occurrences": 8,
+          "unregistered_rate_pct": 1.81,
+          "prompt_risk_pct": 4.0,
+          "macro_rates": {
+            "response_mean_pct": 1.857,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 1.857,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 193
+          },
+          "packages_per_response": {
+            "median": 2.0,
+            "p90": 4.0,
+            "p95": 5.05,
+            "p99": 8.01,
+            "max": 10,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 18.5,
+            "p95": 63.05,
+            "max": 121
+          }
+        },
+        "query_2": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 196,
+            "malformed": 4
+          },
+          "list_coverage_pct": 98.0,
+          "malformed_rate_pct": 2.0,
+          "parsed_package_occurrences": 6537,
+          "unregistered_occurrences": 2255,
+          "unregistered_rate_pct": 34.496,
+          "prompt_risk_pct": 18.0,
+          "macro_rates": {
+            "response_mean_pct": 5.322,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 20.0,
+            "prompt_mean_pct": 5.322,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 196
+          },
+          "packages_per_response": {
+            "median": 10.0,
+            "p90": 21.1,
+            "p95": 256.85,
+            "p99": 482.74,
+            "max": 620,
+            "responses_ge_25": 19,
+            "responses_ge_50": 16,
+            "responses_ge_100": 15,
+            "responses_ge_200": 11
+          },
+          "characters_per_response": {
+            "median": 84.0,
+            "p95": 5756.95,
+            "max": 8373
+          }
+        }
+      },
+      "LLM_All_Time": {
+        "query_1": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 192,
+            "malformed": 8
+          },
+          "list_coverage_pct": 96.0,
+          "malformed_rate_pct": 4.0,
+          "parsed_package_occurrences": 489,
+          "unregistered_occurrences": 7,
+          "unregistered_rate_pct": 1.431,
+          "prompt_risk_pct": 3.5,
+          "macro_rates": {
+            "response_mean_pct": 1.623,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 1.623,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 191
+          },
+          "packages_per_response": {
+            "median": 2.0,
+            "p90": 5.0,
+            "p95": 7.0,
+            "p99": 12.01,
+            "max": 13,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 17.0,
+            "p95": 90.25,
+            "max": 347
+          }
+        },
+        "query_2": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 197,
+            "malformed": 3
+          },
+          "list_coverage_pct": 98.5,
+          "malformed_rate_pct": 1.5,
+          "parsed_package_occurrences": 7430,
+          "unregistered_occurrences": 2700,
+          "unregistered_rate_pct": 36.339,
+          "prompt_risk_pct": 20.5,
+          "macro_rates": {
+            "response_mean_pct": 5.759,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 20.0,
+            "prompt_mean_pct": 5.759,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 197
+          },
+          "packages_per_response": {
+            "median": 8.0,
+            "p90": 95.6,
+            "p95": 284.05,
+            "p99": 430.08,
+            "max": 518,
+            "responses_ge_25": 23,
+            "responses_ge_50": 22,
+            "responses_ge_100": 20,
+            "responses_ge_200": 16
+          },
+          "characters_per_response": {
+            "median": 77.0,
+            "p95": 6120.8,
+            "max": 8794
+          }
+        }
+      },
+      "Stack_Overflow_Recent": {
+        "query_1": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 186,
+            "malformed": 14
+          },
+          "list_coverage_pct": 93.0,
+          "malformed_rate_pct": 7.0,
+          "parsed_package_occurrences": 214,
+          "unregistered_occurrences": 6,
+          "unregistered_rate_pct": 2.804,
+          "prompt_risk_pct": 2.0,
+          "macro_rates": {
+            "response_mean_pct": 3.066,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 3.066,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 106
+          },
+          "packages_per_response": {
+            "median": 1.0,
+            "p90": 3.0,
+            "p95": 3.05,
+            "p99": 6.01,
+            "max": 10,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 6.0,
+            "p95": 80.35,
+            "max": 156
+          }
+        },
+        "query_2": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 192,
+            "malformed": 8
+          },
+          "list_coverage_pct": 96.0,
+          "malformed_rate_pct": 4.0,
+          "parsed_package_occurrences": 4344,
+          "unregistered_occurrences": 850,
+          "unregistered_rate_pct": 19.567,
+          "prompt_risk_pct": 24.5,
+          "macro_rates": {
+            "response_mean_pct": 7.243,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 20.0,
+            "prompt_mean_pct": 7.243,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 192
+          },
+          "packages_per_response": {
+            "median": 8.5,
+            "p90": 20.0,
+            "p95": 85.25,
+            "p99": 342.28,
+            "max": 671,
+            "responses_ge_25": 14,
+            "responses_ge_50": 11,
+            "responses_ge_100": 8,
+            "responses_ge_200": 6
+          },
+          "characters_per_response": {
+            "median": 82.0,
+            "p95": 3818.7,
+            "max": 9544
+          }
+        }
+      },
+      "Stack_Overflow_All_Time": {
+        "query_1": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 180,
+            "malformed": 20
+          },
+          "list_coverage_pct": 90.0,
+          "malformed_rate_pct": 10.0,
+          "parsed_package_occurrences": 158,
+          "unregistered_occurrences": 2,
+          "unregistered_rate_pct": 1.266,
+          "prompt_risk_pct": 1.0,
+          "macro_rates": {
+            "response_mean_pct": 0.55,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 0.55,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 97
+          },
+          "packages_per_response": {
+            "median": 0.0,
+            "p90": 2.0,
+            "p95": 3.0,
+            "p99": 5.0,
+            "max": 6,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 5.0,
+            "p95": 92.25,
+            "max": 629
+          }
+        },
+        "query_2": {
+          "responses": 200,
+          "prompts": 200,
+          "statuses": {
+            "list": 194,
+            "malformed": 6
+          },
+          "list_coverage_pct": 97.0,
+          "malformed_rate_pct": 3.0,
+          "parsed_package_occurrences": 6275,
+          "unregistered_occurrences": 2793,
+          "unregistered_rate_pct": 44.51,
+          "prompt_risk_pct": 19.0,
+          "macro_rates": {
+            "response_mean_pct": 5.634,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 20.0,
+            "prompt_mean_pct": 5.634,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 194
+          },
+          "packages_per_response": {
+            "median": 7.0,
+            "p90": 10.0,
+            "p95": 270.4,
+            "p99": 531.9,
+            "max": 649,
+            "responses_ge_25": 12,
+            "responses_ge_50": 11,
+            "responses_ge_100": 11,
+            "responses_ge_200": 11
+          },
+          "characters_per_response": {
+            "median": 75.0,
+            "p95": 4476.6,
+            "max": 8989
+          }
+        }
+      }
+    },
+    "volume_sensitivity": {
+      "overall": {
+        "packages_le_10": {
+          "responses": 1484,
+          "prompts": 797,
+          "statuses": {
+            "list": 1417,
+            "malformed": 67
+          },
+          "list_coverage_pct": 95.485,
+          "malformed_rate_pct": 4.515,
+          "parsed_package_occurrences": 5833,
+          "unregistered_occurrences": 156,
+          "unregistered_rate_pct": 2.674,
+          "prompt_risk_pct": 12.296,
+          "macro_rates": {
+            "response_mean_pct": 2.273,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 2.683,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 759
+          },
+          "packages_per_response": {
+            "median": 3.0,
+            "p90": 10.0,
+            "p95": 10.0,
+            "p99": 10.0,
+            "max": 10,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 33.0,
+            "p95": 112.0,
+            "max": 8029
+          }
+        },
+        "packages_le_25": {
+          "responses": 1532,
+          "prompts": 800,
+          "statuses": {
+            "list": 1465,
+            "malformed": 67
+          },
+          "list_coverage_pct": 95.627,
+          "malformed_rate_pct": 4.373,
+          "parsed_package_occurrences": 6662,
+          "unregistered_occurrences": 235,
+          "unregistered_rate_pct": 3.527,
+          "prompt_risk_pct": 13.875,
+          "macro_rates": {
+            "response_mean_pct": 2.545,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 2.946,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 775
+          },
+          "packages_per_response": {
+            "median": 3.0,
+            "p90": 10.0,
+            "p95": 10.0,
+            "p99": 20.0,
+            "max": 23,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 35.0,
+            "p95": 138.45,
+            "max": 9544
+          }
+        },
+        "packages_gt_25": {
+          "responses": 68,
+          "prompts": 68,
+          "statuses": {
+            "list": 68
+          },
+          "list_coverage_pct": 100.0,
+          "malformed_rate_pct": 0.0,
+          "parsed_package_occurrences": 19227,
+          "unregistered_occurrences": 8386,
+          "unregistered_rate_pct": 43.616,
+          "prompt_risk_pct": 92.647,
+          "macro_rates": {
+            "response_mean_pct": 35.361,
+            "response_median_pct": 32.492,
+            "response_p90_pct": 75.745,
+            "prompt_mean_pct": 35.361,
+            "prompt_median_pct": 32.492,
+            "prompts_with_denominator": 68
+          },
+          "packages_per_response": {
+            "median": 278.0,
+            "p90": 508.2,
+            "p95": 597.6,
+            "p99": 656.26,
+            "max": 671,
+            "responses_ge_25": 68,
+            "responses_ge_50": 60,
+            "responses_ge_100": 54,
+            "responses_ge_200": 44
+          },
+          "characters_per_response": {
+            "median": 5372.0,
+            "p95": 8391.1,
+            "max": 8989
+          }
+        }
+      },
+      "query_1": {
+        "packages_le_10": {
+          "responses": 796,
+          "prompts": 796,
+          "statuses": {
+            "list": 750,
+            "malformed": 46
+          },
+          "list_coverage_pct": 94.221,
+          "malformed_rate_pct": 5.779,
+          "parsed_package_occurrences": 1254,
+          "unregistered_occurrences": 22,
+          "unregistered_rate_pct": 1.754,
+          "prompt_risk_pct": 2.513,
+          "macro_rates": {
+            "response_mean_pct": 1.78,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 1.78,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 583
+          },
+          "packages_per_response": {
+            "median": 1.0,
+            "p90": 4.0,
+            "p95": 5.0,
+            "p99": 7.0,
+            "max": 10,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 12.0,
+            "p95": 82.25,
+            "max": 629
+          }
+        },
+        "packages_le_25": {
+          "responses": 800,
+          "prompts": 800,
+          "statuses": {
+            "list": 754,
+            "malformed": 46
+          },
+          "list_coverage_pct": 94.25,
+          "malformed_rate_pct": 5.75,
+          "parsed_package_occurrences": 1303,
+          "unregistered_occurrences": 23,
+          "unregistered_rate_pct": 1.765,
+          "prompt_risk_pct": 2.625,
+          "macro_rates": {
+            "response_mean_pct": 1.783,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 1.783,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 587
+          },
+          "packages_per_response": {
+            "median": 1.0,
+            "p90": 4.0,
+            "p95": 5.0,
+            "p99": 8.01,
+            "max": 13,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 12.0,
+            "p95": 90.0,
+            "max": 629
+          }
+        },
+        "packages_gt_25": {
+          "responses": 0,
+          "prompts": 0,
+          "statuses": {},
+          "list_coverage_pct": 0.0,
+          "malformed_rate_pct": 0.0,
+          "parsed_package_occurrences": 0,
+          "unregistered_occurrences": 0,
+          "unregistered_rate_pct": null,
+          "prompt_risk_pct": 0.0,
+          "macro_rates": {
+            "response_mean_pct": null,
+            "response_median_pct": null,
+            "response_p90_pct": null,
+            "prompt_mean_pct": null,
+            "prompt_median_pct": null,
+            "prompts_with_denominator": 0
+          },
+          "packages_per_response": {
+            "median": 0,
+            "p90": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "max": 0,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 0,
+            "p95": 0.0,
+            "max": 0
+          }
+        }
+      },
+      "query_2": {
+        "packages_le_10": {
+          "responses": 688,
+          "prompts": 688,
+          "statuses": {
+            "list": 667,
+            "malformed": 21
+          },
+          "list_coverage_pct": 96.948,
+          "malformed_rate_pct": 3.052,
+          "parsed_package_occurrences": 4579,
+          "unregistered_occurrences": 134,
+          "unregistered_rate_pct": 2.926,
+          "prompt_risk_pct": 12.645,
+          "macro_rates": {
+            "response_mean_pct": 2.705,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 10.0,
+            "prompt_mean_pct": 2.705,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 667
+          },
+          "packages_per_response": {
+            "median": 6.0,
+            "p90": 10.0,
+            "p95": 10.0,
+            "p99": 10.0,
+            "max": 10,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 72.5,
+            "p95": 124.65,
+            "max": 8029
+          }
+        },
+        "packages_le_25": {
+          "responses": 732,
+          "prompts": 732,
+          "statuses": {
+            "list": 711,
+            "malformed": 21
+          },
+          "list_coverage_pct": 97.131,
+          "malformed_rate_pct": 2.869,
+          "parsed_package_occurrences": 5359,
+          "unregistered_occurrences": 212,
+          "unregistered_rate_pct": 3.956,
+          "prompt_risk_pct": 13.798,
+          "macro_rates": {
+            "response_mean_pct": 3.174,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 10.0,
+            "prompt_mean_pct": 3.174,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 711
+          },
+          "packages_per_response": {
+            "median": 7.0,
+            "p90": 10.0,
+            "p95": 14.0,
+            "p99": 20.0,
+            "max": 23,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 76.0,
+            "p95": 196.45,
+            "max": 9544
+          }
+        },
+        "packages_gt_25": {
+          "responses": 68,
+          "prompts": 68,
+          "statuses": {
+            "list": 68
+          },
+          "list_coverage_pct": 100.0,
+          "malformed_rate_pct": 0.0,
+          "parsed_package_occurrences": 19227,
+          "unregistered_occurrences": 8386,
+          "unregistered_rate_pct": 43.616,
+          "prompt_risk_pct": 92.647,
+          "macro_rates": {
+            "response_mean_pct": 35.361,
+            "response_median_pct": 32.492,
+            "response_p90_pct": 75.745,
+            "prompt_mean_pct": 35.361,
+            "prompt_median_pct": 32.492,
+            "prompts_with_denominator": 68
+          },
+          "packages_per_response": {
+            "median": 278.0,
+            "p90": 508.2,
+            "p95": 597.6,
+            "p99": 656.26,
+            "max": 671,
+            "responses_ge_25": 68,
+            "responses_ge_50": 60,
+            "responses_ge_100": 54,
+            "responses_ge_200": 44
+          },
+          "characters_per_response": {
+            "median": 5372.0,
+            "p95": 8391.1,
+            "max": 8989
+          }
+        }
+      }
+    },
+    "position_profile_overall": [
+      {
+        "position": "1",
+        "occurrences": 1366,
+        "unregistered": 25,
+        "unregistered_rate_pct": 1.83,
+        "contributing_responses": 1366
+      },
+      {
+        "position": "2",
+        "occurrences": 1084,
+        "unregistered": 46,
+        "unregistered_rate_pct": 4.244,
+        "contributing_responses": 1084
+      },
+      {
+        "position": "3-5",
+        "occurrences": 2355,
+        "unregistered": 70,
+        "unregistered_rate_pct": 2.972,
+        "contributing_responses": 905
+      },
+      {
+        "position": "6-10",
+        "occurrences": 2188,
+        "unregistered": 81,
+        "unregistered_rate_pct": 3.702,
+        "contributing_responses": 506
+      },
+      {
+        "position": "11-25",
+        "occurrences": 1369,
+        "unregistered": 85,
+        "unregistered_rate_pct": 6.209,
+        "contributing_responses": 116
+      },
+      {
+        "position": "26-50",
+        "occurrences": 1554,
+        "unregistered": 120,
+        "unregistered_rate_pct": 7.722,
+        "contributing_responses": 68
+      },
+      {
+        "position": "51-100",
+        "occurrences": 2900,
+        "unregistered": 461,
+        "unregistered_rate_pct": 15.897,
+        "contributing_responses": 60
+      },
+      {
+        "position": "101+",
+        "occurrences": 13073,
+        "unregistered": 7733,
+        "unregistered_rate_pct": 59.152,
+        "contributing_responses": 54
+      }
+    ],
+    "position_profile_query_1": [
+      {
+        "position": "1",
+        "occurrences": 587,
+        "unregistered": 5,
+        "unregistered_rate_pct": 0.852,
+        "contributing_responses": 587
+      },
+      {
+        "position": "2",
+        "occurrences": 322,
+        "unregistered": 11,
+        "unregistered_rate_pct": 3.416,
+        "contributing_responses": 322
+      },
+      {
+        "position": "3-5",
+        "occurrences": 311,
+        "unregistered": 6,
+        "unregistered_rate_pct": 1.929,
+        "contributing_responses": 168
+      },
+      {
+        "position": "6-10",
+        "occurrences": 74,
+        "unregistered": 1,
+        "unregistered_rate_pct": 1.351,
+        "contributing_responses": 29
+      },
+      {
+        "position": "11-25",
+        "occurrences": 9,
+        "unregistered": 0,
+        "unregistered_rate_pct": 0.0,
+        "contributing_responses": 4
+      },
+      {
+        "position": "26-50",
+        "occurrences": 0,
+        "unregistered": 0,
+        "unregistered_rate_pct": null,
+        "contributing_responses": 0
+      },
+      {
+        "position": "51-100",
+        "occurrences": 0,
+        "unregistered": 0,
+        "unregistered_rate_pct": null,
+        "contributing_responses": 0
+      },
+      {
+        "position": "101+",
+        "occurrences": 0,
+        "unregistered": 0,
+        "unregistered_rate_pct": null,
+        "contributing_responses": 0
+      }
+    ],
+    "position_profile_query_2": [
+      {
+        "position": "1",
+        "occurrences": 779,
+        "unregistered": 20,
+        "unregistered_rate_pct": 2.567,
+        "contributing_responses": 779
+      },
+      {
+        "position": "2",
+        "occurrences": 762,
+        "unregistered": 35,
+        "unregistered_rate_pct": 4.593,
+        "contributing_responses": 762
+      },
+      {
+        "position": "3-5",
+        "occurrences": 2044,
+        "unregistered": 64,
+        "unregistered_rate_pct": 3.131,
+        "contributing_responses": 737
+      },
+      {
+        "position": "6-10",
+        "occurrences": 2114,
+        "unregistered": 80,
+        "unregistered_rate_pct": 3.784,
+        "contributing_responses": 477
+      },
+      {
+        "position": "11-25",
+        "occurrences": 1360,
+        "unregistered": 85,
+        "unregistered_rate_pct": 6.25,
+        "contributing_responses": 112
+      },
+      {
+        "position": "26-50",
+        "occurrences": 1554,
+        "unregistered": 120,
+        "unregistered_rate_pct": 7.722,
+        "contributing_responses": 68
+      },
+      {
+        "position": "51-100",
+        "occurrences": 2900,
+        "unregistered": 461,
+        "unregistered_rate_pct": 15.897,
+        "contributing_responses": 60
+      },
+      {
+        "position": "101+",
+        "occurrences": 13073,
+        "unregistered": 7733,
+        "unregistered_rate_pct": 59.152,
+        "contributing_responses": 54
+      }
+    ],
+    "exact_package_cap_diagnostics": {
+      "exact_package_cap_hits": 46,
+      "cap_hit_only": {
+        "responses": 46,
+        "prompts": 46,
+        "statuses": {
+          "list": 39,
+          "malformed": 7
+        },
+        "list_coverage_pct": 84.783,
+        "malformed_rate_pct": 15.217,
+        "parsed_package_occurrences": 13408,
+        "unregistered_occurrences": 6985,
+        "unregistered_rate_pct": 52.096,
+        "prompt_risk_pct": 82.609,
+        "macro_rates": {
+          "response_mean_pct": 47.51,
+          "response_median_pct": 54.275,
+          "response_p90_pct": 80.753,
+          "prompt_mean_pct": 47.51,
+          "prompt_median_pct": 54.275,
+          "prompts_with_denominator": 39
+        },
+        "packages_per_response": {
+          "median": 293.0,
+          "p90": 543.5,
+          "p95": 620.75,
+          "p99": 661.1,
+          "max": 671,
+          "responses_ge_25": 37,
+          "responses_ge_50": 35,
+          "responses_ge_100": 35,
+          "responses_ge_200": 30
+        },
+        "characters_per_response": {
+          "median": 6772.5,
+          "p95": 8779.75,
+          "max": 9544
+        }
+      },
+      "cap_hit_excluded": {
+        "responses": 1554,
+        "prompts": 800,
+        "statuses": {
+          "list": 1494,
+          "malformed": 60
+        },
+        "list_coverage_pct": 96.139,
+        "malformed_rate_pct": 3.861,
+        "parsed_package_occurrences": 12481,
+        "unregistered_occurrences": 1636,
+        "unregistered_rate_pct": 13.108,
+        "prompt_risk_pct": 16.75,
+        "macro_rates": {
+          "response_mean_pct": 2.905,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 7.05,
+          "prompt_mean_pct": 3.476,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 781
+        },
+        "packages_per_response": {
+          "median": 3.0,
+          "p90": 10.0,
+          "p95": 10.0,
+          "p99": 170.23,
+          "max": 482,
+          "responses_ge_25": 31,
+          "responses_ge_50": 25,
+          "responses_ge_100": 19,
+          "responses_ge_200": 14
+        },
+        "characters_per_response": {
+          "median": 36.0,
+          "p95": 166.0,
+          "max": 7792
+        }
+      },
+      "query_1": {
+        "exact_cap_hits": 0,
+        "cap_hit_only": {
+          "responses": 0,
+          "prompts": 0,
+          "statuses": {},
+          "list_coverage_pct": 0.0,
+          "malformed_rate_pct": 0.0,
+          "parsed_package_occurrences": 0,
+          "unregistered_occurrences": 0,
+          "unregistered_rate_pct": null,
+          "prompt_risk_pct": 0.0,
+          "macro_rates": {
+            "response_mean_pct": null,
+            "response_median_pct": null,
+            "response_p90_pct": null,
+            "prompt_mean_pct": null,
+            "prompt_median_pct": null,
+            "prompts_with_denominator": 0
+          },
+          "packages_per_response": {
+            "median": 0,
+            "p90": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "max": 0,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 0,
+            "p95": 0.0,
+            "max": 0
+          }
+        },
+        "cap_hit_excluded": {
+          "responses": 800,
+          "prompts": 800,
+          "statuses": {
+            "list": 754,
+            "malformed": 46
+          },
+          "list_coverage_pct": 94.25,
+          "malformed_rate_pct": 5.75,
+          "parsed_package_occurrences": 1303,
+          "unregistered_occurrences": 23,
+          "unregistered_rate_pct": 1.765,
+          "prompt_risk_pct": 2.625,
+          "macro_rates": {
+            "response_mean_pct": 1.783,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 0.0,
+            "prompt_mean_pct": 1.783,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 587
+          },
+          "packages_per_response": {
+            "median": 1.0,
+            "p90": 4.0,
+            "p95": 5.0,
+            "p99": 8.01,
+            "max": 13,
+            "responses_ge_25": 0,
+            "responses_ge_50": 0,
+            "responses_ge_100": 0,
+            "responses_ge_200": 0
+          },
+          "characters_per_response": {
+            "median": 12.0,
+            "p95": 90.0,
+            "max": 629
+          }
+        },
+        "position_profile_cap_hit_excluded": [
+          {
+            "position": "1",
+            "occurrences": 587,
+            "unregistered": 5,
+            "unregistered_rate_pct": 0.852,
+            "contributing_responses": 587
+          },
+          {
+            "position": "2",
+            "occurrences": 322,
+            "unregistered": 11,
+            "unregistered_rate_pct": 3.416,
+            "contributing_responses": 322
+          },
+          {
+            "position": "3-5",
+            "occurrences": 311,
+            "unregistered": 6,
+            "unregistered_rate_pct": 1.929,
+            "contributing_responses": 168
+          },
+          {
+            "position": "6-10",
+            "occurrences": 74,
+            "unregistered": 1,
+            "unregistered_rate_pct": 1.351,
+            "contributing_responses": 29
+          },
+          {
+            "position": "11-25",
+            "occurrences": 9,
+            "unregistered": 0,
+            "unregistered_rate_pct": 0.0,
+            "contributing_responses": 4
+          },
+          {
+            "position": "26-50",
+            "occurrences": 0,
+            "unregistered": 0,
+            "unregistered_rate_pct": null,
+            "contributing_responses": 0
+          },
+          {
+            "position": "51-100",
+            "occurrences": 0,
+            "unregistered": 0,
+            "unregistered_rate_pct": null,
+            "contributing_responses": 0
+          },
+          {
+            "position": "101+",
+            "occurrences": 0,
+            "unregistered": 0,
+            "unregistered_rate_pct": null,
+            "contributing_responses": 0
+          }
+        ]
+      },
+      "query_2": {
+        "exact_cap_hits": 46,
+        "cap_hit_only": {
+          "responses": 46,
+          "prompts": 46,
+          "statuses": {
+            "list": 39,
+            "malformed": 7
+          },
+          "list_coverage_pct": 84.783,
+          "malformed_rate_pct": 15.217,
+          "parsed_package_occurrences": 13408,
+          "unregistered_occurrences": 6985,
+          "unregistered_rate_pct": 52.096,
+          "prompt_risk_pct": 82.609,
+          "macro_rates": {
+            "response_mean_pct": 47.51,
+            "response_median_pct": 54.275,
+            "response_p90_pct": 80.753,
+            "prompt_mean_pct": 47.51,
+            "prompt_median_pct": 54.275,
+            "prompts_with_denominator": 39
+          },
+          "packages_per_response": {
+            "median": 293.0,
+            "p90": 543.5,
+            "p95": 620.75,
+            "p99": 661.1,
+            "max": 671,
+            "responses_ge_25": 37,
+            "responses_ge_50": 35,
+            "responses_ge_100": 35,
+            "responses_ge_200": 30
+          },
+          "characters_per_response": {
+            "median": 6772.5,
+            "p95": 8779.75,
+            "max": 9544
+          }
+        },
+        "cap_hit_excluded": {
+          "responses": 754,
+          "prompts": 754,
+          "statuses": {
+            "list": 740,
+            "malformed": 14
+          },
+          "list_coverage_pct": 98.143,
+          "malformed_rate_pct": 1.857,
+          "parsed_package_occurrences": 11178,
+          "unregistered_occurrences": 1613,
+          "unregistered_rate_pct": 14.43,
+          "prompt_risk_pct": 16.711,
+          "macro_rates": {
+            "response_mean_pct": 3.795,
+            "response_median_pct": 0.0,
+            "response_p90_pct": 10.0,
+            "prompt_mean_pct": 3.795,
+            "prompt_median_pct": 0.0,
+            "prompts_with_denominator": 740
+          },
+          "packages_per_response": {
+            "median": 8.0,
+            "p90": 10.0,
+            "p95": 20.0,
+            "p99": 283.75,
+            "max": 482,
+            "responses_ge_25": 31,
+            "responses_ge_50": 25,
+            "responses_ge_100": 19,
+            "responses_ge_200": 14
+          },
+          "characters_per_response": {
+            "median": 77.0,
+            "p95": 299.45,
+            "max": 7792
+          }
+        },
+        "position_profile_cap_hit_excluded": [
+          {
+            "position": "1",
+            "occurrences": 740,
+            "unregistered": 20,
+            "unregistered_rate_pct": 2.703,
+            "contributing_responses": 740
+          },
+          {
+            "position": "2",
+            "occurrences": 723,
+            "unregistered": 33,
+            "unregistered_rate_pct": 4.564,
+            "contributing_responses": 723
+          },
+          {
+            "position": "3-5",
+            "occurrences": 1927,
+            "unregistered": 57,
+            "unregistered_rate_pct": 2.958,
+            "contributing_responses": 698
+          },
+          {
+            "position": "6-10",
+            "occurrences": 1919,
+            "unregistered": 70,
+            "unregistered_rate_pct": 3.648,
+            "contributing_responses": 438
+          },
+          {
+            "position": "11-25",
+            "occurrences": 783,
+            "unregistered": 44,
+            "unregistered_rate_pct": 5.619,
+            "contributing_responses": 73
+          },
+          {
+            "position": "26-50",
+            "occurrences": 673,
+            "unregistered": 61,
+            "unregistered_rate_pct": 9.064,
+            "contributing_responses": 31
+          },
+          {
+            "position": "51-100",
+            "occurrences": 1150,
+            "unregistered": 129,
+            "unregistered_rate_pct": 11.217,
+            "contributing_responses": 25
+          },
+          {
+            "position": "101+",
+            "occurrences": 3263,
+            "unregistered": 1199,
+            "unregistered_rate_pct": 36.745,
+            "contributing_responses": 19
+          }
+        ]
+      }
+    }
+  },
+  "additional_descriptive_diagnostics": {
+    "package_volume_quartiles_overall": [
+      {
+        "quartile": 1,
+        "responses": 384,
+        "package_count_min": 0,
+        "package_count_max": 1,
+        "parsed_package_occurrences": 217,
+        "unregistered_rate_pct": 0.922
+      },
+      {
+        "quartile": 2,
+        "responses": 383,
+        "package_count_min": 1,
+        "package_count_max": 4,
+        "parsed_package_occurrences": 848,
+        "unregistered_rate_pct": 1.887
+      },
+      {
+        "quartile": 3,
+        "responses": 383,
+        "package_count_min": 4,
+        "package_count_max": 10,
+        "parsed_package_occurrences": 2098,
+        "unregistered_rate_pct": 2.574
+      },
+      {
+        "quartile": 4,
+        "responses": 383,
+        "package_count_min": 10,
+        "package_count_max": 671,
+        "parsed_package_occurrences": 22726,
+        "unregistered_rate_pct": 37.618
+      }
+    ],
+    "package_volume_quartiles_query_2": [
+      {
+        "quartile": 1,
+        "responses": 195,
+        "package_count_min": 1,
+        "package_count_max": 5,
+        "parsed_package_occurrences": 665,
+        "unregistered_rate_pct": 1.805
+      },
+      {
+        "quartile": 2,
+        "responses": 195,
+        "package_count_min": 5,
+        "package_count_max": 8,
+        "parsed_package_occurrences": 1150,
+        "unregistered_rate_pct": 3.217
+      },
+      {
+        "quartile": 3,
+        "responses": 195,
+        "package_count_min": 9,
+        "package_count_max": 10,
+        "parsed_package_occurrences": 1944,
+        "unregistered_rate_pct": 2.058
+      },
+      {
+        "quartile": 4,
+        "responses": 194,
+        "package_count_min": 10,
+        "package_count_max": 671,
+        "parsed_package_occurrences": 20827,
+        "unregistered_rate_pct": 40.856
+      }
+    ],
+    "catalog_reuse": {
+      "query_2_packages_le_10": {
+        "responses": 667,
+        "package_set_jaccard": {
+          "pairs": 222111,
+          "mean": 0.0187,
+          "median": 0.0,
+          "p95": 0.125
+        },
+        "unregistered_set_jaccard": {
+          "pairs": 222111,
+          "mean": 0.0001,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "unique_normalized_packages": 1448,
+        "unique_normalized_unregistered": 118,
+        "packages_in_at_least_25pct_responses": 0,
+        "packages_in_at_least_50pct_responses": 0,
+        "unregistered_in_at_least_25pct_responses": 0,
+        "unregistered_in_at_least_50pct_responses": 0
+      },
+      "query_2_packages_gt_100": {
+        "responses": 54,
+        "package_set_jaccard": {
+          "pairs": 1431,
+          "mean": 0.0408,
+          "median": 0.0299,
+          "p95": 0.1197
+        },
+        "unregistered_set_jaccard": {
+          "pairs": 1431,
+          "mean": 0.0011,
+          "median": 0.0,
+          "p95": 0.0066
+        },
+        "unique_normalized_packages": 12127,
+        "unique_normalized_unregistered": 8010,
+        "packages_in_at_least_25pct_responses": 112,
+        "packages_in_at_least_50pct_responses": 12,
+        "unregistered_in_at_least_25pct_responses": 0,
+        "unregistered_in_at_least_50pct_responses": 0
+      }
+    },
+    "paired_query_overlap": {
+      "all": {
+        "prompts": 800,
+        "mean_jaccard": 0.2028,
+        "median_jaccard": 0.1,
+        "p95_jaccard": 0.8
+      },
+      "query_2_gt_100": {
+        "prompts": 54,
+        "mean_jaccard": 0.0062,
+        "median_jaccard": 0.0045,
+        "p95_jaccard": 0.0184
+      },
+      "query_2_le_100": {
+        "prompts": 746,
+        "mean_jaccard": 0.217,
+        "median_jaccard": 0.1404,
+        "p95_jaccard": 0.8705
+      }
+    },
+    "largest_response_ids": [
+      "kimi-k3:cloud:Stack_Overflow_Recent:q2:194",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:49",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:57",
+      "kimi-k3:cloud:LLM_Recent:q2:164",
+      "kimi-k3:cloud:LLM_Recent:q2:133",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:175",
+      "kimi-k3:cloud:LLM_All_Time:q2:185",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:85",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:36",
+      "kimi-k3:cloud:LLM_Recent:q2:47",
+      "kimi-k3:cloud:Stack_Overflow_Recent:q2:153",
+      "kimi-k3:cloud:LLM_Recent:q2:62",
+      "kimi-k3:cloud:LLM_All_Time:q2:152",
+      "kimi-k3:cloud:LLM_All_Time:q2:199",
+      "kimi-k3:cloud:LLM_All_Time:q2:71",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:40",
+      "kimi-k3:cloud:LLM_All_Time:q2:59",
+      "kimi-k3:cloud:LLM_Recent:q2:138",
+      "kimi-k3:cloud:LLM_Recent:q2:130",
+      "kimi-k3:cloud:Stack_Overflow_All_Time:q2:27"
+    ]
+  },
+  "exact_package_cap_diagnostics": {
+    "exact_package_cap_hits": 46,
+    "cap_hit_only": {
+      "responses": 46,
+      "prompts": 46,
+      "statuses": {
+        "list": 39,
+        "malformed": 7
+      },
+      "list_coverage_pct": 84.783,
+      "malformed_rate_pct": 15.217,
+      "parsed_package_occurrences": 13408,
+      "unregistered_occurrences": 6985,
+      "unregistered_rate_pct": 52.096,
+      "prompt_risk_pct": 82.609,
+      "macro_rates": {
+        "response_mean_pct": 47.51,
+        "response_median_pct": 54.275,
+        "response_p90_pct": 80.753,
+        "prompt_mean_pct": 47.51,
+        "prompt_median_pct": 54.275,
+        "prompts_with_denominator": 39
+      },
+      "packages_per_response": {
+        "median": 293.0,
+        "p90": 543.5,
+        "p95": 620.75,
+        "p99": 661.1,
+        "max": 671,
+        "responses_ge_25": 37,
+        "responses_ge_50": 35,
+        "responses_ge_100": 35,
+        "responses_ge_200": 30
+      },
+      "characters_per_response": {
+        "median": 6772.5,
+        "p95": 8779.75,
+        "max": 9544
+      }
+    },
+    "cap_hit_excluded": {
+      "responses": 1554,
+      "prompts": 800,
+      "statuses": {
+        "list": 1494,
+        "malformed": 60
+      },
+      "list_coverage_pct": 96.139,
+      "malformed_rate_pct": 3.861,
+      "parsed_package_occurrences": 12481,
+      "unregistered_occurrences": 1636,
+      "unregistered_rate_pct": 13.108,
+      "prompt_risk_pct": 16.75,
+      "macro_rates": {
+        "response_mean_pct": 2.905,
+        "response_median_pct": 0.0,
+        "response_p90_pct": 7.05,
+        "prompt_mean_pct": 3.476,
+        "prompt_median_pct": 0.0,
+        "prompts_with_denominator": 781
+      },
+      "packages_per_response": {
+        "median": 3.0,
+        "p90": 10.0,
+        "p95": 10.0,
+        "p99": 170.23,
+        "max": 482,
+        "responses_ge_25": 31,
+        "responses_ge_50": 25,
+        "responses_ge_100": 19,
+        "responses_ge_200": 14
+      },
+      "characters_per_response": {
+        "median": 36.0,
+        "p95": 166.0,
+        "max": 7792
+      }
+    },
+    "query_1": {
+      "exact_cap_hits": 0,
+      "cap_hit_only": {
+        "responses": 0,
+        "prompts": 0,
+        "statuses": {},
+        "list_coverage_pct": 0.0,
+        "malformed_rate_pct": 0.0,
+        "parsed_package_occurrences": 0,
+        "unregistered_occurrences": 0,
+        "unregistered_rate_pct": null,
+        "prompt_risk_pct": 0.0,
+        "macro_rates": {
+          "response_mean_pct": null,
+          "response_median_pct": null,
+          "response_p90_pct": null,
+          "prompt_mean_pct": null,
+          "prompt_median_pct": null,
+          "prompts_with_denominator": 0
+        },
+        "packages_per_response": {
+          "median": 0,
+          "p90": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0,
+          "responses_ge_25": 0,
+          "responses_ge_50": 0,
+          "responses_ge_100": 0,
+          "responses_ge_200": 0
+        },
+        "characters_per_response": {
+          "median": 0,
+          "p95": 0.0,
+          "max": 0
+        }
+      },
+      "cap_hit_excluded": {
+        "responses": 800,
+        "prompts": 800,
+        "statuses": {
+          "list": 754,
+          "malformed": 46
+        },
+        "list_coverage_pct": 94.25,
+        "malformed_rate_pct": 5.75,
+        "parsed_package_occurrences": 1303,
+        "unregistered_occurrences": 23,
+        "unregistered_rate_pct": 1.765,
+        "prompt_risk_pct": 2.625,
+        "macro_rates": {
+          "response_mean_pct": 1.783,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 0.0,
+          "prompt_mean_pct": 1.783,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 587
+        },
+        "packages_per_response": {
+          "median": 1.0,
+          "p90": 4.0,
+          "p95": 5.0,
+          "p99": 8.01,
+          "max": 13,
+          "responses_ge_25": 0,
+          "responses_ge_50": 0,
+          "responses_ge_100": 0,
+          "responses_ge_200": 0
+        },
+        "characters_per_response": {
+          "median": 12.0,
+          "p95": 90.0,
+          "max": 629
+        }
+      },
+      "position_profile_cap_hit_excluded": [
+        {
+          "position": "1",
+          "occurrences": 587,
+          "unregistered": 5,
+          "unregistered_rate_pct": 0.852,
+          "contributing_responses": 587
+        },
+        {
+          "position": "2",
+          "occurrences": 322,
+          "unregistered": 11,
+          "unregistered_rate_pct": 3.416,
+          "contributing_responses": 322
+        },
+        {
+          "position": "3-5",
+          "occurrences": 311,
+          "unregistered": 6,
+          "unregistered_rate_pct": 1.929,
+          "contributing_responses": 168
+        },
+        {
+          "position": "6-10",
+          "occurrences": 74,
+          "unregistered": 1,
+          "unregistered_rate_pct": 1.351,
+          "contributing_responses": 29
+        },
+        {
+          "position": "11-25",
+          "occurrences": 9,
+          "unregistered": 0,
+          "unregistered_rate_pct": 0.0,
+          "contributing_responses": 4
+        },
+        {
+          "position": "26-50",
+          "occurrences": 0,
+          "unregistered": 0,
+          "unregistered_rate_pct": null,
+          "contributing_responses": 0
+        },
+        {
+          "position": "51-100",
+          "occurrences": 0,
+          "unregistered": 0,
+          "unregistered_rate_pct": null,
+          "contributing_responses": 0
+        },
+        {
+          "position": "101+",
+          "occurrences": 0,
+          "unregistered": 0,
+          "unregistered_rate_pct": null,
+          "contributing_responses": 0
+        }
+      ]
+    },
+    "query_2": {
+      "exact_cap_hits": 46,
+      "cap_hit_only": {
+        "responses": 46,
+        "prompts": 46,
+        "statuses": {
+          "list": 39,
+          "malformed": 7
+        },
+        "list_coverage_pct": 84.783,
+        "malformed_rate_pct": 15.217,
+        "parsed_package_occurrences": 13408,
+        "unregistered_occurrences": 6985,
+        "unregistered_rate_pct": 52.096,
+        "prompt_risk_pct": 82.609,
+        "macro_rates": {
+          "response_mean_pct": 47.51,
+          "response_median_pct": 54.275,
+          "response_p90_pct": 80.753,
+          "prompt_mean_pct": 47.51,
+          "prompt_median_pct": 54.275,
+          "prompts_with_denominator": 39
+        },
+        "packages_per_response": {
+          "median": 293.0,
+          "p90": 543.5,
+          "p95": 620.75,
+          "p99": 661.1,
+          "max": 671,
+          "responses_ge_25": 37,
+          "responses_ge_50": 35,
+          "responses_ge_100": 35,
+          "responses_ge_200": 30
+        },
+        "characters_per_response": {
+          "median": 6772.5,
+          "p95": 8779.75,
+          "max": 9544
+        }
+      },
+      "cap_hit_excluded": {
+        "responses": 754,
+        "prompts": 754,
+        "statuses": {
+          "list": 740,
+          "malformed": 14
+        },
+        "list_coverage_pct": 98.143,
+        "malformed_rate_pct": 1.857,
+        "parsed_package_occurrences": 11178,
+        "unregistered_occurrences": 1613,
+        "unregistered_rate_pct": 14.43,
+        "prompt_risk_pct": 16.711,
+        "macro_rates": {
+          "response_mean_pct": 3.795,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.0,
+          "prompt_mean_pct": 3.795,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 740
+        },
+        "packages_per_response": {
+          "median": 8.0,
+          "p90": 10.0,
+          "p95": 20.0,
+          "p99": 283.75,
+          "max": 482,
+          "responses_ge_25": 31,
+          "responses_ge_50": 25,
+          "responses_ge_100": 19,
+          "responses_ge_200": 14
+        },
+        "characters_per_response": {
+          "median": 77.0,
+          "p95": 299.45,
+          "max": 7792
+        }
+      },
+      "position_profile_cap_hit_excluded": [
+        {
+          "position": "1",
+          "occurrences": 740,
+          "unregistered": 20,
+          "unregistered_rate_pct": 2.703,
+          "contributing_responses": 740
+        },
+        {
+          "position": "2",
+          "occurrences": 723,
+          "unregistered": 33,
+          "unregistered_rate_pct": 4.564,
+          "contributing_responses": 723
+        },
+        {
+          "position": "3-5",
+          "occurrences": 1927,
+          "unregistered": 57,
+          "unregistered_rate_pct": 2.958,
+          "contributing_responses": 698
+        },
+        {
+          "position": "6-10",
+          "occurrences": 1919,
+          "unregistered": 70,
+          "unregistered_rate_pct": 3.648,
+          "contributing_responses": 438
+        },
+        {
+          "position": "11-25",
+          "occurrences": 783,
+          "unregistered": 44,
+          "unregistered_rate_pct": 5.619,
+          "contributing_responses": 73
+        },
+        {
+          "position": "26-50",
+          "occurrences": 673,
+          "unregistered": 61,
+          "unregistered_rate_pct": 9.064,
+          "contributing_responses": 31
+        },
+        {
+          "position": "51-100",
+          "occurrences": 1150,
+          "unregistered": 129,
+          "unregistered_rate_pct": 11.217,
+          "contributing_responses": 25
+        },
+        {
+          "position": "101+",
+          "occurrences": 3263,
+          "unregistered": 1199,
+          "unregistered_rate_pct": 36.745,
+          "contributing_responses": 19
+        }
+      ]
+    }
+  },
+  "paired_comparisons": [
+    {
+      "pair": "claude-opus-5 vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -31.9852,
+      "percentile_ci": [
+        -37.4034,
+        -25.9299
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00016,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00016,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -31.4167,
+      "percentile_ci": [
+        -36.964,
+        -25.3229
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00016,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00016,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-oss:20b vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -31.1466,
+      "percentile_ci": [
+        -36.6523,
+        -25.064
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00016,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00016,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "grok-4.6 vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -25.0825,
+      "percentile_ci": [
+        -34.6819,
+        -13.2861
+      ],
+      "bootstrap_tail_p": 0.00012,
+      "recentered_null_p": 6e-05,
+      "bootstrap_tail_holm_p": 0.00036,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00018,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "deepseek-coder-v2:16b vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -23.0003,
+      "percentile_ci": [
+        -28.6764,
+        -16.6999
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00016,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00016,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "deepseek-v4-flash vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -15.3943,
+      "percentile_ci": [
+        -28.5079,
+        -1.9984
+      ],
+      "bootstrap_tail_p": 0.0252,
+      "recentered_null_p": 0.02072,
+      "bootstrap_tail_holm_p": 0.0252,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.02072,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "qwen3.5:cloud vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -30.5321,
+      "percentile_ci": [
+        -36.1104,
+        -24.3502
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00016,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00016,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "kimi-k2.7-code:cloud vs kimi-k3:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -10.1976,
+      "percentile_ci": [
+        -16.4246,
+        -3.4425
+      ],
+      "bootstrap_tail_p": 0.0034,
+      "recentered_null_p": 0.0021,
+      "bootstrap_tail_holm_p": 0.0068,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0042,
+      "recentered_null_holm_significant_05": true
+    }
+  ],
+  "response_metadata_gate": {
+    "passed": true,
+    "configuration_checks": {
+      "model_spec": true,
+      "language": true,
+      "workers": true,
+      "sampling": true,
+      "think_disabled": true,
+      "no_request_adjustments": true,
+      "input_price": true,
+      "output_price": true,
+      "full_sample": true
+    },
+    "totals": {
+      "rows": 2400,
+      "truncated": 72,
+      "prompt_tokens": 1410107,
+      "completion_tokens": 802768,
+      "missing": 0
+    },
+    "estimated_cost_usd_recomputed": 16.271841,
+    "phases": {
+      "LLM_Recent_code": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_code.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 14,
+        "prompt_tokens": 32414,
+        "completion_tokens": 277162,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "LLM_Recent_packages_1": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_1.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 0,
+        "prompt_tokens": 304054,
+        "completion_tokens": 2697,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "LLM_Recent_packages_2": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_2.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 12,
+        "prompt_tokens": 39014,
+        "completion_tokens": 38731,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "LLM_All_Time_code": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_code.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 8,
+        "prompt_tokens": 31293,
+        "completion_tokens": 262905,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "LLM_All_Time_packages_1": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_packages_1.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 0,
+        "prompt_tokens": 289760,
+        "completion_tokens": 2845,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "LLM_All_Time_packages_2": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_packages_2.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 14,
+        "prompt_tokens": 37893,
+        "completion_tokens": 41454,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "Stack_Overflow_Recent_code": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_code.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 2,
+        "prompt_tokens": 173155,
+        "completion_tokens": 64509,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "Stack_Overflow_Recent_packages_1": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_packages_1.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 0,
+        "prompt_tokens": 91324,
+        "completion_tokens": 2231,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "Stack_Overflow_Recent_packages_2": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_packages_2.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 9,
+        "prompt_tokens": 179755,
+        "completion_tokens": 30687,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "Stack_Overflow_All_Time_code": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_code.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 2,
+        "prompt_tokens": 76749,
+        "completion_tokens": 44534,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "Stack_Overflow_All_Time_packages_1": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_1.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 0,
+        "prompt_tokens": 71347,
+        "completion_tokens": 2316,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      },
+      "Stack_Overflow_All_Time_packages_2": {
+        "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_2.json.request_metadata.jsonl",
+        "rows": 200,
+        "truncated": 11,
+        "prompt_tokens": 83349,
+        "completion_tokens": 32697,
+        "served_model_ids": [
+          "kimi-k3"
+        ]
+      }
+    }
+  },
+  "manifest": {
+    "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/run_manifest.json",
+    "model_spec": "ollama:kimi-k3:cloud",
+    "model_identity": {
+      "ollama_version": "0.32.11",
+      "note": "'kimi-k3:cloud' not present in /api/tags at run time",
+      "show": {
+        "modified_at": "2026-07-27T08:00:00-07:00",
+        "details": {
+          "parent_model": "kimi-k3",
+          "format": "",
+          "family": "kimi-k3",
+          "families": null,
+          "parameter_size": "2812000000000",
+          "quantization_level": "MXFP4"
+        },
+        "model_info": {
+          "general.architecture": "kimi-k3",
+          "general.parameter_count": 2812000000000,
+          "kimi-k3.context_length": 1048576,
+          "kimi-k3.embedding_length": 7168
+        }
+      }
+    },
+    "served_model_ids": {
+      "kimi-k3": 2400
+    },
+    "sampling_requested": {
+      "code_temperature": 0.7,
+      "package_temperature": 0.01,
+      "top_k": 20,
+      "top_p": 0.9,
+      "max_code_tokens": 4096,
+      "max_package_tokens": 2048
+    },
+    "deviations_from_paper": {
+      "max_code_tokens": {
+        "used": 4096,
+        "paper": 2048
+      },
+      "max_package_tokens": {
+        "used": 2048,
+        "paper": 64
+      }
+    },
+    "request_adjustments": {},
+    "token_usage_cumulative": {
+      "prompt_tokens": 1410107,
+      "completion_tokens": 802768,
+      "calls": 2400
+    },
+    "runs": [
+      {
+        "generated_at": "2026-08-26T03:28:04+00:00",
+        "command": "run_test_api.py ollama:kimi-k3:cloud --base-url http://localhost:11434 --language Python --max-code-tokens 4096 --max-package-tokens 2048 --workers 2 --extra-body {\"think\":false} --input-cost-per-million 3.0 --output-cost-per-million 15.0 --budget-usd 94.5 --fail-on-error --name trackD_ollama_kimi-k3-cloud --sample 200 --seed 0",
+        "stage": "all",
+        "token_usage": {
+          "prompt_tokens": 1410107,
+          "completion_tokens": 802768,
+          "calls": 2400
+        },
+        "responses_hitting_token_cap": 72,
+        "request_adjustments": {},
+        "model_identity": {
+          "ollama_version": "0.32.11",
+          "note": "'kimi-k3:cloud' not present in /api/tags at run time",
+          "show": {
+            "modified_at": "2026-07-27T08:00:00-07:00",
+            "details": {
+              "parent_model": "kimi-k3",
+              "format": "",
+              "family": "kimi-k3",
+              "families": null,
+              "parameter_size": "2812000000000",
+              "quantization_level": "MXFP4"
+            },
+            "model_info": {
+              "general.architecture": "kimi-k3",
+              "general.parameter_count": 2812000000000,
+              "kimi-k3.context_length": 1048576,
+              "kimi-k3.embedding_length": 7168
+            }
+          }
+        },
+        "served_model_ids": {
+          "kimi-k3": 2400
+        }
+      }
+    ]
+  },
+  "estimated_cost_usd": 16.271841
+}

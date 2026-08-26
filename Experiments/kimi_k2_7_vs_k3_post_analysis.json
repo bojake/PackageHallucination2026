@@ -1,0 +1,306 @@
+{
+  "generated_at": "2026-08-26T03:32:56.627461+00:00",
+  "status": "complete post-hoc mechanism comparison",
+  "measurement_note": "K3 cap membership is exact. K2.7 cap membership is the frozen within-phase longest-response proxy and must not be described as exact. Cap exclusion is a diagnostic conditioning analysis, not a causal estimate.",
+  "models": {
+    "kimi_k2_7": {
+      "overall": {
+        "responses": 1600,
+        "prompts": 800,
+        "statuses": {
+          "list": 1364,
+          "malformed": 236
+        },
+        "list_coverage_pct": 85.25,
+        "malformed_rate_pct": 14.75,
+        "parsed_package_occurrences": 111842,
+        "unregistered_occurrences": 25838,
+        "unregistered_rate_pct": 23.102,
+        "prompt_risk_pct": 43.0,
+        "macro_rates": {
+          "response_mean_pct": 8.357,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 30.0,
+          "prompt_mean_pct": 11.784,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 752
+        },
+        "packages_per_response": {
+          "median": 3.0,
+          "p90": 389.0,
+          "p95": 552.05,
+          "p99": 619.0,
+          "max": 656,
+          "responses_ge_25": 254,
+          "responses_ge_50": 246,
+          "responses_ge_100": 240,
+          "responses_ge_200": 213
+        },
+        "characters_per_response": {
+          "median": 51.0,
+          "p95": 7162.05,
+          "max": 9946
+        }
+      },
+      "cap_proxy_only": {
+        "responses": 323,
+        "prompts": 318,
+        "statuses": {
+          "malformed": 87,
+          "list": 236
+        },
+        "list_coverage_pct": 73.065,
+        "malformed_rate_pct": 26.935,
+        "parsed_package_occurrences": 104420,
+        "unregistered_occurrences": 24860,
+        "unregistered_rate_pct": 23.808,
+        "prompt_risk_pct": 72.642,
+        "macro_rates": {
+          "response_mean_pct": 25.552,
+          "response_median_pct": 12.629,
+          "response_p90_pct": 71.726,
+          "prompt_mean_pct": 25.427,
+          "prompt_median_pct": 12.827,
+          "prompts_with_denominator": 234
+        },
+        "packages_per_response": {
+          "median": 389.0,
+          "p90": 602.0,
+          "p95": 618.9,
+          "p99": 647.8,
+          "max": 656,
+          "responses_ge_25": 235,
+          "responses_ge_50": 232,
+          "responses_ge_100": 229,
+          "responses_ge_200": 209
+        },
+        "characters_per_response": {
+          "median": 6520.0,
+          "p95": 8942.0,
+          "max": 9946
+        }
+      },
+      "cap_proxy_excluded": {
+        "responses": 1277,
+        "prompts": 795,
+        "statuses": {
+          "list": 1128,
+          "malformed": 149
+        },
+        "list_coverage_pct": 88.332,
+        "malformed_rate_pct": 11.668,
+        "parsed_package_occurrences": 7422,
+        "unregistered_occurrences": 978,
+        "unregistered_rate_pct": 13.177,
+        "prompt_risk_pct": 15.849,
+        "macro_rates": {
+          "response_mean_pct": 4.379,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.0,
+          "prompt_mean_pct": 5.019,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 684
+        },
+        "packages_per_response": {
+          "median": 2.0,
+          "p90": 10.0,
+          "p95": 11.0,
+          "p99": 51.48,
+          "max": 334,
+          "responses_ge_25": 19,
+          "responses_ge_50": 14,
+          "responses_ge_100": 11,
+          "responses_ge_200": 4
+        },
+        "characters_per_response": {
+          "median": 34.0,
+          "p95": 170.6,
+          "max": 5411
+        }
+      },
+      "cap_proxy_contribution": {
+        "selected_responses": 323,
+        "response_share_pct": 20.188,
+        "selected_parsed_occurrences": 104420,
+        "occurrence_share_pct": 93.364,
+        "selected_unregistered_occurrences": 24860,
+        "unregistered_share_pct": 96.215
+      }
+    },
+    "kimi_k3": {
+      "overall": {
+        "responses": 1600,
+        "prompts": 800,
+        "statuses": {
+          "list": 1533,
+          "malformed": 67
+        },
+        "list_coverage_pct": 95.812,
+        "malformed_rate_pct": 4.188,
+        "parsed_package_occurrences": 25889,
+        "unregistered_occurrences": 8621,
+        "unregistered_rate_pct": 33.3,
+        "prompt_risk_pct": 21.5,
+        "macro_rates": {
+          "response_mean_pct": 4.179,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 10.0,
+          "prompt_mean_pct": 5.775,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 789
+        },
+        "packages_per_response": {
+          "median": 3.0,
+          "p90": 10.0,
+          "p95": 20.0,
+          "p99": 403.12,
+          "max": 671,
+          "responses_ge_25": 68,
+          "responses_ge_50": 60,
+          "responses_ge_100": 54,
+          "responses_ge_200": 44
+        },
+        "characters_per_response": {
+          "median": 38.0,
+          "p95": 349.9,
+          "max": 9544
+        }
+      },
+      "exact_cap_only": {
+        "responses": 46,
+        "prompts": 46,
+        "statuses": {
+          "list": 39,
+          "malformed": 7
+        },
+        "list_coverage_pct": 84.783,
+        "malformed_rate_pct": 15.217,
+        "parsed_package_occurrences": 13408,
+        "unregistered_occurrences": 6985,
+        "unregistered_rate_pct": 52.096,
+        "prompt_risk_pct": 82.609,
+        "macro_rates": {
+          "response_mean_pct": 47.51,
+          "response_median_pct": 54.275,
+          "response_p90_pct": 80.753,
+          "prompt_mean_pct": 47.51,
+          "prompt_median_pct": 54.275,
+          "prompts_with_denominator": 39
+        },
+        "packages_per_response": {
+          "median": 293.0,
+          "p90": 543.5,
+          "p95": 620.75,
+          "p99": 661.1,
+          "max": 671,
+          "responses_ge_25": 37,
+          "responses_ge_50": 35,
+          "responses_ge_100": 35,
+          "responses_ge_200": 30
+        },
+        "characters_per_response": {
+          "median": 6772.5,
+          "p95": 8779.75,
+          "max": 9544
+        }
+      },
+      "exact_cap_excluded": {
+        "responses": 1554,
+        "prompts": 800,
+        "statuses": {
+          "list": 1494,
+          "malformed": 60
+        },
+        "list_coverage_pct": 96.139,
+        "malformed_rate_pct": 3.861,
+        "parsed_package_occurrences": 12481,
+        "unregistered_occurrences": 1636,
+        "unregistered_rate_pct": 13.108,
+        "prompt_risk_pct": 16.75,
+        "macro_rates": {
+          "response_mean_pct": 2.905,
+          "response_median_pct": 0.0,
+          "response_p90_pct": 7.05,
+          "prompt_mean_pct": 3.476,
+          "prompt_median_pct": 0.0,
+          "prompts_with_denominator": 781
+        },
+        "packages_per_response": {
+          "median": 3.0,
+          "p90": 10.0,
+          "p95": 10.0,
+          "p99": 170.23,
+          "max": 482,
+          "responses_ge_25": 31,
+          "responses_ge_50": 25,
+          "responses_ge_100": 19,
+          "responses_ge_200": 14
+        },
+        "characters_per_response": {
+          "median": 36.0,
+          "p95": 166.0,
+          "max": 7792
+        }
+      },
+      "exact_cap_contribution": {
+        "selected_responses": 46,
+        "response_share_pct": 2.875,
+        "selected_parsed_occurrences": 13408,
+        "occurrence_share_pct": 51.79,
+        "selected_unregistered_occurrences": 6985,
+        "unregistered_share_pct": 81.023
+      }
+    }
+  },
+  "paired_q2_diagnostics": {
+    "q2_prompt_risk": {
+      "k2_7_pct": 41.125,
+      "k3_pct": 20.5,
+      "k2_7_minus_k3_pp": 20.625,
+      "paired_prompt_cluster_bootstrap_95_ci": [
+        16.5,
+        24.75
+      ]
+    },
+    "q2_responses_over_100_packages": {
+      "k2_7_pct": 29.25,
+      "k3_pct": 6.75,
+      "k2_7_minus_k3_pp": 22.5,
+      "paired_prompt_cluster_bootstrap_95_ci": [
+        19.0,
+        26.0
+      ]
+    },
+    "over_100_prompt_contingency": {
+      "both": 22,
+      "k2_7_only": 212,
+      "k3_only": 32,
+      "neither": 534,
+      "prompt_set_jaccard": 0.0827
+    },
+    "bootstrap_replicates": 50000,
+    "seed": 260825
+  },
+  "q2_position_rate_cap_excluded": {
+    "kimi_k2_7_proxy_excluded": {
+      "1": 4.867,
+      "2": 5.593,
+      "3-5": 5.079,
+      "6-10": 5.412,
+      "11-25": 6.711,
+      "26-50": 22.029,
+      "51-100": 36.935,
+      "101+": 41.379
+    },
+    "kimi_k3_exact_excluded": {
+      "1": 2.703,
+      "2": 4.564,
+      "3-5": 2.958,
+      "6-10": 3.648,
+      "11-25": 5.619,
+      "26-50": 9.064,
+      "51-100": 11.217,
+      "101+": 36.745
+    }
+  }
+}

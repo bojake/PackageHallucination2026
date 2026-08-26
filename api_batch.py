@@ -25,12 +25,17 @@ def _partial_path(outfile):
     return f"{outfile}.partial"
 
 
+def _metadata_path(outfile):
+    return f"{outfile}.request_metadata.jsonl"
+
+
 def _load_partial(outfile):
-    """Read completed (index, text) pairs from a previous interrupted run."""
+    """Read completed responses and metadata from a previous interrupted run."""
     path = _partial_path(outfile)
     done = {}
+    metadata = {}
     if not os.path.exists(path):
-        return done
+        return done, metadata
     with open(path, "r", encoding="utf-8") as handle:
         for line in handle:
             line = line.strip()
@@ -38,10 +43,13 @@ def _load_partial(outfile):
                 continue
             try:
                 record = json.loads(line)
-                done[int(record["i"])] = record["text"]
+                index = int(record["i"])
+                done[index] = record["text"]
+                if isinstance(record.get("meta"), dict):
+                    metadata[index] = record["meta"]
             except (ValueError, KeyError, TypeError):
                 continue  # truncated final line from a hard kill -- just redo that item
-    return done
+    return done, metadata
 
 
 def run_batch(client, items, build_messages, outfile, max_tokens,
@@ -54,7 +62,7 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
 
     Returns a stats dict for the run manifest.
     """
-    done = _load_partial(outfile)
+    done, response_metadata = _load_partial(outfile)
     todo = [i for i in range(len(items)) if i not in done]
     errors = []
     truncated_before = client.truncated
@@ -66,14 +74,15 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
         partial = open(_partial_path(outfile), "a", encoding="utf-8", newline="")
         try:
             def call(index):
-                text, _ = client.chat(
+                text, _, metadata = client.chat(
                     build_messages(items[index]),
                     max_tokens=max_tokens,
                     temperature=temperature,
                     top_k=top_k,
                     top_p=top_p,
+                    include_metadata=True,
                 )
-                return index, text
+                return index, text, metadata
 
             with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
                 futures = {pool.submit(call, i): i for i in todo}
@@ -81,7 +90,7 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
                                    desc=desc, unit="prompt"):
                     index = futures[future]
                     try:
-                        index, text = future.result()
+                        index, text, metadata = future.result()
                     except Exception as exc:  # noqa: BLE001 -- any per-row failure must
                         # be recorded and retried on resume, never crash a multi-hour run
                         # Keep row alignment: an empty response occupies the slot so every
@@ -93,7 +102,9 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
                         done[index] = ""
                         continue
                     done[index] = text
-                    partial.write(json.dumps({"i": index, "text": text}) + "\n")
+                    response_metadata[index] = metadata
+                    partial.write(json.dumps({"i": index, "text": text,
+                                              "meta": metadata}) + "\n")
                     partial.flush()
         finally:
             partial.close()
@@ -102,6 +113,18 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
         for index in range(len(items)):
             json.dump(done.get(index, ""), output)
             output.write("\n")
+
+    # A sidecar preserves the paper-compatible raw response file while making finish reason
+    # and token use auditable per row. Legacy partial files may lack metadata; mark those rows
+    # explicitly instead of inventing values.
+    with open(_metadata_path(outfile), "w", newline="", encoding="utf-8") as output:
+        for index in range(len(items)):
+            record = {"index": index}
+            if index in response_metadata:
+                record.update(response_metadata[index])
+            else:
+                record["metadata_missing"] = True
+            output.write(json.dumps(record) + "\n")
 
     error_file = f"{outfile}.errors.json"
     if errors:
@@ -122,4 +145,6 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
     # partial file are not re-measured, so a resumed phase undercounts relative to a fresh
     # one -- callers wanting exact per-phase cap-hit denominators should run without resume.
     return {"items": len(items), "requested": len(todo), "resumed": len(items) - len(todo),
-            "errors": len(errors), "truncated_new_requests": client.truncated - truncated_before}
+            "errors": len(errors), "truncated_new_requests": client.truncated - truncated_before,
+            "response_metadata_rows": len(response_metadata),
+            "response_metadata_path": _metadata_path(outfile).replace("\\", "/")}

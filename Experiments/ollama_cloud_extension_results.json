@@ -1,37 +1,525 @@
 {
-  "generated_at": "2026-08-14T21:58:13+00:00",
-  "status": "pending model collection",
+  "generated_at": "2026-08-26T00:46:00+00:00",
+  "status": "complete preregistered Ollama Cloud extension",
   "preregistration": "Experiments/PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md",
-  "missing": {
-    "qwen3.5:cloud": [
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\run_manifest.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\LLM_Recent_code.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\LLM_Recent_packages_1.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\LLM_Recent_packages_2.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\LLM_All_Time_code.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\LLM_All_Time_packages_1.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\LLM_All_Time_packages_2.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\Stack_Overflow_Recent_code.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\Stack_Overflow_Recent_packages_1.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\Stack_Overflow_Recent_packages_2.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\Stack_Overflow_All_Time_code.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\Stack_Overflow_All_Time_packages_1.json",
-      "Tests\\trackC_ollama_qwen3-5-cloud_Python\\Stack_Overflow_All_Time_packages_2.json"
-    ],
-    "kimi-k3:cloud": [
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\run_manifest.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\LLM_Recent_code.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\LLM_Recent_packages_1.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\LLM_Recent_packages_2.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\LLM_All_Time_code.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\LLM_All_Time_packages_1.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\LLM_All_Time_packages_2.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\Stack_Overflow_Recent_code.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\Stack_Overflow_Recent_packages_1.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\Stack_Overflow_Recent_packages_2.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\Stack_Overflow_All_Time_code.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\Stack_Overflow_All_Time_packages_1.json",
-      "Tests\\trackC_ollama_kimi-k3-cloud_Python\\Stack_Overflow_All_Time_packages_2.json"
-    ]
-  }
+  "registries": {
+    "frozen": "Data/Python/pypi_package_names.csv",
+    "current": "Data/Python/pypi_package_names_2026-08-12.csv"
+  },
+  "bootstrap": {
+    "cluster": "prompt",
+    "stratified_by_dataset": true,
+    "cell_interval_replicates": 50000,
+    "paired_comparison_replicates": 50000,
+    "seed_family": 20260813
+  },
+  "new_cells": {
+    "qwen3.5:cloud": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1388,
+        "malformed": 212
+      },
+      "malformed_rate_pct": 13.25,
+      "malformed_cluster_ci": [
+        11.562,
+        15.0
+      ],
+      "empty_rate_pct": 0.0,
+      "coverage_list_pct": 86.75,
+      "unregistered_occurrences": 77,
+      "parsed_package_occurrences": 2782,
+      "unregistered_rate_pct": 2.768,
+      "unregistered_rate_cluster_ci": [
+        2.067,
+        3.543
+      ],
+      "unregistered_per_prompt": 0.0963,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.9338,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 1.0,
+        "p99_per_prompt": 2.0,
+        "max_per_prompt": 4,
+        "top1_response_share_pct": 5.19,
+        "top3_response_share_pct": 12.99,
+        "top10_response_share_pct": 29.87,
+        "prompts_needed_for_50pct": 25,
+        "leave_top1_rate_pct": 2.628,
+        "leave_top3_rate_pct": 2.418,
+        "leave_top10_rate_pct": 1.966,
+        "top_response_ids": [
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:55",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:76",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:45",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:54",
+          "qwen3.5:cloud:LLM_Recent:q2:85",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:68",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:93",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:182",
+          "qwen3.5:cloud:Stack_Overflow_Recent:q2:46",
+          "qwen3.5:cloud:LLM_All_Time:q2:23"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 13.25,
+        "eos_marker_adjusted_rate_pct": 2.768,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 0,
+        "semantic_sentinel_adjusted_rate_pct": 2.768,
+        "semantic_sentinel_removed_unregistered": 0,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      },
+      "prompt_risk_pct": 7.875
+    },
+    "kimi-k2.7-code:cloud": {
+      "responses": 1600,
+      "prompts": 800,
+      "statuses": {
+        "list": 1364,
+        "malformed": 236
+      },
+      "malformed_rate_pct": 14.75,
+      "malformed_cluster_ci": [
+        13.0,
+        16.562
+      ],
+      "empty_rate_pct": 0.0,
+      "coverage_list_pct": 85.25,
+      "unregistered_occurrences": 25838,
+      "parsed_package_occurrences": 111842,
+      "unregistered_rate_pct": 23.102,
+      "unregistered_rate_cluster_ci": [
+        20.192,
+        26.187
+      ],
+      "unregistered_per_prompt": 32.2975,
+      "tail": {
+        "gini_prompt_unregistered_counts": 0.8554,
+        "median_per_prompt": 0.0,
+        "p95_per_prompt": 230.15,
+        "p99_per_prompt": 351.02,
+        "max_per_prompt": 419,
+        "top1_response_share_pct": 1.62,
+        "top3_response_share_pct": 4.62,
+        "top10_response_share_pct": 14.34,
+        "prompts_needed_for_50pct": 43,
+        "leave_top1_rate_pct": 22.823,
+        "leave_top3_rate_pct": 22.293,
+        "leave_top10_rate_pct": 20.652,
+        "top_response_ids": [
+          "kimi-k2.7-code:cloud:Stack_Overflow_Recent:q2:94",
+          "kimi-k2.7-code:cloud:LLM_Recent:q2:181",
+          "kimi-k2.7-code:cloud:LLM_All_Time:q2:146",
+          "kimi-k2.7-code:cloud:Stack_Overflow_Recent:q2:68",
+          "kimi-k2.7-code:cloud:LLM_All_Time:q2:38",
+          "kimi-k2.7-code:cloud:LLM_All_Time:q2:52",
+          "kimi-k2.7-code:cloud:LLM_All_Time:q2:155",
+          "kimi-k2.7-code:cloud:Stack_Overflow_All_Time:q2:109",
+          "kimi-k2.7-code:cloud:LLM_Recent:q2:54",
+          "kimi-k2.7-code:cloud:LLM_Recent:q2:13"
+        ]
+      },
+      "parser_sensitivity": {
+        "trailing_eos_marker_rescued_responses": 0,
+        "eos_marker_adjusted_malformed_rate_pct": 14.75,
+        "eos_marker_adjusted_rate_pct": 23.102,
+        "eos_marker_added_unregistered": 0,
+        "eos_marker_added_packages": 0,
+        "collapsed_no_package_sentinel_responses": 0,
+        "semantic_sentinel_adjusted_rate_pct": 23.102,
+        "semantic_sentinel_removed_unregistered": 0,
+        "note": "Both are post-hoc diagnostics. The eos variant strips only a literal trailing <|eos|>; the semantic variant treats one-token strings such as NoPythonpackagesrequired as no-package answers."
+      },
+      "prompt_risk_pct": 43.0
+    }
+  },
+  "paired_comparisons": [
+    {
+      "pair": "claude-opus-5 vs qwen3.5:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -1.4531,
+      "percentile_ci": [
+        -2.1909,
+        -0.7739
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 8e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00056,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "claude-opus-5 vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -21.7876,
+      "percentile_ci": [
+        -24.8483,
+        -18.8798
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00026,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs qwen3.5:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -0.8847,
+      "percentile_ci": [
+        -1.6163,
+        -0.1931
+      ],
+      "bootstrap_tail_p": 0.01112,
+      "recentered_null_p": 0.01454,
+      "bootstrap_tail_holm_p": 0.04448,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.05816,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "gpt-5.2-2025-12-11 vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -21.2191,
+      "percentile_ci": [
+        -24.2742,
+        -18.3103
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00026,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "gpt-oss:20b vs qwen3.5:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -0.6145,
+      "percentile_ci": [
+        -1.3735,
+        0.1009
+      ],
+      "bootstrap_tail_p": 0.09428,
+      "recentered_null_p": 0.10366,
+      "bootstrap_tail_holm_p": 0.28284,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.31098,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "gpt-oss:20b vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -20.9489,
+      "percentile_ci": [
+        -24.009,
+        -18.014
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00026,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "grok-4.6 vs qwen3.5:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": 5.4496,
+      "percentile_ci": [
+        -1.3358,
+        15.4916
+      ],
+      "bootstrap_tail_p": 0.2992,
+      "recentered_null_p": 0.24442,
+      "bootstrap_tail_holm_p": 0.5984,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.48884,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "grok-4.6 vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -14.8849,
+      "percentile_ci": [
+        -22.7518,
+        -4.1908
+      ],
+      "bootstrap_tail_p": 0.00872,
+      "recentered_null_p": 0.0049,
+      "bootstrap_tail_holm_p": 0.0436,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0294,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "deepseek-coder-v2:16b vs qwen3.5:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": 7.5318,
+      "percentile_ci": [
+        5.9278,
+        9.1696
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00026,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "deepseek-coder-v2:16b vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -12.8027,
+      "percentile_ci": [
+        -16.0349,
+        -9.6346
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00026,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "deepseek-v4-flash vs qwen3.5:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": 15.1377,
+      "percentile_ci": [
+        2.9601,
+        27.1066
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 0.0083,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.0415,
+      "recentered_null_holm_significant_05": true
+    },
+    {
+      "pair": "deepseek-v4-flash vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -5.1967,
+      "percentile_ci": [
+        -17.4229,
+        7.1908
+      ],
+      "bootstrap_tail_p": 0.38036,
+      "recentered_null_p": 0.43006,
+      "bootstrap_tail_holm_p": 0.5984,
+      "bootstrap_tail_holm_significant_05": false,
+      "recentered_null_holm_p": 0.48884,
+      "recentered_null_holm_significant_05": false
+    },
+    {
+      "pair": "qwen3.5:cloud vs kimi-k2.7-code:cloud",
+      "n_shared_prompts": 800,
+      "observed_diff_pp": -20.3344,
+      "percentile_ci": [
+        -23.4576,
+        -17.4017
+      ],
+      "bootstrap_tail_p": 2e-05,
+      "recentered_null_p": 2e-05,
+      "bootstrap_tail_holm_p": 0.00026,
+      "bootstrap_tail_holm_significant_05": true,
+      "recentered_null_holm_p": 0.00026,
+      "recentered_null_holm_significant_05": true
+    }
+  ],
+  "manifests": {
+    "qwen3.5:cloud": {
+      "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/run_manifest.json",
+      "model_spec": "ollama:qwen3.5:cloud",
+      "model_identity": {
+        "ollama_version": "0.32.11",
+        "note": "'qwen3.5:cloud' not present in /api/tags at run time",
+        "show": {
+          "modified_at": "2026-02-16T00:00:00Z",
+          "details": {
+            "parent_model": "qwen3.5",
+            "format": "",
+            "family": "qwen3.5",
+            "families": null,
+            "parameter_size": "397000000000",
+            "quantization_level": "BF16"
+          },
+          "model_info": {
+            "general.architecture": "qwen3.5",
+            "general.parameter_count": 397000000000,
+            "qwen3.5.context_length": 262144,
+            "qwen3.5.embedding_length": 4096
+          }
+        }
+      },
+      "served_model_ids": {
+        "qwen3.5": 2400
+      },
+      "sampling_requested": {
+        "code_temperature": 0.7,
+        "package_temperature": 0.01,
+        "top_k": 20,
+        "top_p": 0.9,
+        "max_code_tokens": 4096,
+        "max_package_tokens": 2048
+      },
+      "deviations_from_paper": {
+        "max_code_tokens": {
+          "used": 4096,
+          "paper": 2048
+        },
+        "max_package_tokens": {
+          "used": 2048,
+          "paper": 64
+        }
+      },
+      "request_adjustments": {},
+      "token_usage_cumulative": {
+        "prompt_tokens": 731235,
+        "completion_tokens": 92619,
+        "calls": 2400
+      },
+      "runs": [
+        {
+          "generated_at": "2026-08-20T00:02:14+00:00",
+          "command": "run_test_api.py ollama:qwen3.5:cloud --base-url http://localhost:11434 --language Python --max-code-tokens 4096 --max-package-tokens 2048 --workers 2 --extra-body {\"think\":false} --fail-on-error --name trackC_ollama_qwen3-5-cloud --sample 200 --seed 0",
+          "stage": "all",
+          "token_usage": {
+            "prompt_tokens": 731235,
+            "completion_tokens": 92619,
+            "calls": 2400
+          },
+          "responses_hitting_token_cap": 1,
+          "request_adjustments": {},
+          "model_identity": {
+            "ollama_version": "0.32.11",
+            "note": "'qwen3.5:cloud' not present in /api/tags at run time",
+            "show": {
+              "modified_at": "2026-02-16T00:00:00Z",
+              "details": {
+                "parent_model": "qwen3.5",
+                "format": "",
+                "family": "qwen3.5",
+                "families": null,
+                "parameter_size": "397000000000",
+                "quantization_level": "BF16"
+              },
+              "model_info": {
+                "general.architecture": "qwen3.5",
+                "general.parameter_count": 397000000000,
+                "qwen3.5.context_length": 262144,
+                "qwen3.5.embedding_length": 4096
+              }
+            }
+          },
+          "served_model_ids": {
+            "qwen3.5": 2400
+          }
+        }
+      ]
+    },
+    "kimi-k2.7-code:cloud": {
+      "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/run_manifest.json",
+      "model_spec": "ollama:kimi-k2.7-code:cloud",
+      "model_identity": {
+        "ollama_version": "0.32.11",
+        "note": "'kimi-k2.7-code:cloud' not present in /api/tags at run time",
+        "show": {
+          "modified_at": "2026-06-12T00:00:00Z",
+          "details": {
+            "parent_model": "kimi-k2.7-code",
+            "format": "",
+            "family": "kimi-k2",
+            "families": null,
+            "parameter_size": "1042000000000",
+            "quantization_level": "INT4"
+          },
+          "model_info": {
+            "general.architecture": "kimi-k2",
+            "general.parameter_count": 1042000000000,
+            "kimi-k2.context_length": 262144,
+            "kimi-k2.embedding_length": 2048
+          }
+        }
+      },
+      "served_model_ids": {
+        "kimi-k2.7-code": 2400
+      },
+      "sampling_requested": {
+        "code_temperature": 0.7,
+        "package_temperature": 0.01,
+        "top_k": 20,
+        "top_p": 0.9,
+        "max_code_tokens": 4096,
+        "max_package_tokens": 2048
+      },
+      "deviations_from_paper": {
+        "max_code_tokens": {
+          "used": 4096,
+          "paper": 2048
+        },
+        "max_package_tokens": {
+          "used": 2048,
+          "paper": 64
+        }
+      },
+      "request_adjustments": {},
+      "token_usage_cumulative": {
+        "prompt_tokens": 1026611,
+        "completion_tokens": 1134677,
+        "calls": 2400
+      },
+      "runs": [
+        {
+          "generated_at": "2026-08-20T01:29:55+00:00",
+          "command": "run_test_api.py ollama:kimi-k2.7-code:cloud --base-url http://localhost:11434 --language Python --max-code-tokens 4096 --max-package-tokens 2048 --workers 2 --extra-body {\"think\":false} --fail-on-error --name trackC_ollama_kimi-k2-7-code-cloud --sample 200 --seed 0",
+          "stage": "all",
+          "token_usage": {
+            "prompt_tokens": 1026611,
+            "completion_tokens": 1134677,
+            "calls": 2400
+          },
+          "responses_hitting_token_cap": 333,
+          "request_adjustments": {},
+          "model_identity": {
+            "ollama_version": "0.32.11",
+            "note": "'kimi-k2.7-code:cloud' not present in /api/tags at run time",
+            "show": {
+              "modified_at": "2026-06-12T00:00:00Z",
+              "details": {
+                "parent_model": "kimi-k2.7-code",
+                "format": "",
+                "family": "kimi-k2",
+                "families": null,
+                "parameter_size": "1042000000000",
+                "quantization_level": "INT4"
+              },
+              "model_info": {
+                "general.architecture": "kimi-k2",
+                "general.parameter_count": 1042000000000,
+                "kimi-k2.context_length": 262144,
+                "kimi-k2.embedding_length": 2048
+              }
+            }
+          },
+          "served_model_ids": {
+            "kimi-k2.7-code": 2400
+          }
+        }
+      ]
+    }
+  },
+  "guardrails": [
+    "These cells extend rather than alter frozen Campaign 4.",
+    "Holm correction covers only the 13 comparisons involving a new cell.",
+    "Raw rates remain conditional on Parser v2-accepted package tokens.",
+    "Report response coverage and tail concentration with every occurrence rate."
+  ]
 }

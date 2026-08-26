@@ -219,9 +219,57 @@ pwsh -File run_ollama_cloud_extension.ps1 -Mode smoke
 pwsh -File run_ollama_cloud_extension.ps1 -Mode full
 ```
 
-The frozen tags are `qwen3.5:cloud` and `kimi-k3:cloud`. Kimi K3 requires Pro/Max plus an
-extra-usage balance; the runner fails on access or quota errors and never enables billing.
-See [PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md](Experiments/PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md).
+The amended frozen tags are `qwen3.5:cloud` and `kimi-k2.7-code:cloud`; both 2,400-call cells
+are complete. Their preregistered estimates, post-hoc mechanism analysis, and frozen protocol
+are in [OLLAMA_CLOUD_EXTENSION_RESULTS.md](Experiments/OLLAMA_CLOUD_EXTENSION_RESULTS.md),
+[OLLAMA_CLOUD_EXTENSION_POST_ANALYSIS.md](Experiments/OLLAMA_CLOUD_EXTENSION_POST_ANALYSIS.md),
+and [PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md](Experiments/PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md).
+
+Kimi K3 was later authorized under the maintainer's pay-go budget as a separately preregistered
+successor/mechanism cell. It is complete and is not a retroactive member of the Qwen/K2.7
+inferential family:
+
+```powershell
+pwsh -File run_kimi_k3_extension.ps1 -Mode smoke
+pwsh -File run_kimi_k3_extension.ps1 -Mode full
+```
+
+The K3 campaign completed 2,400/2,400 calls with zero errors for $16.271841 analytic spend.
+Its primary occurrence-weighted rate is 33.30% (95% prompt-cluster interval 27.22–38.81),
+but its prompt risk is 21.50% and its response-macro mean is 4.18%: 46 rare package cap hits
+contribute 81.02% of all unregistered occurrences. This aggregation reversal is documented in
+[KIMI_K3_EXTENSION_RESULTS.md](Experiments/KIMI_K3_EXTENSION_RESULTS.md) and
+[KIMI_K2_7_VS_K3_POST_ANALYSIS.md](Experiments/KIMI_K2_7_VS_K3_POST_ANALYSIS.md); the frozen
+protocol and execution log are in
+[PREREGISTRATION_KIMI_K3_EXTENSION.md](Experiments/PREREGISTRATION_KIMI_K3_EXTENSION.md).
+Because this campaign was run from an uncommitted working tree, its evidence is explicitly
+qualified by the [retrospective provenance stamp](Experiments/PROVENANCE_STAMP_2026-08-26.md).
+The stamp hashes the attested pre-outcome design core, local chronology, commit-candidate files,
+and raw-artifact index, but does not claim to retroactively create a cryptographic
+preregistration.
+Because `Tests/` is intentionally git-ignored, run `python build_ollama_artifact_index.py`
+after collection to generate SHA-256, size, and row-count provenance for a separately archived
+raw-artifact bundle. The index contains no response text or candidate package names.
+
+## Freeze gate for new experiments
+
+The K3 review found that preregistration freezes were self-attested: protocol, scorer, and
+results lived only in the working tree, so nothing proved the frozen text predated the data.
+Every future analytic cell must therefore launch through the freeze gate — the commit is the
+freeze, and a dirty repository cannot collect data:
+
+```bash
+python experiment_gate.py stamp --prereg Experiments/PREREGISTRATION_<CELL>.md --run-name trackE_<model>_Python
+```
+
+Stamping requires a completely clean `git status` and records the preregistration's committed
+blob hash under `Experiments/freeze_stamps/`. Commit that stamp, then launch with
+`--freeze-stamp Experiments/freeze_stamps/trackE_<model>_Python.json` (runner scripts must
+pass it for `-Mode full`). The launch aborts unless the tree is still clean, the stamp is
+committed at HEAD and names this exact run, and the preregistration blob is unchanged; the
+verified stamp and per-invocation git state are written into `run_manifest.json`. There is
+deliberately no override flag, and because a resume re-runs the gate, editing tracked files
+mid-campaign blocks the resume too. `test_experiment_gate.py` covers the blocking paths.
 
 The model spec is always `provider:model_id`. Providers: `ollama`, `openai`, `xai` (alias
 `grok`), `anthropic` (alias `claude`), plus `openai_compatible` with `--base-url` for

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\MachineLearning\github\PackageHallucination\run_test_api.py", line 43, in <module>
+    import aggregate_results
+  File "C:\MachineLearning\github\PackageHallucination\aggregate_results.py", line 1, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+Exception: C:\MachineLearning\github\PackageHallucination\run_ollama_cloud_extension.ps1:69
+Line |
+  69 |          throw "$model exited with code $LASTEXITCODE; rerun the same  .
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | qwen3.5:cloud exited with code 1; rerun the same command to resume.

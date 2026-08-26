@@ -1,6 +1,7 @@
 # Churilov bridge analysis
 
-**Status:** post-hoc analysis of frozen Campaign 4 outputs; no model responses were changed.
+**Status:** post-hoc analysis of frozen Campaign 4 and extension outputs; no model responses
+were changed.
 
 ## Code-only bridge
 
@@ -19,23 +20,29 @@ Wilson intervals.
 | grok-4.6 | 766 | 18.15% (12.45–23.92) | 17.49% (11.91–23.18) | 48.5% | 7.0% |
 | deepseek-coder-v2:16b | 778 | 9.13% (7.02–11.38) | 8.87% (6.80–11.08) | 56.0% | 7.9% |
 | deepseek-v4-flash | 742 | 8.89% (6.73–11.23) | 8.89% (6.73–11.23) | 52.0% | 7.4% |
+| qwen3.5:cloud | 169 | 7.10% (3.57–11.05) | 6.51% (3.12–10.38) | 14.1% | 1.4% |
+| kimi-k2.7-code:cloud | 745 | 7.38% (5.50–9.46) | 7.38% (5.50–9.46) | 53.2% | 6.5% |
+| kimi-k3:cloud | 777 | 8.62% (6.57–10.84) | 8.37% (6.33–10.57) | 52.6% | 7.2% |
 
 The bridge rates are not a direct replication of Churilov's model table because the model
 cohorts do not overlap exactly and Campaign 4 uses 800 sampled prompts rather than the full
 corpus. They do isolate the extraction-channel difference without spending more model calls.
 
-The observed dual-registry bridge range is **8.30%–17.49%**,
-which is above Churilov's reported Python range of 5.49%–7.27%. Therefore the code-only
-extractor does **not** by itself reconcile the studies. 97.3%
+The observed dual-registry bridge range is **6.51%–17.49%**,
+which overlaps Churilov's reported Python range of 5.49%–7.27% at its lower end but extends
+far above it. Qwen 3.5 falls inside that band, Kimi K2.7 is 0.11 points above its upper edge,
+and Kimi K3 is 8.37%; the original six Campaign 4 cells remain 8.30%–17.49%. Thus the
+extensions provide cohort-sensitive partial convergence, while the code-only extractor does
+**not** by itself reconcile the original benchmark. 97.9%
 of bridge flags came from imports rather than explicit `pip install` directives, and only
-8 frozen-absence mentions were removed
+11 frozen-absence mentions were removed
 by the current-registry/non-stdlib correction. The live measurement question is now the
 semantic validity of mapping an import module directly to a PyPI distribution, together
 with genuine model/cohort differences—not registry drift.
 
 The dataset split is pronounced: the model-level dual-registry rates span
-**8.25%–26.45%**
-on LLM-synthesized datasets and **1.21%–7.50%**
+**3.70%–26.45%**
+on LLM-synthesized datasets and **0.00%–7.50%**
 on Stack Overflow datasets. This agrees directionally with Churilov's statement that
 synthetic prompts yield higher rates, while showing that dataset composition and prompt
 type remain substantial effect modifiers.
@@ -43,11 +50,11 @@ type remain substantial effect modifiers.
 ## Prompt-conditioned overlap
 
 - Mean ordinary pairwise Jaccard over unique unregistered recommendation names:
-  **0.054**.
-- Names shared by all 6 models: **5**.
-- Universal names emitted by all 6 on at least one identical prompt:
-  **4**
-  (80.0% of the universal set).
+  **0.038**.
+- Names shared by all 9 models: **2**.
+- Universal names emitted by all 9 on at least one identical prompt:
+  **1**
+  (50.0% of the universal set).
 
 This distinction matters: ordinary overlap does not identify whether a shared name reflects
 shared training data, a common package misconception, or direct elicitation by the same

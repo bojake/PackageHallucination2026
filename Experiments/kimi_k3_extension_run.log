@@ -1,0 +1,22 @@
+{
+  "requested": "kimi-k3:cloud",
+  "modified_at": "2026-07-27T08:00:00-07:00",
+  "details": {
+    "parent_model": "kimi-k3",
+    "format": "",
+    "family": "kimi-k3",
+    "families": null,
+    "parameter_size": "2812000000000",
+    "quantization_level": "MXFP4"
+  },
+  "model_info": {
+    "general.architecture": "kimi-k3",
+    "general.parameter_count": 2812000000000,
+    "kimi-k3.context_length": 1048576,
+    "kimi-k3.embedding_length": 7168
+  }
+}
+Kimi K3 extension: mode=full budget=94.5 -> Tests/trackD_ollama_kimi-k3-cloud_Python
+wrote Experiments\kimi_k3_extension_results.json
+wrote Experiments\KIMI_K3_EXTENSION_RESULTS.md
+Kimi K3 extension complete: mode=full

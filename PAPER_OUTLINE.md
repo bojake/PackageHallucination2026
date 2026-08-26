@@ -37,10 +37,20 @@ failure regimes.
    necessary to characterize package-recommendation failures.
 8. A Churilov-compatible code-import rescore does not collapse Campaign 4 into the reported
    2026 frontier band: dual-registry rates remain 8.30–17.49%, and import-module references
-   account for 97.4% of flagged bridge mentions.
+   account for most flagged bridge mentions. Extension rates are 6.51% for Qwen 3.5, 7.38%
+   for Kimi K2.7, and 8.37% for Kimi K3.
 9. Cross-model overlap is substantially prompt-conditioned: five unregistered names occur
    across all six Campaign 4 models, and four of those five occur across all six on an
    identical prompt.
+10. The separately preregistered cloud extension adds a low-rate Qwen 3.5 cell (2.77%) and
+    exposes a Kimi K2.7 list-flood failure: its 23.10% aggregate is dominated by 107,955
+    Query 2 occurrences, 315 Query 2 cap hits, and a position gradient from about 5% in the
+    first ten items to 27.33% after position 100.
+11. The preregistered Kimi K3 successor test reveals an aggregation reversal: K3 has fewer
+    risky prompts and far fewer runaway lists than K2.7, but a worse 33.30% occurrence-weighted
+    rate because 46 exact package cap hits contribute 81.02% of its unregistered occurrences.
+    Excluding the cap-associated tails only as a post-hoc diagnostic yields nearly identical
+    K3 and K2.7 rates (13.11% and 13.18%).
 
 ## Claims to avoid
 
@@ -58,6 +68,19 @@ failure regimes.
   above Churilov's Python range; extraction channel alone does not reconcile the studies.
 - “Universal names prove shared training data.” Same-prompt elicitation explains four of
   Campaign 4's five all-model names and must be separated from different-prompt overlap.
+- “Kimi K2.7 has a model-wide 23.10% ordinary recommendation rate.” That occurrence-weighted
+  aggregate is a valid description of the collected output but is not representative of an
+  ordinary short response: lists of at most ten parsed packages score 4.95%, and extreme
+  Query 2 enumeration supplies nearly the entire denominator.
+- “Removing cap-hit responses repairs Kimi K2.7.” The first extension runner retained exact
+  cap counts only at phase level, so its exclusion analysis uses an explicitly post-hoc
+  longest-response proxy. It diagnoses influence but cannot identify exact rows.
+- “Kimi K3 is simply worse than K2.7.” K3 is worse on the preregistered occurrence-weighted
+  estimand, but better on prompt risk (21.50% versus 43.00%), response-macro mean (4.18%
+  versus 8.36%), and runaway-list frequency. The ranking depends on the operational question.
+- “The token cap causes K3 hallucinations.” Exact cap status identifies a highly influential
+  tail, but cap membership is post-treatment and cannot distinguish runaway enumeration from
+  the boundary that truncates it. A randomized within-prompt cap experiment is still needed.
 
 ## Research questions
 
@@ -80,6 +103,10 @@ recommendation floods?
 Churilov's code-import extractor, and cross-model overlap is conditioned on prompt identity,
 which apparent agreements and disagreements remain?
 
+**RQ7 — Successor and list-volume mechanism.** Do the Kimi K2.7 response-volume and
+late-position effects persist in Kimi K3 when finish reason and token use are retained for
+every response?
+
 ## Abstract: five beats
 
 1. **Problem:** Package hallucinations create correctness and software-supply-chain risk,
@@ -92,7 +119,9 @@ which apparent agreements and disagreements remain?
    the published 16.61%.
 4. **Modern result:** Primary rates range from 1.31% to 17.91%, but tail analysis reveals
    three qualitatively different regimes. Three responses account for 82.88% of Grok's and
-   72.42% of DeepSeek V4's unregistered recommendations.
+   72.42% of DeepSeek V4's unregistered recommendations. A separately preregistered successor
+   cell extends the range to Kimi K3's 33.30%, where only 46 capped package responses supply
+   81.02% of unregistered occurrences despite lower prompt-level risk than K2.7.
 5. **Conclusion:** Valid evaluation requires registry-versioned scoring, explicit parser
    coverage, cluster uncertainty, and concentration diagnostics; a single average rate is
    inadequate.
@@ -140,10 +169,18 @@ Use five contributions:
   paper value.
 - Modern primary rates: 1.31–17.91%, with radically different concentration.
 - Cap diagnostic: no systematic or monotone association.
-- Code-import bridge: 8.30–17.49% under the dual-registry definition; 490 flagged mentions,
-  of which 477 (97.35%) arise from imports rather than explicit install directives.
+- Code-import bridge: original Campaign 4 cells remain 8.30–17.49% under the dual-registry
+  definition; adding Qwen 3.5, Kimi K2.7, and Kimi K3 yields 621 flagged mentions, of which
+  608 (97.91%) arise from imports rather than explicit install directives.
 - Prompt-conditioned overlap: five names span all six models, but four have same-prompt
   support across all six.
+- Cloud extension: Qwen 3.5 is 2.77% (95% cluster interval 2.07–3.54); Kimi K2.7 is 23.10%
+  (20.19–26.19) but falls to 4.95% among responses with at most ten parsed packages and rises
+  steeply with package position.
+- Kimi K3 successor: 33.30% (27.22–38.81) occurrence-weighted, 21.50% prompt risk, and
+  4.18% response-macro mean. Its 46 package cap hits provide 51.79% of parsed occurrences and
+  81.02% of unregistered occurrences; after diagnostic cap-tail exclusion, K3 is 13.11% and
+  K2.7 is 13.18%.
 
 ## 2. Background and related work
 
@@ -177,7 +214,7 @@ Use five contributions:
 - Treat their training-origin interpretation of Jaccard overlap as one hypothesis; shared
   prompt elicitation, extractor behavior, and corpus composition are alternatives.
 
-End this section with the five research questions.
+End this section with the seven research questions.
 
 ## 3. Study design
 
@@ -187,6 +224,9 @@ End this section with the five research questions.
   settings, parsers, and frozen 2024 registry.
 - **Track B:** modern benchmark using Parser v2, the fixed prompt set, larger token budgets,
   and both 2024 and 2026 registries.
+- **Extension cells:** Qwen 3.5 Cloud and Kimi K2.7 Code Cloud under a separately frozen
+  protocol; Kimi K3 under a later successor/mechanism preregistration. These cells extend but
+  do not alter Track B's original inferential family.
 - State explicitly that Track B is not a scale reproduction of the 2024 paper.
 
 ### 3.2 Prompt corpus and unit of analysis
@@ -258,6 +298,18 @@ Co-report:
   `(normalized name, dataset, prompt index)` tuples.
 - Do not publish candidate package names.
 
+### 3.9 Cloud extension and per-response provenance
+
+- Qwen 3.5 and Kimi K2.7 reuse the fixed 800-prompt subset, Parser v2, dual registries, and
+  two-query design, with a separate 13-comparison Holm family involving either new cell.
+- Co-report Query 1 and Query 2 volumes: the two prompts are measurement channels, not
+  interchangeable replicate responses when a model enumerates hundreds of recommendations.
+- Preserve Kimi K2.7's combined preregistered estimate while labeling query-, volume-, and
+  position-specific diagnostics post hoc.
+- For Kimi K3, require ordered per-response sidecars with finish reason, served model,
+  prompt/completion tokens, and exact cap status; fail scoring if any of 2,400 rows is missing.
+- Record provider-reported token cost and enforce the maintainer's run-level dollar guard.
+
 ## 4. Results
 
 ### 4.1 Measurement validation
@@ -324,16 +376,84 @@ This should be the paper's signature result.
 
 - Code-only dual-registry rates: GPT-5.2 8.30%, DeepSeek Coder V2 8.87%, DeepSeek V4
   8.89%, Opus 9.52%, gpt-oss 10.61%, and Grok 17.49%.
-- The bridge range remains above Churilov's Python range of 5.49–7.27%; there is no exact
-  model overlap, so describe rather than test that contrast.
-- Synthetic-prompt rates span 8.25–26.45%, versus 1.20–7.50% on Stack Overflow subsets;
+- Extension bridge rates are Qwen 3.5 6.51%, Kimi K2.7 7.38%, and Kimi K3 8.37%. Only Qwen
+  falls inside Churilov's Python range of 5.49–7.27%; there is no exact model overlap, so
+  describe rather than test that contrast.
+- Across all nine cells, synthetic-prompt rates span 3.70–26.45%, versus 0.00–7.50% on
+  Stack Overflow subsets;
   prompt source is a major effect modifier.
-- Only eight of 498 frozen-absence mentions are removed by the current-registry/non-stdlib
+- Only 11 of 632 frozen-absence mentions are removed by the current-registry/non-stdlib
   correction, so registry drift does not explain the bridge gap.
-- Imports contribute 477 of 490 dual-registry flags. Discuss import-module/distribution-name
+- Imports contribute 608 of 621 dual-registry flags. Discuss import-module/distribution-name
   mismatch and project-local imports as remaining semantic-validity risks.
-- Ordinary mean pairwise Jaccard is 0.054; five names span all six models, four with
-  same-prompt support across every model.
+- Across all nine cells, ordinary mean pairwise Jaccard is 0.038; two names span every model,
+  one with same-prompt support across all nine. Preserve the original six-cell overlap result
+  separately when discussing Campaign 4 alone.
+
+### 4.8 Preregistered Qwen/Kimi cloud extension
+
+- Qwen 3.5: 2.77% unregistered recommendation rate (2.07–3.54), 7.88% prompt risk,
+  13.25% malformed, zero package-response cap hits, and 2,782 parsed occurrences.
+- Kimi K2.7: 23.10% (20.19–26.19), 43.00% prompt risk, 14.75% malformed, 323
+  package-response cap hits, and 111,842 parsed occurrences.
+- Split the channels immediately: Kimi Query 1 is 21.82% over 3,887 occurrences and Query 2
+  is 23.15% over 107,955. The Query 1 aggregate is itself driven by six responses extending
+  beyond position 100; excluding the phase-matched longest-response proxy reduces it to
+  3.77%.
+- Lists of at most ten packages yield 4.95%; responses above 25 packages supply 106,980
+  occurrences at 23.93%.
+- The weighting contrast is material: the pooled occurrence rate is 23.10%, versus an
+  unweighted 8.36% mean over non-empty parsed responses and an 11.78% prompt-macro mean;
+  both macro medians are zero. Report these as descriptive views, not replacements for the
+  preregistered estimand.
+- Position is the clearest mechanism: Kimi Query 2 is 5.28–5.87% through position 25,
+  10.85% at 26–50, 15.03% at 51–100, and 27.33% at 101+. This is a late-enumeration
+  validity collapse plus instruction-following failure, not simply a uniform model rate.
+- Parser noise is a mediator, not a sufficient explanation. The 323 phase-matched cap proxies
+  are malformed at 26.94% versus 11.67% for nonproxies (+15.27 points), and contain 36.86% of
+  all Kimi malformed responses. Nevertheless, 236 proxies parse as lists and supply 104,420
+  occurrences. After excluding every proxy, Query 2 still rises from roughly 5–7% through
+  position 25 to 22.03%, 36.94%, and 41.38% in positions 26–50, 51–100, and 101+; those late
+  bins come from only 16, 12, and 10 responses and must be presented as mechanism evidence,
+  not precise population rates.
+- The 234 Query 2 responses above 100 packages are not copies of a fixed catalog: mean
+  pairwise package-set Jaccard is 0.066. Thirty-nine normalized names form a common core,
+  but diverse prompt-conditioned tails dominate; paired Query 1/Query 2 mean Jaccard is only
+  0.005 for these floods.
+- State the provenance limitation: Kimi K2.7 exact cap-hit response ids were not retained;
+  the longest-response exclusion is a post-hoc proxy. Kimi K3 corrects that instrumentation.
+
+### 4.9 Kimi K3 successor test
+
+- The separately preregistered 2,400-call cell passed all 12 response-sidecar gates: one
+  served id (`kimi-k3`), zero errors or request adjustments, 72 total exact caps (46 package),
+  and $16.271841 token-derived analytic spend.
+- Primary occurrence-weighted rate: 33.30% (95% prompt-cluster interval 27.22–38.81), with
+  21.50% prompt risk, 4.19% malformed responses, and 25,889 parsed occurrences. All eight
+  separately adjusted paired comparisons place K3 above its comparator on this primary rate;
+  K2.7 minus K3 is -10.20 points (95% percentile interval -16.43 to -3.44).
+- Split the task: Query 1 is 1.76% over 1,303 occurrences, whereas Query 2 is 34.97% over
+  24,586. K3 therefore follows the requested-code query well but sometimes treats the open
+  recommendation query as an unbounded enumeration task.
+- Exact cap decomposition: 46 package cap hits—2.88% of package responses—supply 13,408
+  occurrences (51.79% of the total) and 6,985 unregistered occurrences (81.02% of the total).
+  Their rate is 52.10%; the exact-cap-excluded diagnostic is 13.11%. Keep 33.30% primary and
+  label exclusion as post hoc conditioning, not a corrected estimate.
+- The comparison with K2.7 is an aggregation reversal. K3 has lower prompt risk (21.50% versus
+  43.00%), lower response-macro mean (4.18% versus 8.36%), and only 54 Query 2 responses above
+  100 packages versus 234. Yet its rarer capped floods are much more contaminated (52.10%
+  versus 23.81% in K2.7's cap proxy), making the pooled occurrence rate worse.
+- On 800 shared Query 2 prompts, K2.7 exceeds K3 prompt risk by 20.63 points (paired bootstrap
+  95% interval 16.50–24.75) and >100-package response frequency by 22.50 points (19.00–26.00).
+  Only 22 prompts flood in both models; flood-prompt Jaccard is 0.083, weakening a
+  prompt-difficulty-only explanation.
+- Late-position degradation remains after exact K3 cap exclusion: Query 2 rises from 2.70–5.62%
+  through position 25 to 9.06%, 11.22%, and 36.75% at positions 26–50, 51–100, and 101+.
+  The two-stage mechanism is occasional runaway enumeration followed by declining validity;
+  the token boundary reveals and censors that process but is not established as its cause.
+- Report the K3 eight-comparison Holm family separately from Campaign 4 and the Qwen/K2.7
+  extension family. Use `KIMI_K3_EXTENSION_RESULTS.md` for the preregistered result and
+  `KIMI_K2_7_VS_K3_POST_ANALYSIS.md` for the explicitly post-hoc mechanism comparison.
 
 ## 5. Discussion
 
@@ -353,11 +473,15 @@ This should be the paper's signature result.
 - Low diffuse, high diffuse, and catastrophic-tail regimes.
 - Tail-aware metrics are necessary for security evaluation.
 - Recommend flood guards, registry checks, and installation confirmation interfaces.
+- Use the K2.7/K3 reversal as the clearest example: K3 is safer on typical-prompt measures but
+  worse when every emitted occurrence receives equal weight. Neither estimand subsumes the other.
 
 ### 5.4 What the cap diagnostic resolves—and what it does not
 
 - It weakens the proposed cap mechanism for DeepSeek under deterministic measurement.
 - It does not identify temperature as the cause and does not establish formal equivalence.
+- Exact K3 finish reasons show that cap-associated responses can dominate an aggregate, but
+  they do not establish that increasing or decreasing the cap causes the runaway behavior.
 
 ### 5.5 Replication as measurement debugging
 
@@ -377,7 +501,8 @@ This should be the paper's signature result.
 ## 6. Threats to validity and limitations
 
 - Python only; package-query task rather than general code generation.
-- Six modern cells are purposive, not representative samples of all frontier/local models.
+- The six-cell Campaign 4 benchmark and three separately frozen cloud extensions are purposive,
+  not representative samples of all frontier/local models.
 - One fixed prompt subset and one modern generation draw per model.
 - Strict parser has 79.75% end-to-end semantic recall in the initial validation sample.
 - The Track B audit was AI-reviewed at maintainer direction; no human labeled every record.
@@ -385,12 +510,18 @@ This should be the paper's signature result.
 - Hosted aliases and provider-side infrastructure can change despite served-ID capture.
 - DeepSeek Coder V2 resumed-run metadata are mixed.
 - Some package-query responses hit token caps; catastrophic-tail totals may be lower bounds.
+- Kimi K2.7's phase-level cap counts cannot be mapped to exact response ids; its cap exclusion
+  is a longest-response proxy. Kimi K3 was instrumented prospectively to remove that ambiguity.
+- Kimi K2.7's aggregate denominator is overwhelmingly generated by extreme Query 2 lists;
+  occurrence-weighted and prompt-level risk answer different operational questions.
+- K3 exact cap membership is observed, but cap-excluded conditioning remains post-treatment;
+  comparison against K2.7 also mixes exact K3 labels with K2.7's longest-response proxy.
 - Unregistered PyPI names include ecosystem mismatches, not only invented strings.
 - Post-hoc tail, EOS, sentinel, and recentered-bootstrap analyses must remain labeled post
   hoc.
 - The Churilov bridge is post-hoc relative to Campaign 4, the cohorts have no exact model
   match, and generated imports can denote local modules rather than installable packages.
-- The Qwen 3.5 Cloud and Kimi K3 cells are a separately preregistered extension and must not
+- The Qwen 3.5 Cloud and Kimi K2.7 Code cells are a separately preregistered extension and must not
   be folded retroactively into Campaign 4's original confirmatory family.
 
 ## 7. Security, ethics, and responsible artifact release
@@ -422,7 +553,9 @@ Return to three sentences:
 6. Name-category composition by model.
 7. Churilov code-import bridge with clustered intervals and dataset decomposition.
 8. Ordinary versus prompt-aligned overlap summary.
-9. Qwen/Kimi extension outcomes, once collection is complete.
+9. Qwen/Kimi extension outcomes with query volume, position profile, and cap sensitivity.
+10. Kimi K3 successor outcomes and exact response-metadata audit.
+11. K2.7/K3 aggregation decomposition, shared-prompt flood contingency, and cap-tail influence.
 
 ## Figures
 
@@ -433,6 +566,11 @@ Return to three sentences:
 5. Ranked-prompt cumulative concentration curves.
 6. Leave-top-k sensitivity plot showing the three failure regimes.
 7. Paired ordinary-name versus prompt-aligned overlap comparison.
+8. Kimi K2.7 position/volume mechanism: Query 2 position rates, occurrence mass, and
+   response-volume quartiles (`Experiments/figures/ollama_extension_position_volume.pdf`).
+9. Kimi K2.7 versus K3 mechanism: aggregate metric reversal, cap-tail contribution, and
+   cap-diagnostic-excluded position profile
+   (`Experiments/figures/kimi_k2_7_vs_k3_mechanism.pdf`).
 
 ## Appendices and artifact checklist
 
@@ -450,6 +588,12 @@ Return to three sentences:
 - Churilov-compatible extractor port, dependency versions, tests, and machine-readable
   prompt-cluster bridge output.
 - Separately frozen Qwen/Kimi cloud extension protocol and manifests.
+- Kimi K2.7 query/volume/position post-analysis with explicit cap-proxy labeling.
+- Kimi K3 preregistration, ordered response metadata sidecars, cost ledger, and scoring gate.
+- Kimi K2.7/K3 paired post-analysis with exact/proxy distinction and 50,000-replicate
+  shared-prompt intervals.
+- Retrospective provenance stamp with explicit non-cryptographic-preregistration limitation,
+  frozen-core digest, containing commit, and raw-artifact hash index.
 
 ## Recommended writing order
 

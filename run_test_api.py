@@ -41,6 +41,7 @@ import sys
 from datetime import datetime, timezone
 
 import aggregate_results
+import experiment_gate
 import generate_code_api
 import generate_package_names_api
 import llm_api
@@ -135,6 +136,22 @@ def build_parser():
                              "instead of dropping it and recording the drop")
     parser.add_argument("--fail-on-error", action="store_true",
                         help="Abort a phase if any request fails after all retries")
+    parser.add_argument("--input-cost-per-million", type=float, default=None,
+                        help="Provider input-token price in USD per million, recorded in the "
+                             "manifest and used by --budget-usd")
+    parser.add_argument("--output-cost-per-million", type=float, default=None,
+                        help="Provider output-token price in USD per million, recorded in the "
+                             "manifest and used by --budget-usd")
+    parser.add_argument("--budget-usd", type=float, default=None,
+                        help="Stop launching new requests when provider-reported token cost "
+                             "reaches this run-level guard; in-flight requests may finish")
+    parser.add_argument("--freeze-stamp", default=None,
+                        help="Committed freeze stamp from 'experiment_gate.py stamp'. The "
+                             "launch aborts unless the working tree is clean, the stamp is "
+                             "committed at HEAD and names this run, and the preregistration "
+                             "blob is unchanged; the verified stamp is recorded in the "
+                             "manifest. Required by analytic runner scripts, optional for "
+                             "smokes.")
 
     # Experiment control.
     parser.add_argument("--stage", default="all", choices=["all", "code", "packages", "detect"],
@@ -191,6 +208,45 @@ def subset_dataset(source, destination, limit=None, sample=None, seed=0):
     return destination
 
 
+def restore_response_accounting(save_path, client):
+    """Reconstruct prior token usage from completed sidecars and active partial files.
+
+    A hard kill may happen before a manifest is written. The per-response metadata is the
+    authoritative resume ledger, keyed by output file and row index so a sidecar and stale
+    partial cannot double-count the same response.
+    """
+    if not os.path.isdir(save_path):
+        return {"prompt_tokens": 0, "completion_tokens": 0, "calls": 0}
+    records = {}
+    for filename in sorted(os.listdir(save_path)):
+        if filename.endswith(".request_metadata.jsonl"):
+            base = filename.removesuffix(".request_metadata.jsonl")
+            path = os.path.join(save_path, filename)
+            with open(path, encoding="utf-8") as handle:
+                for line in handle:
+                    if not line.strip():
+                        continue
+                    record = json.loads(line)
+                    records[(base, int(record["index"]))] = record
+        elif filename.endswith(".json.partial"):
+            base = filename.removesuffix(".partial")
+            path = os.path.join(save_path, filename)
+            with open(path, encoding="utf-8") as handle:
+                for line in handle:
+                    if not line.strip():
+                        continue
+                    record = json.loads(line)
+                    if isinstance(record.get("meta"), dict):
+                        records[(base, int(record["i"]))] = record["meta"]
+    restored = client.restore_accounting(records.values())
+    if restored["calls"]:
+        logging.info(
+            "Restored budget accounting from %d response metadata rows ($%.4f total so far).",
+            restored["calls"], client.estimated_cost_usd,
+        )
+    return restored
+
+
 def main():
     args = build_parser().parse_args()
 
@@ -219,6 +275,14 @@ def main():
     except ValueError as exc:
         raise SystemExit(f"--extra-body must be valid JSON: {exc}")
 
+    # The freeze gate runs before the client exists so a blocked launch can never spend.
+    freeze = None
+    if args.freeze_stamp:
+        expected_run = f"{args.name or llm_api.slugify(args.model)}_{args.language}"
+        freeze = experiment_gate.check(args.freeze_stamp, expected_run)
+        logging.info("Freeze gate passed: %s frozen at commit %s.",
+                     freeze["preregistration"], freeze["stamped_at_head"][:12])
+
     try:
         provider, model_id = llm_api.split_spec(args.model)
         workers = args.workers if args.workers is not None else (1 if provider == "ollama" else 4)
@@ -230,6 +294,9 @@ def main():
             max_retries=args.max_retries,
             extra_body=extra_body,
             strict=args.strict_sampling,
+            input_cost_per_million=args.input_cost_per_million,
+            output_cost_per_million=args.output_cost_per_million,
+            budget_usd=args.budget_usd,
         )
     except llm_api.ProviderError as exc:
         raise SystemExit(str(exc))
@@ -238,6 +305,7 @@ def main():
     run_name = args.name or llm_api.slugify(args.model)
     save_path = os.path.join(os.getcwd(), "Tests", f"{run_name}_{args.language}")
     os.makedirs(save_path, exist_ok=True)
+    restore_response_accounting(save_path, client)
 
     # Mutable tags can be repointed at different weights; record the immutable identity of
     # what is actually being run so results stay attributable months later.
@@ -316,7 +384,8 @@ def main():
             package_detection.detect_packages(data_path, save_path, args.model,
                                               args.logging, args.language, overrides=overrides)
     finally:
-        write_manifest(save_path, args, client, workers, overrides, stats, identity)
+        write_manifest(save_path, args, client, workers, overrides, stats, identity,
+                       freeze=freeze)
 
     logging.info("Experiment complete")
 
@@ -338,7 +407,8 @@ def paper_deviations(args):
             for name, paper in PAPER_DEFAULTS.items() if getattr(args, name) != paper}
 
 
-def write_manifest(save_path, args, client, workers, overrides, stats, identity=None):
+def write_manifest(save_path, args, client, workers, overrides, stats, identity=None,
+                   freeze=None):
     """Record exactly what was sent, so results stay interpretable months later.
 
     Experiments are often run in stages or resumed days apart, so this merges into any
@@ -357,11 +427,21 @@ def write_manifest(save_path, args, client, workers, overrides, stats, identity=
     phases = dict(previous.get("phases") or {})
     phases.update(stats)
 
-    cumulative = previous.get("token_usage_cumulative") or {"prompt_tokens": 0,
-                                                            "completion_tokens": 0, "calls": 0}
-    for field in cumulative:
-        cumulative[field] += client.usage.get(field, 0)
+    if client.restored_accounting_rows:
+        # Sidecars are authoritative and already include every completed pre-resume row.
+        cumulative = {
+            field: client.restored_usage.get(field, 0) + client.usage.get(field, 0)
+            for field in ("prompt_tokens", "completion_tokens", "calls")
+        }
+    else:
+        cumulative = previous.get("token_usage_cumulative") or {
+            "prompt_tokens": 0, "completion_tokens": 0, "calls": 0
+        }
+        cumulative = dict(cumulative)
+        for field in cumulative:
+            cumulative[field] += client.usage.get(field, 0)
 
+    provenance = experiment_gate.git_provenance()
     runs = list(previous.get("runs") or [])
     runs.append({
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -372,6 +452,7 @@ def write_manifest(save_path, args, client, workers, overrides, stats, identity=
         "request_adjustments": dict(client.adjustments),
         "model_identity": identity or {},
         "served_model_ids": dict(client.served_models),
+        "git_provenance": provenance,
     })
 
     manifest = {
@@ -397,6 +478,10 @@ def write_manifest(save_path, args, client, workers, overrides, stats, identity=
         "token_usage_cumulative": cumulative,
         "phases": phases,
         "runs": runs,
+        # Last-invocation repository state plus the verified freeze stamp, if any. A
+        # resumed invocation launched without --freeze-stamp must not erase the record.
+        "git_provenance": provenance,
+        "freeze_stamp": freeze or previous.get("freeze_stamp"),
     }
     with open(manifest_path, "w", encoding="utf-8") as handle:
         json.dump(manifest, handle, indent=2)

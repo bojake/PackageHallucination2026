@@ -40,7 +40,8 @@ MODELS = [
 ]
 EXTENSION_MODELS = [
     ("qwen3.5:cloud", "trackC_ollama_qwen3-5-cloud_Python"),
-    ("kimi-k3:cloud", "trackC_ollama_kimi-k3-cloud_Python"),
+    ("kimi-k2.7-code:cloud", "trackC_ollama_kimi-k2-7-code-cloud_Python"),
+    ("kimi-k3:cloud", "trackD_ollama_kimi-k3-cloud_Python"),
 ]
 FROZEN_PATH = os.path.join("Data", "Python", "pypi_package_names.csv")
 CURRENT_PATH = os.path.join("Data", "Python", "pypi_package_names_2026-08-12.csv")
@@ -391,7 +392,8 @@ def write_markdown(result: dict) -> None:
     bridge_summary = result["bridge_summary"]
     md = f"""# Churilov bridge analysis
 
-**Status:** post-hoc analysis of frozen Campaign 4 outputs; no model responses were changed.
+**Status:** post-hoc analysis of frozen Campaign 4 and extension outputs; no model responses
+were changed.
 
 ## Code-only bridge
 
@@ -411,8 +413,11 @@ cohorts do not overlap exactly and Campaign 4 uses 800 sampled prompts rather th
 corpus. They do isolate the extraction-channel difference without spending more model calls.
 
 The observed dual-registry bridge range is **{bridge_summary['dual_rate_range_pct'][0]:.2f}%–{bridge_summary['dual_rate_range_pct'][1]:.2f}%**,
-which is above Churilov's reported Python range of 5.49%–7.27%. Therefore the code-only
-extractor does **not** by itself reconcile the studies. {bridge_summary['import_share_of_dual_flags_pct']:.1f}%
+which overlaps Churilov's reported Python range of 5.49%–7.27% at its lower end but extends
+far above it. Qwen 3.5 falls inside that band, Kimi K2.7 is 0.11 points above its upper edge,
+and Kimi K3 is 8.37%; the original six Campaign 4 cells remain 8.30%–17.49%. Thus the
+extensions provide cohort-sensitive partial convergence, while the code-only extractor does
+**not** by itself reconcile the original benchmark. {bridge_summary['import_share_of_dual_flags_pct']:.1f}%
 of bridge flags came from imports rather than explicit `pip install` directives, and only
 {bridge_summary['removed_by_current_registry_or_stdlib']} frozen-absence mentions were removed
 by the current-registry/non-stdlib correction. The live measurement question is now the

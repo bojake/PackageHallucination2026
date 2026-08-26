@@ -1,0 +1,631 @@
+{
+  "generated_at": "2026-08-26T03:28:45+00:00",
+  "purpose": "SHA-256, size, and row-count index for separately archived raw experiment artifacts under the git-ignored Tests directory.",
+  "contains_raw_response_content": false,
+  "runs": [
+    {
+      "model": "qwen3.5:cloud",
+      "run": "trackC_ollama_qwen3-5-cloud_Python",
+      "tests_directory_git_ignored": true,
+      "required_phase_outputs": 12,
+      "required_response_sidecars": 0,
+      "status": "complete",
+      "manifest_summary": {
+        "model_spec": "ollama:qwen3.5:cloud",
+        "calls": 2400,
+        "phase_items": 2400,
+        "phase_errors": 0,
+        "served_model_ids": {
+          "qwen3.5": 2400
+        },
+        "request_adjustments": {}
+      },
+      "missing_phase_outputs": [],
+      "missing_response_sidecars": [],
+      "files": [
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/FINAL_RESULTS.csv",
+          "bytes": 197,
+          "nonempty_lines": 6,
+          "sha256": "ddaaa3ca00b28bb81c18712bf4624ddc106b124daec44b86d6676d66e3fe5600"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_AT_results.csv",
+          "bytes": 199012,
+          "nonempty_lines": 3471,
+          "sha256": "7f78e3a84d2e47bd0560622197d071928ae92762012ec3da483f349fce66f3cf"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_All_Time_Master.json",
+          "bytes": 181422,
+          "nonempty_lines": 200,
+          "sha256": "192087a365d806d1a4122c903e4b8c8fcfe89c9de8fe07825606b4d9db1f9a73"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_All_Time_code.json",
+          "bytes": 132200,
+          "nonempty_lines": 200,
+          "sha256": "a043d5c2dbb5a2d6fba23fe300ff0c5e13e048d498d150c148314a5de179dad2"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_All_Time_packages_1.json",
+          "bytes": 3062,
+          "nonempty_lines": 200,
+          "sha256": "0fcdcb7c1db7098cba64eec24328cf9ce3cb16d39c9359355646b1c29e8110da"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_All_Time_packages_2.json",
+          "bytes": 7963,
+          "nonempty_lines": 200,
+          "sha256": "d01b9bda28f0c3b32a563f4310bcf7ddd228aa68421e5324e4bab5fa1b5fc64c"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_All_Time_prompts.json",
+          "bytes": 44695,
+          "nonempty_lines": 200,
+          "sha256": "94b29b56f974d1ec09212f80659d81011e2ccb68f9c13f9e16d6f8801e6c6742"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_LY_results.csv",
+          "bytes": 228432,
+          "nonempty_lines": 3911,
+          "sha256": "94711a47e846a7c1b927e61d0f716273a8e5e7918fd1c11de10d7eed243f9c6c"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_Recent_Master.json",
+          "bytes": 209303,
+          "nonempty_lines": 200,
+          "sha256": "1d5d0095d1b58cd2941ae3747f01b9ef0aacbe3fd410241d82394205728398bb"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_Recent_code.json",
+          "bytes": 156516,
+          "nonempty_lines": 200,
+          "sha256": "a530a599e309564e3c64addc67b74ab57b43716285cea0fedcf8257aaeb524f1"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_Recent_packages_1.json",
+          "bytes": 3258,
+          "nonempty_lines": 200,
+          "sha256": "d57a5c7e72c4c6acbc3d3ffbce610c3b1bedcd4107476c9a43cc9fdeb24adefc"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_Recent_packages_2.json",
+          "bytes": 8801,
+          "nonempty_lines": 200,
+          "sha256": "43199c1d4f0bf5118b73ce5a73c4bf15ea149d0595b86bdc45ffbe08c3e708aa"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/LLM_Recent_prompts.json",
+          "bytes": 48159,
+          "nonempty_lines": 200,
+          "sha256": "e014efff6c85d195fc309ed28c78dad65c7817c4f16899d9ba61e460647bc541"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/PACKAGE_NAMES.csv",
+          "bytes": 52018,
+          "nonempty_lines": 801,
+          "sha256": "f8bbb6f59eaf15f22f652d7b0b01e045fca8656cc6246ac287ca7c5a4cfad6a0"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/SO_AT_results.csv",
+          "bytes": 236066,
+          "nonempty_lines": 3383,
+          "sha256": "9e02963472419f56774c8be3856d7cb2f7dcbf18d64a356c983d009337284e70"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/SO_LY_results.csv",
+          "bytes": 572629,
+          "nonempty_lines": 9639,
+          "sha256": "96bd3dfebdd8fc3194fe5b88bdc75d12ba266a30efcdeb2790561cd4d2d65543"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_All_Time_Master.json",
+          "bytes": 231324,
+          "nonempty_lines": 200,
+          "sha256": "8e18e552aacae7c67cef298b93368dfdcce74c1e46e0d88325aeb49bd4314b39"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_All_Time_code.json",
+          "bytes": 16288,
+          "nonempty_lines": 200,
+          "sha256": "6c50a6a280e9e106628af1461e65ebf042db79ba639675fd24bfb7f93e65619a"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_All_Time_packages_1.json",
+          "bytes": 2570,
+          "nonempty_lines": 200,
+          "sha256": "cd57748e4337b9df37d131ae0c78a46bd681d9cd774b64dfc17ffd64b5432779"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_All_Time_packages_2.json",
+          "bytes": 7168,
+          "nonempty_lines": 200,
+          "sha256": "2608820ba9c8dc2eb062e98c789765eae3b98abdea9a56ed367d5d120f7a5029"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_All_Time_prompts.json",
+          "bytes": 211420,
+          "nonempty_lines": 200,
+          "sha256": "61e25771f2b3430e7242c7ac0978b0628a1280177a22884249cf05f2ab124cba"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_Recent_Master.json",
+          "bytes": 577063,
+          "nonempty_lines": 200,
+          "sha256": "428d08a04b2d0a091cf21287a2a1af82931f4a7ab3f4473cdb0a35219c205188"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_Recent_code.json",
+          "bytes": 36288,
+          "nonempty_lines": 200,
+          "sha256": "c8ca408c50066f395bdace6ed482ddc74e2dbf62868fd480b400a60bc8ea14aa"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_Recent_packages_1.json",
+          "bytes": 2443,
+          "nonempty_lines": 200,
+          "sha256": "9625cbfe9833f1123f288885bc295639a89cd1f7cb6beb7829f99d721c536ecf"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_Recent_packages_2.json",
+          "bytes": 9126,
+          "nonempty_lines": 200,
+          "sha256": "db523e0e2f2373c01e7e668d2e57cf6475cff6b0afc36010f5ef427dfc19c62e"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/Stack_Overflow_Recent_prompts.json",
+          "bytes": 537140,
+          "nonempty_lines": 200,
+          "sha256": "16185aa958de178df6bbb5c42e66b2aa437e5e93bec9a2ef04f0f432cba59c1b"
+        },
+        {
+          "path": "Tests/trackC_ollama_qwen3-5-cloud_Python/run_manifest.json",
+          "bytes": 5212,
+          "nonempty_lines": 203,
+          "sha256": "2d38191549f6b246f97cc13999193dbe7a13de76ffae23f2352f16e56ebb5818"
+        }
+      ]
+    },
+    {
+      "model": "kimi-k2.7-code:cloud",
+      "run": "trackC_ollama_kimi-k2-7-code-cloud_Python",
+      "tests_directory_git_ignored": true,
+      "required_phase_outputs": 12,
+      "required_response_sidecars": 0,
+      "status": "complete",
+      "manifest_summary": {
+        "model_spec": "ollama:kimi-k2.7-code:cloud",
+        "calls": 2400,
+        "phase_items": 2400,
+        "phase_errors": 0,
+        "served_model_ids": {
+          "kimi-k2.7-code": 2400
+        },
+        "request_adjustments": {}
+      },
+      "missing_phase_outputs": [],
+      "missing_response_sidecars": [],
+      "files": [
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/FINAL_RESULTS.csv",
+          "bytes": 234,
+          "nonempty_lines": 6,
+          "sha256": "fdc447f83aa90c82463addb5425d5f86528143874b6e60f6908aae410767c690"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_AT_results.csv",
+          "bytes": 2098499,
+          "nonempty_lines": 17742,
+          "sha256": "5e1fc5e276169ede0866bd971ad8d4616e1d3abb7efa9a370e1434a99fc58db3"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_All_Time_Master.json",
+          "bytes": 768700,
+          "nonempty_lines": 200,
+          "sha256": "78122f2f500aab1bf3aab8b2b81f3dcf221879a2097ffd1f0bd70faf29c428d3"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_All_Time_code.json",
+          "bytes": 718730,
+          "nonempty_lines": 200,
+          "sha256": "40358ed9c009e9bbaef5df0da703bac1877af4e3f798e139a4fa48a23076ef9e"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_All_Time_packages_1.json",
+          "bytes": 25339,
+          "nonempty_lines": 200,
+          "sha256": "7589aed7ceeb9def22fbaee3ca35b24485ce867b64daa9a885214e96adb70ecd"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_All_Time_packages_2.json",
+          "bytes": 661811,
+          "nonempty_lines": 200,
+          "sha256": "0490f949f410c5acbab2ac71dc6fc943a8e46f5f2445ac39d2145d5f39ef245e"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_All_Time_prompts.json",
+          "bytes": 44695,
+          "nonempty_lines": 200,
+          "sha256": "94b29b56f974d1ec09212f80659d81011e2ccb68f9c13f9e16d6f8801e6c6742"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_LY_results.csv",
+          "bytes": 1947581,
+          "nonempty_lines": 17395,
+          "sha256": "29b472c8864a83535725f50bae0c6eb48d792b473e6bb272ec9ac6b6b3ea44b0"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_Recent_Master.json",
+          "bytes": 758559,
+          "nonempty_lines": 200,
+          "sha256": "afd65f9c425ba17c12cf19f4906b5563bc46cdedbeb6e998beef1b07c9351fab"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_Recent_code.json",
+          "bytes": 704998,
+          "nonempty_lines": 200,
+          "sha256": "900b50c67aa8e8369347424ee62abab9428915036a47c9dbceab9c402f81afab"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_Recent_packages_1.json",
+          "bytes": 40595,
+          "nonempty_lines": 200,
+          "sha256": "98c521cf6f006df1ff49238cd0f615ad193a5bb0d0e74651b7dd427fc12794bc"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_Recent_packages_2.json",
+          "bytes": 595052,
+          "nonempty_lines": 200,
+          "sha256": "d9e0ea1c03e47fdfa4a33120852d28d90c226a78513c2ed316f4ca460e19a13f"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/LLM_Recent_prompts.json",
+          "bytes": 48159,
+          "nonempty_lines": 200,
+          "sha256": "e014efff6c85d195fc309ed28c78dad65c7817c4f16899d9ba61e460647bc541"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/PACKAGE_NAMES.csv",
+          "bytes": 2267714,
+          "nonempty_lines": 801,
+          "sha256": "a66eaf14b317f87017d6a9a0cecf8e832a90046cd6733c172de45a67312900b1"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/SO_AT_results.csv",
+          "bytes": 1226444,
+          "nonempty_lines": 7102,
+          "sha256": "0030722debc6972a50cc0833ff5584454a7c16539558c32f0cc8d9c569f35029"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/SO_LY_results.csv",
+          "bytes": 1877559,
+          "nonempty_lines": 15601,
+          "sha256": "df97e6ba23a434256f9624d41fa4f782a56c9262fce63d96edf73f4781ca99a1"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_All_Time_Master.json",
+          "bytes": 375478,
+          "nonempty_lines": 200,
+          "sha256": "1a1245d2058fa0184365d4bcab17defc444ea4e3cfd50e63875b5db6c47c3041"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_All_Time_code.json",
+          "bytes": 159978,
+          "nonempty_lines": 200,
+          "sha256": "e11aba7ecaccbfe99518a23ba206fe5b53431fff5d21aa5221154f8cf1a9a74f"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_All_Time_packages_1.json",
+          "bytes": 5727,
+          "nonempty_lines": 200,
+          "sha256": "e4fe81b5308ca5f8f2fe3f23c56e2336ca36a5e824fe225337e4f379a0db693c"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_All_Time_packages_2.json",
+          "bytes": 459381,
+          "nonempty_lines": 200,
+          "sha256": "777e4df22b5a59a6d40a911a675a5d5a0797080b56c0ce35c64781c76826dadc"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_All_Time_prompts.json",
+          "bytes": 211420,
+          "nonempty_lines": 200,
+          "sha256": "61e25771f2b3430e7242c7ac0978b0628a1280177a22884249cf05f2ab124cba"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_Recent_Master.json",
+          "bytes": 826284,
+          "nonempty_lines": 200,
+          "sha256": "887cfae711b4316776d6db30cb49929bf572d59bb9e10bcafcc7bcb25859a9e6"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_Recent_code.json",
+          "bytes": 284809,
+          "nonempty_lines": 200,
+          "sha256": "17d6c99d97c1220ab7d87ccbf5a5e6f3dc45c197a761a4d53a9b9fd1df2af64c"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_Recent_packages_1.json",
+          "bytes": 13491,
+          "nonempty_lines": 200,
+          "sha256": "33540f9ee9c899ac9f75e3a0c8943e98ffaab3b3690d567cd55a32ed0a33e65a"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_Recent_packages_2.json",
+          "bytes": 559709,
+          "nonempty_lines": 200,
+          "sha256": "82de84b17b5d6e4e36bdae56d6825e6eb1b87690234b59d616d68dceb69d1e7e"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/Stack_Overflow_Recent_prompts.json",
+          "bytes": 537140,
+          "nonempty_lines": 200,
+          "sha256": "16185aa958de178df6bbb5c42e66b2aa437e5e93bec9a2ef04f0f432cba59c1b"
+        },
+        {
+          "path": "Tests/trackC_ollama_kimi-k2-7-code-cloud_Python/run_manifest.json",
+          "bytes": 5298,
+          "nonempty_lines": 203,
+          "sha256": "95799758c1e38710f9b81ea254da5d21ec0cd63d6e30ac780979ad46c9db9159"
+        }
+      ]
+    },
+    {
+      "model": "kimi-k3:cloud",
+      "run": "trackD_ollama_kimi-k3-cloud_Python",
+      "tests_directory_git_ignored": true,
+      "required_phase_outputs": 12,
+      "required_response_sidecars": 12,
+      "status": "complete",
+      "manifest_summary": {
+        "model_spec": "ollama:kimi-k3:cloud",
+        "calls": 2400,
+        "phase_items": 2400,
+        "phase_errors": 0,
+        "served_model_ids": {
+          "kimi-k3": 2400
+        },
+        "request_adjustments": {}
+      },
+      "missing_phase_outputs": [],
+      "missing_response_sidecars": [],
+      "files": [
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/FINAL_RESULTS.csv",
+          "bytes": 219,
+          "nonempty_lines": 6,
+          "sha256": "dd539368f4e2e3ba5690ce35a61db954a6074f2daa4920b688bc7bb26dd038cf"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_AT_results.csv",
+          "bytes": 1533225,
+          "nonempty_lines": 29748,
+          "sha256": "37a2023e23dfdb601523da9c2fe6446dfa49c4f0942efba8336cd5d92943381e"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_Master.json",
+          "bytes": 1296667,
+          "nonempty_lines": 200,
+          "sha256": "8a43c399be4d8c6cde5279a90f19a3f75abe90404ba9d3708bfb64cd08437529"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_code.json",
+          "bytes": 1246179,
+          "nonempty_lines": 200,
+          "sha256": "25145d350d5f4c20900330e222008b5dc53c38090dc7c6e98e648810c6f00ef4"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_code.json.request_metadata.jsonl",
+          "bytes": 26970,
+          "nonempty_lines": 200,
+          "sha256": "f96bc78d183ca73db5e4e4d15043afb8b36a07b2ada84529102fab225eccb032"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_packages_1.json",
+          "bytes": 6275,
+          "nonempty_lines": 200,
+          "sha256": "0087572e9da6e762578e0e9e7a2f1e24ea53de81ca9e730fc474569714cfa64e"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_packages_1.json.request_metadata.jsonl",
+          "bytes": 26738,
+          "nonempty_lines": 200,
+          "sha256": "154cd58c51bb007f32990c70864b796ebe4c85c864a7161398a666ab06c5424b"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_packages_2.json",
+          "bytes": 136882,
+          "nonempty_lines": 200,
+          "sha256": "499882dffd80263fe768024e0cc8bcccdbac23a13112a734b6d2eeba21622942"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_packages_2.json.request_metadata.jsonl",
+          "bytes": 26739,
+          "nonempty_lines": 200,
+          "sha256": "89b4915dd0a7f2a0be95e48a9cea62d37b55d64bd83849c667c1063887bcb6b0"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_All_Time_prompts.json",
+          "bytes": 44695,
+          "nonempty_lines": 200,
+          "sha256": "94b29b56f974d1ec09212f80659d81011e2ccb68f9c13f9e16d6f8801e6c6742"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_LY_results.csv",
+          "bytes": 1564919,
+          "nonempty_lines": 30194,
+          "sha256": "580e70132cd57d55dc898aafa564f678c2175d9d0c58c17606404c2f8a5e4f38"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_Master.json",
+          "bytes": 1355146,
+          "nonempty_lines": 200,
+          "sha256": "81248150a8f24cc9e754a3f102996369b0740dad3be8c9f16c05f50cd21e0ac6"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_code.json",
+          "bytes": 1301033,
+          "nonempty_lines": 200,
+          "sha256": "38eb8bf50709628738c55adf193a3fa42b2ddc7ab5d3bb610e244ed9f01b4ce5"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_code.json.request_metadata.jsonl",
+          "bytes": 26980,
+          "nonempty_lines": 200,
+          "sha256": "610950b9cfe1fa1f30a8d70342beaa47badf812c254e91df822b1205d5f59400"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_1.json",
+          "bytes": 5415,
+          "nonempty_lines": 200,
+          "sha256": "d2cf92ddf0bb5ad7131c8d852afe85784c1837e36e14dafe56f97bd0475de5ed"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_1.json.request_metadata.jsonl",
+          "bytes": 26743,
+          "nonempty_lines": 200,
+          "sha256": "5849a3d47bab9364da4326f5f14a0c970190099647224a959300d021e62e9a10"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_2.json",
+          "bytes": 125696,
+          "nonempty_lines": 200,
+          "sha256": "059e39d4fbd4b235038758865360ea952b4862ad87089842203a2239903312ce"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_packages_2.json.request_metadata.jsonl",
+          "bytes": 26739,
+          "nonempty_lines": 200,
+          "sha256": "1cb2e4b97b22e29a458e8e221c1d272872fdeb929d10d67bdd2c8a1d222f8dfa"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/LLM_Recent_prompts.json",
+          "bytes": 48159,
+          "nonempty_lines": 200,
+          "sha256": "e014efff6c85d195fc309ed28c78dad65c7817c4f16899d9ba61e460647bc541"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/PACKAGE_NAMES.csv",
+          "bytes": 464639,
+          "nonempty_lines": 801,
+          "sha256": "c2aafeaa9891cf7f29b426172f543fe99bcd2e8ecc6b4e144dbb43951eb0db26"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/SO_AT_results.csv",
+          "bytes": 618882,
+          "nonempty_lines": 7199,
+          "sha256": "15900afa34a022b4c8cf95bd047874da7aed0ebb1ac8acc0dfa73209e2defb52"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/SO_LY_results.csv",
+          "bytes": 924310,
+          "nonempty_lines": 14685,
+          "sha256": "27ad3ac24e9e5bba8af0a6da238bf068f571ae488191fa39a541be009841a8d2"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_Master.json",
+          "bytes": 405482,
+          "nonempty_lines": 200,
+          "sha256": "204d112afda4fce939a331a1a088351d9deb661c4d92230b2ac065d03e544f1d"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_code.json",
+          "bytes": 190107,
+          "nonempty_lines": 200,
+          "sha256": "d2b7cd8674a58ff7d6b873a32fe3e0784ed69fe029c0b8bfd1de57801611bf6c"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_code.json.request_metadata.jsonl",
+          "bytes": 26722,
+          "nonempty_lines": 200,
+          "sha256": "2f966af6a2a170a3b2d102b0abc7688fb73008a2ef2deb27346338ca5f3d3a33"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_1.json",
+          "bytes": 4724,
+          "nonempty_lines": 200,
+          "sha256": "a71096e93a64e0f5667cad6fd5121a8ce9a202e3c06cb244f4c3a4797b733c98"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_1.json.request_metadata.jsonl",
+          "bytes": 26564,
+          "nonempty_lines": 200,
+          "sha256": "2b90a3a35ad08ee1e44fca27ccba850d3bd61932d5b8bc1c5e224b52f465c79f"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_2.json",
+          "bytes": 104059,
+          "nonempty_lines": 200,
+          "sha256": "caa5907b784c454007218c2fb5f82da73974bfdaea34ec642e68e7524c1ea781"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_packages_2.json.request_metadata.jsonl",
+          "bytes": 26738,
+          "nonempty_lines": 200,
+          "sha256": "88d68e300f81b87ce9f23c355dfda0195af4d9706700e5e786d9d181b025b02d"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_All_Time_prompts.json",
+          "bytes": 211420,
+          "nonempty_lines": 200,
+          "sha256": "61e25771f2b3430e7242c7ac0978b0628a1280177a22884249cf05f2ab124cba"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_Master.json",
+          "bytes": 801113,
+          "nonempty_lines": 200,
+          "sha256": "866ccf4f2339fa94a695d95b51ee531af60c5a286fc58021556392782b75411e"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_code.json",
+          "bytes": 259984,
+          "nonempty_lines": 200,
+          "sha256": "ccc308df2f84994b89eba7f5f286730d26d5180d60946f13024c04c0d7c2733e"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_code.json.request_metadata.jsonl",
+          "bytes": 26797,
+          "nonempty_lines": 200,
+          "sha256": "924fa310af17923834f3667cc7ecf62135f85663a4898274f628a55c291997af"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_packages_1.json",
+          "bytes": 4044,
+          "nonempty_lines": 200,
+          "sha256": "c2bc8afc6f1d82ece932b9bb9878c6ad86a6d560c3de0e84697893f978ee2eba"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_packages_1.json.request_metadata.jsonl",
+          "bytes": 26593,
+          "nonempty_lines": 200,
+          "sha256": "7d3378fdfeaca6ced1e571546f83ab08fe0cdf4811784ffd6c06c1d4bdc390e6"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_packages_2.json",
+          "bytes": 100449,
+          "nonempty_lines": 200,
+          "sha256": "c53f5019da760b08b3a673c8fbcc81dfc6ad58e0350e09c0b81eae6baffc3977"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_packages_2.json.request_metadata.jsonl",
+          "bytes": 26777,
+          "nonempty_lines": 200,
+          "sha256": "66298c3f3bd1707edaf87adcf06db8758d4928785304a000bc324acee7c7ec58"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/Stack_Overflow_Recent_prompts.json",
+          "bytes": 537140,
+          "nonempty_lines": 200,
+          "sha256": "16185aa958de178df6bbb5c42e66b2aa437e5e93bec9a2ef04f0f432cba59c1b"
+        },
+        {
+          "path": "Tests/trackD_ollama_kimi-k3-cloud_Python/run_manifest.json",
+          "bytes": 8239,
+          "nonempty_lines": 234,
+          "sha256": "633c45b40734d674268c9ad410ffb598af6e031b8f00db3862e27886bbcc6f6d"
+        }
+      ]
+    }
+  ]
+}

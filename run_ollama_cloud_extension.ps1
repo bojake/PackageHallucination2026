@@ -15,7 +15,7 @@ param(
     [string]$BaseUrl = "http://localhost:11434",
     [string]$Python = "python",
     [int]$Workers = 2,
-    [string[]]$Models = @("qwen3.5:cloud", "kimi-k3:cloud")
+    [string[]]$Models = @("qwen3.5:cloud", "kimi-k2.7-code:cloud")
 )
 
 $ErrorActionPreference = "Stop"

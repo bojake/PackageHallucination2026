@@ -1,0 +1,23 @@
+{
+  "details": {
+    "parent_model": "kimi-k3",
+    "format": "",
+    "family": "kimi-k3",
+    "families": null,
+    "parameter_size": "2812000000000",
+    "quantization_level": "MXFP4"
+  },
+  "model_info": {
+    "general.architecture": "kimi-k3",
+    "general.parameter_count": 2812000000000,
+    "kimi-k3.context_length": 1048576,
+    "kimi-k3.embedding_length": 7168
+  },
+  "capabilities": [
+    "vision",
+    "thinking",
+    "completion",
+    "tools"
+  ],
+  "modified_at": "2026-07-27T08:00:00-07:00"
+}

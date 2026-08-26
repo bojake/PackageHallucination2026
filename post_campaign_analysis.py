@@ -119,7 +119,7 @@ def prompt_rows(rows):
     return grouped
 
 
-def stratified_bootstrap_ratio(grouped, numerator, denominator, reps=20_000,
+def stratified_bootstrap_ratio(grouped, numerator, denominator, reps=REPS,
                                seed=BOOTSTRAP_SEED):
     rng = np.random.default_rng(seed)
     out_num = np.zeros(reps)
@@ -561,8 +561,14 @@ def main():
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "POST-HOC sensitivity analysis; frozen model outputs and Parser v2",
         "source_result": "Experiments/campaign4_results.json",
-        "bootstrap": {"replicates": REPS, "seed": BOOTSTRAP_SEED,
-                      "stratified_by_dataset": True, "cluster": "prompt"},
+        "bootstrap": {
+            "cell_interval_replicates": REPS,
+            "paired_sensitivity_replicates": REPS,
+            "cap_diagnostic_pair_replicates": 20_000,
+            "seed": BOOTSTRAP_SEED,
+            "stratified_by_dataset": True,
+            "cluster": "prompt",
+        },
         "track_b": summaries,
         "paired_sensitivity": comparisons,
         "parser_track_b_audit": summarize_audit(),
