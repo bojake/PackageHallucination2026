@@ -187,6 +187,35 @@ class ResponseMetadataTests(unittest.TestCase):
             self.assertEqual([record["served_model"] for record in records], ["fake", "fake"])
             self.assertEqual(stats["response_metadata_rows"], 2)
             self.assertEqual(stats["truncated_new_requests"], 0)
+            self.assertEqual(stats["truncated_total_rows"], 0)
+
+    def test_batch_resume_reports_complete_phase_truncations(self):
+        client = _BatchClient()
+        with tempfile.TemporaryDirectory() as directory:
+            outfile = os.path.join(directory, "responses.json")
+            with open(outfile + ".partial", "w", encoding="utf-8") as handle:
+                handle.write(json.dumps({
+                    "i": 0,
+                    "text": "old",
+                    "meta": {
+                        "finish_reason": "length",
+                        "truncated": True,
+                        "served_model": "fake",
+                        "prompt_tokens": 2,
+                        "completion_tokens": 10,
+                    },
+                }) + "\n")
+            stats = api_batch.run_batch(
+                client,
+                ["one", "two"],
+                lambda item: [{"role": "user", "content": item}],
+                outfile,
+                max_tokens=10,
+            )
+            self.assertEqual(stats["requested"], 1)
+            self.assertEqual(stats["resumed"], 1)
+            self.assertEqual(stats["truncated_new_requests"], 0)
+            self.assertEqual(stats["truncated_total_rows"], 1)
 
     def test_k3_gate_accepts_complete_provenance_and_rejects_identity_drift(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -197,6 +226,29 @@ class ResponseMetadataTests(unittest.TestCase):
                 result = score_kimi_k3_extension.validate_metadata(run, 1)
                 self.assertTrue(result["passed"])
                 self.assertEqual(result["totals"]["rows"], 12)
+                manifest_path = os.path.join(run_dir, "run_manifest.json")
+                with open(manifest_path, encoding="utf-8") as handle:
+                    manifest = json.load(handle)
+                phase = manifest["phases"]["LLM_Recent_code"]
+                phase.update({
+                    "requested": 0,
+                    "resumed": 1,
+                    "truncated_new_requests": 0,
+                    "truncated_total_rows": 0,
+                })
+                with open(manifest_path, "w", encoding="utf-8") as handle:
+                    json.dump(manifest, handle)
+                self.assertTrue(
+                    score_kimi_k3_extension.validate_metadata(run, 1)["passed"]
+                )
+                del phase["truncated_total_rows"]
+                with open(manifest_path, "w", encoding="utf-8") as handle:
+                    json.dump(manifest, handle)
+                with self.assertRaises(SystemExit):
+                    score_kimi_k3_extension.validate_metadata(run, 1)
+                phase["truncated_total_rows"] = 0
+                with open(manifest_path, "w", encoding="utf-8") as handle:
+                    json.dump(manifest, handle)
                 path = os.path.join(
                     run_dir, "LLM_Recent_code.json.request_metadata.jsonl"
                 )

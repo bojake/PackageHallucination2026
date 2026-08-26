@@ -225,16 +225,18 @@ are in [OLLAMA_CLOUD_EXTENSION_RESULTS.md](Experiments/OLLAMA_CLOUD_EXTENSION_RE
 [OLLAMA_CLOUD_EXTENSION_POST_ANALYSIS.md](Experiments/OLLAMA_CLOUD_EXTENSION_POST_ANALYSIS.md),
 and [PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md](Experiments/PREREGISTRATION_OLLAMA_CLOUD_EXTENSION.md).
 
-Kimi K3 was later authorized under the maintainer's pay-go budget as a separately preregistered
-successor/mechanism cell. It is complete and is not a retroactive member of the Qwen/K2.7
-inferential family:
+Kimi K3 was later authorized under the maintainer's pay-go budget as a separately specified
+successor/mechanism cell. Its scientific design is attested as pre-outcome, but the missing
+pre-run commit prevents a cryptographic preregistration claim. It is complete and is not a
+retroactive member of the Qwen/K2.7 inferential family:
 
 ```powershell
 pwsh -File run_kimi_k3_extension.ps1 -Mode smoke
 pwsh -File run_kimi_k3_extension.ps1 -Mode full
 ```
 
-The K3 campaign completed 2,400/2,400 calls with zero errors for $16.271841 analytic spend.
+The K3 campaign completed 2,400/2,400 calls with zero errors for $16.271841 analytic spend
+($16.341030 including the excluded smoke).
 Its primary occurrence-weighted rate is 33.30% (95% prompt-cluster interval 27.22–38.81),
 but its prompt risk is 21.50% and its response-macro mean is 4.18%: 46 rare package cap hits
 contribute 81.02% of all unregistered occurrences. This aggregation reversal is documented in
@@ -247,6 +249,12 @@ qualified by the [retrospective provenance stamp](Experiments/PROVENANCE_STAMP_2
 The stamp hashes the attested pre-outcome design core, local chronology, commit-candidate files,
 and raw-artifact index, but does not claim to retroactively create a cryptographic
 preregistration.
+Here, “frozen” applies to prompts, parser, registries, model/sampling settings, estimands, and
+the comparison family. Provenance and completion-gate code was expanded during collection,
+before scoring; the live process had already loaded an earlier implementation. Those changes
+did not alter responses or outcomes, but the executable pipeline was not byte-frozen end to end.
+The numerical and wording corrections from the follow-up review are itemized in
+[FABLE_REVIEW_AMENDMENTS_2026-08-26.md](Experiments/FABLE_REVIEW_AMENDMENTS_2026-08-26.md).
 Because `Tests/` is intentionally git-ignored, run `python build_ollama_artifact_index.py`
 after collection to generate SHA-256, size, and row-count provenance for a separately archived
 raw-artifact bundle. The index contains no response text or candidate package names.
@@ -270,6 +278,9 @@ committed at HEAD and names this exact run, and the preregistration blob is unch
 verified stamp and per-invocation git state are written into `run_manifest.json`. There is
 deliberately no override flag, and because a resume re-runs the gate, editing tracked files
 mid-campaign blocks the resume too. `test_experiment_gate.py` covers the blocking paths.
+Phase manifests now store both new-request and complete-sidecar cap totals, so a legitimate
+resume is validated against `truncated_total_rows` rather than spuriously comparing all sidecar
+rows with only the current invocation's cap count.
 
 The model spec is always `provider:model_id`. Providers: `ollama`, `openai`, `xai` (alias
 `grok`), `anthropic` (alias `claude`), plus `openai_compatible` with `--base-url` for

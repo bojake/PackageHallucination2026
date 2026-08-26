@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T03:32:56.627461+00:00",
+  "generated_at": "2026-08-26T16:38:59.315546+00:00",
   "status": "complete post-hoc mechanism comparison",
   "measurement_note": "K3 cap membership is exact. K2.7 cap membership is the frozen within-phase longest-response proxy and must not be described as exact. Cap exclusion is a diagnostic conditioning analysis, not a causal estimate.",
   "models": {
@@ -276,10 +276,18 @@
       "k2_7_only": 212,
       "k3_only": 32,
       "neither": 534,
-      "prompt_set_jaccard": 0.0827
+      "prompt_set_jaccard": 0.0827,
+      "k2_7_flood_prompts": 234,
+      "k3_flood_prompts": 54,
+      "expected_both_under_independence": 15.795,
+      "odds_ratio": 1.732,
+      "maximum_jaccard_given_marginals": 0.2308,
+      "observed_fraction_of_maximum_jaccard": 0.358
     },
     "bootstrap_replicates": 50000,
-    "seed": 260825
+    "seed": 260825,
+    "stratified_by_dataset": true,
+    "cluster": "prompt"
   },
   "q2_position_rate_cap_excluded": {
     "kimi_k2_7_proxy_excluded": {
@@ -302,5 +310,26 @@
       "51-100": 11.217,
       "101+": 36.745
     }
+  },
+  "kimi_k3_q2_flood_name_diversity": {
+    "responses": 54,
+    "package_set_jaccard": {
+      "pairs": 1431,
+      "mean": 0.0408,
+      "median": 0.0299,
+      "p95": 0.1197
+    },
+    "unregistered_set_jaccard": {
+      "pairs": 1431,
+      "mean": 0.0011,
+      "median": 0.0,
+      "p95": 0.0066
+    },
+    "unique_normalized_packages": 12127,
+    "unique_normalized_unregistered": 8010,
+    "packages_in_at_least_25pct_responses": 112,
+    "packages_in_at_least_50pct_responses": 12,
+    "unregistered_in_at_least_25pct_responses": 0,
+    "unregistered_in_at_least_50pct_responses": 0
   }
 }

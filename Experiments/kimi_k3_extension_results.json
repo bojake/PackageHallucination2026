@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-26T03:28:36+00:00",
-  "status": "complete preregistered Kimi K3 extension",
+  "generated_at": "2026-08-26T16:38:57+00:00",
+  "status": "complete Kimi K3 extension; scientific design attested as pre-outcome, with retrospective provenance limitation",
   "preregistration": "Experiments/PREREGISTRATION_KIMI_K3_EXTENSION.md",
   "primary": {
     "responses": 1600,
@@ -2146,6 +2146,12 @@
       "recentered_null_holm_significant_05": true
     }
   ],
+  "paired_comparison_p_value_reporting": {
+    "bootstrap_replicates": 50000,
+    "holm_family_size": 8,
+    "smallest_resolvable_holm_adjusted_p": 0.00016,
+    "note": "Values at the Monte Carlo/Holm resolution floor are reported as upper bounds (<=), not exact p-values, in the human-readable table."
+  },
   "response_metadata_gate": {
     "passed": true,
     "configuration_checks": {

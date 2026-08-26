@@ -52,8 +52,9 @@ complete only where the cited artifact or verifier establishes the full requirem
 - [x] **Preserve provenance and enforce the pay-go guard.** The runner can retain ordered
   per-response finish reason, cap status, served identity, prompt/completion tokens, and exact
   cost; interrupted runs restore and deduplicate prior spend before launching new calls.
-  Six focused tests cover response shape, ordered sidecars, price requirements, restored
-  accounting, resume deduplication, and K3 identity-drift rejection. Evidence: `llm_api.py`,
+  Seven focused tests cover response shape, ordered sidecars, price requirements, restored
+  accounting, resume deduplication, resume-safe complete cap totals, and K3 identity-drift
+  rejection. Evidence: `llm_api.py`,
   `api_batch.py`, `run_test_api.py`, `score_kimi_k3_extension.py`, and
   `test_api_response_metadata.py`.
 - [x] **Preregister the justified successor cell before analysis.** Kimi K3 identity, frozen
@@ -98,10 +99,16 @@ complete only where the cited artifact or verifier establishes the full requirem
   artifact index; they state that local mtimes and the retrospective digest are corroborating,
   not independent proof. The containing Git commit makes this exact state tamper-evident from
   the commit forward.
+- [x] **Apply the follow-up methodological review.** Floor Holm values are rendered as bounds;
+  the K2.7/K3 post-hoc bootstrap now stratifies by dataset; flood overlap is interpreted using
+  its odds ratio, independence expectation, and marginal-constrained Jaccard; the 8,010-name
+  K3 flood diversity diagnostic is carried into the paper; analytic-only cost is labeled; and
+  resumed phases use complete-sidecar cap totals. The scientific estimates did not change.
+  Evidence: `Experiments/FABLE_REVIEW_AMENDMENTS_2026-08-26.md`.
 
 ## Pending gates
 
-- [x] **Run the final repository audit.** Six focused metadata/provenance tests pass; all
+- [x] **Run the final repository audit.** Thirteen focused metadata/provenance tests pass; all
   modified analysis, runner, scoring, plotting, and bridge scripts compile; four principal
   JSON and five Markdown artifacts reload and are non-empty; the final mechanism figure was
   visually inspected; all 93 raw artifacts reverify; and source/document whitespace checks

@@ -645,8 +645,9 @@ truncation and strict parsing biasing the measured aggregate in both directions.
 
 ### Kimi K3 successor result
 
-Kimi K3 was preregistered as a successor/mechanism test before analytic scoring. Its 2,400-call
-cell passed all 12 ordered response-sidecar gates with zero errors, one served identity, no
+Kimi K3's successor/mechanism design is attested as written before analytic scoring, although
+the missing pre-run commit prevents a cryptographic preregistration claim. Its 2,400-call cell
+passed all 12 ordered response-sidecar gates with zero errors, one served identity, no
 request adjustments, exact finish/cap metadata, and $16.271841 token-derived analytic spend.
 The primary occurrence-weighted rate is 33.30% (95% prompt-cluster interval 27.22–38.81),
 higher than K2.7's 23.10%; all eight separately adjusted comparisons place K3 above the
@@ -663,8 +664,28 @@ The K3 data sharpen the mechanism. Runaway enumeration is less frequent than in 
 contaminated when it occurs, and validity still deteriorates with package position after exact
 cap exclusion: Query 2 rises from roughly 3–6% through position 25 to 9.06%, 11.22%, and
 36.75% at positions 26–50, 51–100, and 101+. The cap is therefore an influential observation
-boundary, not an established root cause. A future within-prompt cap-by-bounded-list factorial
-is justified; another unconstrained model cell is not needed for the present paper.
+boundary, not an established root cause. The flood prompts are positively associated across
+models—22 joint floods versus 15.8 expected under independence, odds ratio about 1.7—so prompt
+susceptibility is real. But unequal marginal flood rates constrain the maximum possible Jaccard
+to 0.231; the observed 0.083 still shows that susceptibility alone does not determine which
+model floods. Moreover, K3's 54 floods contain 8,010 unique normalized unregistered names with
+mean pairwise Jaccard 0.0011, inconsistent with a repeated catalog or degenerate repetition loop.
+A future within-prompt cap-by-bounded-list factorial is justified; another unconstrained model
+cell is not needed for the present paper.
+
+The post-hoc K2.7/K3 prompt-risk and flood-frequency intervals have been rerun with prompts
+resampled independently within each of the four dataset strata, matching the primary bootstrap
+machinery. In the K3 comparison table, Holm values that hit the 50,000-replicate resolution
+floor are now reported as `p ≤ 0.000160`, not exact values. The $16.271841 cost is analytic-only;
+total spend including smoke was $16.341030.
+
+Finally, “frozen” must be scoped to the scientific design. Prompts, parser, registry snapshots,
+model/sampling settings, estimands, diagnostics, and comparison family were fixed, but provenance
+and completion gates were expanded while collection was running and before scoring. The live
+process had loaded the earlier implementation, which is corroborated by the finalized manifest's
+absence of later `restored_*` fields. Those edits did not change responses or outcomes, but the
+pipeline was not byte-frozen end to end, and the retrospective stamp does not repair the missing
+pre-data commit.
 
 ### Updated bottom line
 

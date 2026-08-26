@@ -46,11 +46,13 @@ failure regimes.
     exposes a Kimi K2.7 list-flood failure: its 23.10% aggregate is dominated by 107,955
     Query 2 occurrences, 315 Query 2 cap hits, and a position gradient from about 5% in the
     first ten items to 27.33% after position 100.
-11. The preregistered Kimi K3 successor test reveals an aggregation reversal: K3 has fewer
+11. The pre-outcome-attested Kimi K3 successor test reveals an aggregation reversal: K3 has fewer
     risky prompts and far fewer runaway lists than K2.7, but a worse 33.30% occurrence-weighted
     rate because 46 exact package cap hits contribute 81.02% of its unregistered occurrences.
     Excluding the cap-associated tails only as a post-hoc diagnostic yields nearly identical
-    K3 and K2.7 rates (13.11% and 13.18%).
+    K3 and K2.7 rates (13.11% and 13.18%). The 54 K3 floods contain 8,010 unique normalized
+    unregistered names with mean pairwise Jaccard 0.0011, ruling out a repeated fixed catalog
+    as the main explanation for the tail.
 
 ## Claims to avoid
 
@@ -75,12 +77,16 @@ failure regimes.
 - “Removing cap-hit responses repairs Kimi K2.7.” The first extension runner retained exact
   cap counts only at phase level, so its exclusion analysis uses an explicitly post-hoc
   longest-response proxy. It diagnoses influence but cannot identify exact rows.
-- “Kimi K3 is simply worse than K2.7.” K3 is worse on the preregistered occurrence-weighted
+- “Kimi K3 is simply worse than K2.7.” K3 is worse on the prespecified occurrence-weighted
   estimand, but better on prompt risk (21.50% versus 43.00%), response-macro mean (4.18%
   versus 8.36%), and runaway-list frequency. The ranking depends on the operational question.
 - “The token cap causes K3 hallucinations.” Exact cap status identifies a highly influential
   tail, but cap membership is post-treatment and cannot distinguish runaway enumeration from
   the boundary that truncates it. A randomized within-prompt cap experiment is still needed.
+- “The K2.7 and K3 flood prompts barely overlap, so prompt susceptibility is irrelevant.” The
+  22 joint floods exceed the 15.8 expected under independence (odds ratio about 1.7). The low
+  Jaccard is partly constrained by the unequal 29.25% and 6.75% marginal flood rates; prompt
+  susceptibility contributes, but does not alone determine model-specific flood membership.
 
 ## Research questions
 
@@ -227,6 +233,11 @@ End this section with the seven research questions.
 - **Extension cells:** Qwen 3.5 Cloud and Kimi K2.7 Code Cloud under a separately frozen
   protocol; Kimi K3 under a later successor/mechanism preregistration. These cells extend but
   do not alter Track B's original inferential family.
+- For Kimi K3, define “frozen” narrowly and accurately: prompts, parser, registries, model and
+  sampling settings, estimands, diagnostics, and comparison family were fixed. Provenance and
+  completion-gate code changed during collection, before scoring; the executable pipeline was
+  therefore not byte-frozen end to end, and the run remains retrospectively rather than
+  cryptographically preregistered.
 - State explicitly that Track B is not a scale reproduction of the 2024 paper.
 
 ### 3.2 Prompt corpus and unit of analysis
@@ -280,10 +291,15 @@ Co-report:
 
 - Dataset-stratified prompt-cluster percentile bootstrap intervals.
 - Paired prompt-cluster comparisons across Track B cells.
+- Use the same dataset-stratified paired prompt resampling for the post-hoc K2.7/K3 prompt-risk
+  and flood-frequency comparisons; do not describe a uniform 800-prompt resample as the house
+  standard.
 - Holm correction across 15 pairwise comparisons.
 - Treat the recentered-null bootstrap as a labeled post-hoc sensitivity.
 - Make effect sizes and intervals primary; place p-value tables in a secondary table or
   appendix.
+- Report adjusted values at a finite-bootstrap resolution floor as bounds. For the K3 family,
+  `8 × (1/50,000) = 0.000160` is written `p ≤ 0.000160`, never as an exact p-value.
 - Explain that leave-top-k estimates characterize concentration and are not alternative
   primary estimands.
 
@@ -443,16 +459,22 @@ This should be the paper's signature result.
   43.00%), lower response-macro mean (4.18% versus 8.36%), and only 54 Query 2 responses above
   100 packages versus 234. Yet its rarer capped floods are much more contaminated (52.10%
   versus 23.81% in K2.7's cap proxy), making the pooled occurrence rate worse.
-- On 800 shared Query 2 prompts, K2.7 exceeds K3 prompt risk by 20.63 points (paired bootstrap
-  95% interval 16.50–24.75) and >100-package response frequency by 22.50 points (19.00–26.00).
-  Only 22 prompts flood in both models; flood-prompt Jaccard is 0.083, weakening a
-  prompt-difficulty-only explanation.
+- On 800 shared Query 2 prompts, report the dataset-stratified paired-bootstrap intervals for
+  K2.7 minus K3 prompt risk and >100-package response frequency. Twenty-two prompts flood in
+  both models versus 15.8 expected under independence (odds ratio about 1.7), so there is shared
+  prompt susceptibility. Flood-prompt Jaccard is 0.083 versus a marginal-constrained maximum
+  of 0.231; prompt difficulty contributes but does not alone determine the catastrophic tail.
+- The 54 K3 floods contain 8,010 unique normalized unregistered names; mean pairwise
+  unregistered-name Jaccard is 0.0011 and no name appears in at least 25% of floods. This
+  preempts the claim that the tail is merely one repeated catalog or a degenerate loop. It
+  does not remove the parser's ordinary validity limitations.
 - Late-position degradation remains after exact K3 cap exclusion: Query 2 rises from 2.70–5.62%
   through position 25 to 9.06%, 11.22%, and 36.75% at positions 26–50, 51–100, and 101+.
   The two-stage mechanism is occasional runaway enumeration followed by declining validity;
   the token boundary reveals and censors that process but is not established as its cause.
 - Report the K3 eight-comparison Holm family separately from Campaign 4 and the Qwen/K2.7
-  extension family. Use `KIMI_K3_EXTENSION_RESULTS.md` for the preregistered result and
+  extension family. Use `KIMI_K3_EXTENSION_RESULTS.md` for the prespecified K3 result with its
+  retrospective-provenance qualifier and
   `KIMI_K2_7_VS_K3_POST_ANALYSIS.md` for the explicitly post-hoc mechanism comparison.
 
 ## 5. Discussion
@@ -501,8 +523,16 @@ This should be the paper's signature result.
 ## 6. Threats to validity and limitations
 
 - Python only; package-query task rather than general code generation.
-- The six-cell Campaign 4 benchmark and three separately frozen cloud extensions are purposive,
-  not representative samples of all frontier/local models.
+- The six-cell Campaign 4 benchmark, two separately frozen extension cells, and one later
+  pre-outcome-attested K3 successor are purposive, not representative samples of all
+  frontier/local models.
+- Kimi K3's scientific design was frozen, but its provenance/completion gates were expanded
+  during collection. The finalized manifest's missing later `restored_*` fields corroborate
+  that the live process had loaded an earlier pipeline version. Those edits did not affect
+  prompts, responses, parsing, or estimands, but “frozen pipeline” would overstate the record.
+- The Kimi K3 freeze is supported by a retrospective attestation and later remote commit, not
+  by a tamper-evident pre-data commit; the remote history only anchors the state forward from
+  publication.
 - One fixed prompt subset and one modern generation draw per model.
 - Strict parser has 79.75% end-to-end semantic recall in the initial validation sample.
 - The Track B audit was AI-reviewed at maintainer direction; no human labeled every record.
@@ -590,10 +620,13 @@ Return to three sentences:
 - Separately frozen Qwen/Kimi cloud extension protocol and manifests.
 - Kimi K2.7 query/volume/position post-analysis with explicit cap-proxy labeling.
 - Kimi K3 preregistration, ordered response metadata sidecars, cost ledger, and scoring gate.
-- Kimi K2.7/K3 paired post-analysis with exact/proxy distinction and 50,000-replicate
-  shared-prompt intervals.
+- Kimi K2.7/K3 paired post-analysis with exact/proxy distinction and 50,000-replicate,
+  dataset-stratified shared-prompt intervals, plus the full flood contingency and diversity
+  diagnostics.
 - Retrospective provenance stamp with explicit non-cryptographic-preregistration limitation,
   frozen-core digest, containing commit, and raw-artifact hash index.
+- Fable review amendment ledger documenting the stratified rerun, finite-bootstrap p-value
+  bounds, overlap reinterpretation, mid-run code disclosure, and resume-safe cap gate.
 
 ## Recommended writing order
 

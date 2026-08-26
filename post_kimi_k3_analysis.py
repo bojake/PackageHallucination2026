@@ -82,15 +82,31 @@ def paired_bootstrap(k2: dict, k3: dict) -> dict:
     rng = np.random.default_rng(BOOTSTRAP_SEED)
     risk_diffs = np.empty(BOOTSTRAP_REPS)
     flood_diffs = np.empty(BOOTSTRAP_REPS)
+    strata = []
+    for dataset in campaign.KEYS:
+        indices = np.array([i for i, key in enumerate(keys) if key[0] == dataset])
+        if len(indices) != 200:
+            raise RuntimeError(
+                f"K2.7/K3 dataset stratum gate failed for {dataset}: {len(indices)}"
+            )
+        strata.append(indices)
     for start in range(0, BOOTSTRAP_REPS, 2_000):
         size = min(2_000, BOOTSTRAP_REPS - start)
-        indices = rng.integers(0, len(keys), size=(size, len(keys)))
-        risk_diffs[start:start + size] = (
-            k2_risk[indices].mean(axis=1) - k3_risk[indices].mean(axis=1)
-        ) * 100
-        flood_diffs[start:start + size] = (
-            k2_flood[indices].mean(axis=1) - k3_flood[indices].mean(axis=1)
-        ) * 100
+        risk_chunk = np.zeros(size)
+        flood_chunk = np.zeros(size)
+        for stratum in strata:
+            sampled = stratum[
+                rng.integers(0, len(stratum), size=(size, len(stratum)))
+            ]
+            weight = len(stratum) / len(keys)
+            risk_chunk += weight * (
+                k2_risk[sampled].mean(axis=1) - k3_risk[sampled].mean(axis=1)
+            )
+            flood_chunk += weight * (
+                k2_flood[sampled].mean(axis=1) - k3_flood[sampled].mean(axis=1)
+            )
+        risk_diffs[start:start + size] = risk_chunk * 100
+        flood_diffs[start:start + size] = flood_chunk * 100
 
     def metric(a: np.ndarray, b: np.ndarray, draws: np.ndarray) -> dict:
         diff = 100 * (a.mean() - b.mean())
@@ -112,12 +128,32 @@ def paired_bootstrap(k2: dict, k3: dict) -> dict:
     }
     union = flood_counts["both"] + flood_counts["k2_7_only"] + flood_counts["k3_only"]
     flood_counts["prompt_set_jaccard"] = round(flood_counts["both"] / union, 4)
+    k2_total = flood_counts["both"] + flood_counts["k2_7_only"]
+    k3_total = flood_counts["both"] + flood_counts["k3_only"]
+    expected_both = k2_total * k3_total / len(keys)
+    odds_ratio = (
+        flood_counts["both"] * flood_counts["neither"]
+        / (flood_counts["k2_7_only"] * flood_counts["k3_only"])
+    )
+    maximum_jaccard = min(k2_total, k3_total) / max(k2_total, k3_total)
+    flood_counts.update({
+        "k2_7_flood_prompts": k2_total,
+        "k3_flood_prompts": k3_total,
+        "expected_both_under_independence": round(expected_both, 3),
+        "odds_ratio": round(odds_ratio, 3),
+        "maximum_jaccard_given_marginals": round(maximum_jaccard, 4),
+        "observed_fraction_of_maximum_jaccard": round(
+            flood_counts["prompt_set_jaccard"] / maximum_jaccard, 3
+        ),
+    })
     return {
         "q2_prompt_risk": metric(k2_risk, k3_risk, risk_diffs),
         "q2_responses_over_100_packages": metric(k2_flood, k3_flood, flood_diffs),
         "over_100_prompt_contingency": flood_counts,
         "bootstrap_replicates": BOOTSTRAP_REPS,
         "seed": BOOTSTRAP_SEED,
+        "stratified_by_dataset": True,
+        "cluster": "prompt",
     }
 
 
@@ -177,6 +213,9 @@ def main() -> None:
             "kimi_k2_7_proxy_excluded": position_table(k2_q2_clean),
             "kimi_k3_exact_excluded": position_table(k3_q2_clean),
         },
+        "kimi_k3_q2_flood_name_diversity": diagnostics.pairwise_set_reuse([
+            row for row in k3 if row["mode"] == 2 and row["package_count"] > 100
+        ]),
     }
 
     k2o = result["models"]["kimi_k2_7"]["overall"]
@@ -200,9 +239,11 @@ def main() -> None:
         for label, _, _ in diagnostics.POSITION_BINS
     )
     flood = paired["over_100_prompt_contingency"]
+    diversity = result["kimi_k3_q2_flood_name_diversity"]
     md = f"""# Kimi K2.7 versus Kimi K3 post-analysis
 
-**Status:** complete post-hoc mechanism comparison. The K3 preregistered score remains primary.
+**Status:** complete post-hoc mechanism comparison. The prespecified K3 score remains primary;
+its scientific design is attested as pre-outcome but was not committed before collection.
 
 ## Main finding
 
@@ -238,9 +279,20 @@ versus {k2h['unregistered_rate_pct']:.3f}%).
 | Responses over 100 packages | {ci(paired['q2_responses_over_100_packages'])} |
 
 For >100-package responses, the shared-prompt contingency is: both {flood['both']}, K2.7 only
-{flood['k2_7_only']}, K3 only {flood['k3_only']}, neither {flood['neither']}; prompt-set Jaccard
-is {flood['prompt_set_jaccard']:.4f}. The weak overlap argues against prompt difficulty alone as
-the source of the catastrophic tail.
+{flood['k2_7_only']}, K3 only {flood['k3_only']}, neither {flood['neither']}. The {flood['both']}
+joint floods exceed the {flood['expected_both_under_independence']:.3f} expected under independence
+(odds ratio {flood['odds_ratio']:.3f}), so there is shared prompt susceptibility. Prompt-set
+Jaccard is {flood['prompt_set_jaccard']:.4f}, against a maximum of
+{flood['maximum_jaccard_given_marginals']:.4f} given the unequal marginal flood rates. Prompt
+difficulty therefore contributes, but cannot alone explain which prompts enter each model's
+catastrophic tail.
+
+The {diversity['responses']} K3 floods contain
+{diversity['unique_normalized_unregistered']:,} unique normalized unregistered names. Their mean
+pairwise unregistered-name Jaccard is only
+{diversity['unregistered_set_jaccard']['mean']:.4f}, with no unregistered name appearing in at
+least 25% of floods. This diverse tail is inconsistent with a repeated fixed catalog or a
+degenerate parser/repetition loop, although it does not by itself validate every extracted name.
 
 ## Query 2 position rate after cap diagnostic exclusion
 
@@ -256,10 +308,12 @@ the root cause by itself.
 
 ## Interpretation guardrails
 
-- Preserve the preregistered raw K3 result as primary; do not replace it with cap-excluded rates.
+- Preserve the prespecified raw K3 result as primary; do not replace it with cap-excluded rates.
 - Report prompt risk and response-macro summaries beside the occurrence-weighted rate. They answer
   different deployment questions and reveal K3's better typical response behavior.
 - Treat K2.7 cap membership as a proxy. Exact K3 metadata supports stronger claims only for K3.
+- The paired intervals above resample prompts within each of the four 200-prompt dataset strata,
+  matching the primary bootstrap machinery.
 - The next experiment should vary the package token cap within model and prompt, and should add a
   bounded-list instruction arm. That factorial separates runaway enumeration from token-boundary
   truncation and tests a practical mitigation.

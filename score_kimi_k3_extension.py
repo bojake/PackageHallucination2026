@@ -108,7 +108,16 @@ def validate_metadata(run: str = RUN, expected_rows_per_phase: int = 200) -> dic
                     or phase.get("errors") != 0
                     or phase.get("response_metadata_rows") != expected_rows_per_phase):
                 raise SystemExit(f"manifest phase gate failed for {phase_name}: {phase}")
-            expected = int(phase["truncated_new_requests"])
+            if "truncated_total_rows" in phase:
+                expected = int(phase["truncated_total_rows"])
+            elif int(phase.get("resumed") or 0) == 0:
+                # Historical never-resumed K3 manifest predates the total-row field.
+                expected = int(phase["truncated_new_requests"])
+            else:
+                raise SystemExit(
+                    f"resume-aware cap total unavailable for {phase_name}; "
+                    "a complete sidecar cannot be compared with truncated_new_requests"
+                )
             if missing or truncated != expected:
                 raise SystemExit(
                     f"metadata gate failed for {phase_name}: invalid_rows={invalid_rows}, "
@@ -252,13 +261,27 @@ def main() -> None:
         manifest = json.load(handle)
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "status": "complete preregistered Kimi K3 extension",
+        "status": (
+            "complete Kimi K3 extension; scientific design attested as pre-outcome, "
+            "with retrospective provenance limitation"
+        ),
         "preregistration": "Experiments/PREREGISTRATION_KIMI_K3_EXTENSION.md",
         "primary": primary,
         "prespecified_mechanism_diagnostics": prespecified_mechanism,
         "additional_descriptive_diagnostics": additional_descriptive,
         "exact_package_cap_diagnostics": exact_caps,
         "paired_comparisons": comparisons,
+        "paired_comparison_p_value_reporting": {
+            "bootstrap_replicates": campaign.REPS,
+            "holm_family_size": len(comparisons),
+            "smallest_resolvable_holm_adjusted_p": round(
+                len(comparisons) / campaign.REPS, 6
+            ),
+            "note": (
+                "Values at the Monte Carlo/Holm resolution floor are reported as upper "
+                "bounds (<=), not exact p-values, in the human-readable table."
+            ),
+        },
         "response_metadata_gate": provenance,
         "manifest": extension.manifest_summary(RUN),
         "estimated_cost_usd": manifest["client"]["cost_tracking"]["estimated_cost_usd"],
@@ -300,18 +323,24 @@ def main() -> None:
             f"{position_rate(clean_q2[label])} |"
         )
 
+    holm_floor = len(comparisons) / campaign.REPS
+
+    def adjusted_p(value: float) -> str:
+        return f"≤{holm_floor:.6f}" if value <= holm_floor else f"{value:.6f}"
+
     comparison_rows = []
     for item in comparisons:
         low, high = item["percentile_ci"]
         comparison_rows.append(
             f"| {item['pair']} | {item['observed_diff_pp']:.3f} | "
             f"{low:.3f} to {high:.3f} | "
-            f"{item['bootstrap_tail_holm_p']:.6f} | "
-            f"{item['recentered_null_holm_p']:.6f} |"
+            f"{adjusted_p(item['bootstrap_tail_holm_p'])} | "
+            f"{adjusted_p(item['recentered_null_holm_p'])} |"
         )
     md = f"""# Kimi K3 extension results
 
-**Status:** complete preregistered extension.
+**Status:** complete extension under a pre-outcome-attested scientific design; the missing
+pre-run commit prevents a cryptographic preregistration claim.
 
 | Outcome | Result |
 |---|---:|
@@ -324,7 +353,7 @@ def main() -> None:
 | Exact package-response cap hits | {exact_caps['exact_package_cap_hits']} |
 | Exact package cap-hit rate / occurrences | {rate(cap_only)} / {cap_only['parsed_package_occurrences']:,} |
 | Excluding exact package cap hits | {rate(cap_excluded)} / {cap_excluded['parsed_package_occurrences']:,} occurrences |
-| Estimated pay-go cost | ${result['estimated_cost_usd']:.2f} |
+| Estimated analytic pay-go cost (smoke excluded) | ${result['estimated_cost_usd']:.2f} |
 
 All 2,400 responses passed the ordered metadata-sidecar gate. The machine-readable artifact
 contains the prespecified position, response-volume, query, dataset, and exact cap diagnostics,
@@ -340,11 +369,25 @@ and quartile summaries are explicitly stored as descriptive rather than prespeci
 ## Paired comparisons
 
 Differences are comparator minus Kimi K3 in percentage points. Each row uses all 800 shared
-prompts. Both Holm columns adjust the separately frozen eight-comparison K3 family.
+prompts. Both Holm columns adjust the separately specified eight-comparison K3 family.
+Values shown as ≤0.000160 reached the 50,000-replicate Monte Carlo/Holm resolution floor and
+must not be read as exact p-values.
 
 | Pair | Difference (pp) | 95% percentile CI | Holm bootstrap-tail p | Holm recentered-null p |
 |---|---:|---:|---:|---:|
 {os.linesep.join(comparison_rows)}
+
+## Protocol and implementation provenance
+
+“Frozen” applies to the scientific design: prompts, parser, registries, model and sampling
+settings, primary estimand, mechanism summaries, bootstrap plan, and comparison family.
+Provenance and completion-gate code was expanded while collection was in flight, before package
+responses were scored. The live collector had already loaded the earlier implementation—visible
+because its finalized manifest lacks fields added later to `llm_api.py`—so the executable
+pipeline was not byte-frozen end to end. These edits recorded identity, cap, cost, completeness,
+and artifact hashes; they did not change prompts, responses, parser decisions, or outcome
+calculations. The retrospective provenance stamp preserves this limitation and does not convert
+the run into a cryptographic pre-data preregistration.
 """
     with open(OUT_MD, "w", encoding="utf-8", newline="") as handle:
         handle.write(md)

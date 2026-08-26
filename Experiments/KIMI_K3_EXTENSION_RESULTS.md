@@ -1,6 +1,7 @@
 # Kimi K3 extension results
 
-**Status:** complete preregistered extension.
+**Status:** complete extension under a pre-outcome-attested scientific design; the missing
+pre-run commit prevents a cryptographic preregistration claim.
 
 | Outcome | Result |
 |---|---:|
@@ -13,7 +14,7 @@
 | Exact package-response cap hits | 46 |
 | Exact package cap-hit rate / occurrences | 52.10% / 13,408 |
 | Excluding exact package cap hits | 13.11% / 12,481 occurrences |
-| Estimated pay-go cost | $16.27 |
+| Estimated analytic pay-go cost (smoke excluded) | $16.27 |
 
 All 2,400 responses passed the ordered metadata-sidecar gate. The machine-readable artifact
 contains the prespecified position, response-volume, query, dataset, and exact cap diagnostics,
@@ -36,15 +37,29 @@ and quartile summaries are explicitly stored as descriptive rather than prespeci
 ## Paired comparisons
 
 Differences are comparator minus Kimi K3 in percentage points. Each row uses all 800 shared
-prompts. Both Holm columns adjust the separately frozen eight-comparison K3 family.
+prompts. Both Holm columns adjust the separately specified eight-comparison K3 family.
+Values shown as ≤0.000160 reached the 50,000-replicate Monte Carlo/Holm resolution floor and
+must not be read as exact p-values.
 
 | Pair | Difference (pp) | 95% percentile CI | Holm bootstrap-tail p | Holm recentered-null p |
 |---|---:|---:|---:|---:|
-| claude-opus-5 vs kimi-k3:cloud | -31.985 | -37.403 to -25.930 | 0.000160 | 0.000160 |
-| gpt-5.2-2025-12-11 vs kimi-k3:cloud | -31.417 | -36.964 to -25.323 | 0.000160 | 0.000160 |
-| gpt-oss:20b vs kimi-k3:cloud | -31.147 | -36.652 to -25.064 | 0.000160 | 0.000160 |
+| claude-opus-5 vs kimi-k3:cloud | -31.985 | -37.403 to -25.930 | ≤0.000160 | ≤0.000160 |
+| gpt-5.2-2025-12-11 vs kimi-k3:cloud | -31.417 | -36.964 to -25.323 | ≤0.000160 | ≤0.000160 |
+| gpt-oss:20b vs kimi-k3:cloud | -31.147 | -36.652 to -25.064 | ≤0.000160 | ≤0.000160 |
 | grok-4.6 vs kimi-k3:cloud | -25.082 | -34.682 to -13.286 | 0.000360 | 0.000180 |
-| deepseek-coder-v2:16b vs kimi-k3:cloud | -23.000 | -28.676 to -16.700 | 0.000160 | 0.000160 |
+| deepseek-coder-v2:16b vs kimi-k3:cloud | -23.000 | -28.676 to -16.700 | ≤0.000160 | ≤0.000160 |
 | deepseek-v4-flash vs kimi-k3:cloud | -15.394 | -28.508 to -1.998 | 0.025200 | 0.020720 |
-| qwen3.5:cloud vs kimi-k3:cloud | -30.532 | -36.110 to -24.350 | 0.000160 | 0.000160 |
+| qwen3.5:cloud vs kimi-k3:cloud | -30.532 | -36.110 to -24.350 | ≤0.000160 | ≤0.000160 |
 | kimi-k2.7-code:cloud vs kimi-k3:cloud | -10.198 | -16.425 to -3.442 | 0.006800 | 0.004200 |
+
+## Protocol and implementation provenance
+
+“Frozen” applies to the scientific design: prompts, parser, registries, model and sampling
+settings, primary estimand, mechanism summaries, bootstrap plan, and comparison family.
+Provenance and completion-gate code was expanded while collection was in flight, before package
+responses were scored. The live collector had already loaded the earlier implementation—visible
+because its finalized manifest lacks fields added later to `llm_api.py`—so the executable
+pipeline was not byte-frozen end to end. These edits recorded identity, cap, cost, completeness,
+and artifact hashes; they did not change prompts, responses, parser decisions, or outcome
+calculations. The retrospective provenance stamp preserves this limitation and does not convert
+the run into a cryptographic pre-data preregistration.

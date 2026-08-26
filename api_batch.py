@@ -141,10 +141,17 @@ def run_batch(client, items, build_messages, outfile, max_tokens,
             if os.path.exists(path):
                 os.remove(path)
 
-    # Truncations among the requests THIS invocation made. Rows recovered from a prior
-    # partial file are not re-measured, so a resumed phase undercounts relative to a fresh
-    # one -- callers wanting exact per-phase cap-hit denominators should run without resume.
+    # Preserve both invocation-specific and complete-phase truncation counts. The latter is
+    # reconstructed from the ordered sidecar metadata and therefore remains exact after a
+    # legitimate resume; scorers must not compare a complete sidecar with the new-request-only
+    # counter.
+    truncated_total_rows = sum(
+        bool(record.get("truncated"))
+        for record in response_metadata.values()
+        if isinstance(record, dict) and not record.get("metadata_missing")
+    )
     return {"items": len(items), "requested": len(todo), "resumed": len(items) - len(todo),
             "errors": len(errors), "truncated_new_requests": client.truncated - truncated_before,
+            "truncated_total_rows": truncated_total_rows,
             "response_metadata_rows": len(response_metadata),
             "response_metadata_path": _metadata_path(outfile).replace("\\", "/")}

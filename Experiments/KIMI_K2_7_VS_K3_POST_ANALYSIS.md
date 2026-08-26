@@ -1,6 +1,7 @@
 # Kimi K2.7 versus Kimi K3 post-analysis
 
-**Status:** complete post-hoc mechanism comparison. The K3 preregistered score remains primary.
+**Status:** complete post-hoc mechanism comparison. The prespecified K3 score remains primary;
+its scientific design is attested as pre-outcome but was not committed before collection.
 
 ## Main finding
 
@@ -36,9 +37,20 @@ versus 23.808%).
 | Responses over 100 packages | 22.500 (19.000 to 26.000) |
 
 For >100-package responses, the shared-prompt contingency is: both 22, K2.7 only
-212, K3 only 32, neither 534; prompt-set Jaccard
-is 0.0827. The weak overlap argues against prompt difficulty alone as
-the source of the catastrophic tail.
+212, K3 only 32, neither 534. The 22
+joint floods exceed the 15.795 expected under independence
+(odds ratio 1.732), so there is shared prompt susceptibility. Prompt-set
+Jaccard is 0.0827, against a maximum of
+0.2308 given the unequal marginal flood rates. Prompt
+difficulty therefore contributes, but cannot alone explain which prompts enter each model's
+catastrophic tail.
+
+The 54 K3 floods contain
+8,010 unique normalized unregistered names. Their mean
+pairwise unregistered-name Jaccard is only
+0.0011, with no unregistered name appearing in at
+least 25% of floods. This diverse tail is inconsistent with a repeated fixed catalog or a
+degenerate parser/repetition loop, although it does not by itself validate every extracted name.
 
 ## Query 2 position rate after cap diagnostic exclusion
 
@@ -61,10 +73,12 @@ the root cause by itself.
 
 ## Interpretation guardrails
 
-- Preserve the preregistered raw K3 result as primary; do not replace it with cap-excluded rates.
+- Preserve the prespecified raw K3 result as primary; do not replace it with cap-excluded rates.
 - Report prompt risk and response-macro summaries beside the occurrence-weighted rate. They answer
   different deployment questions and reveal K3's better typical response behavior.
 - Treat K2.7 cap membership as a proxy. Exact K3 metadata supports stronger claims only for K3.
+- The paired intervals above resample prompts within each of the four 200-prompt dataset strata,
+  matching the primary bootstrap machinery.
 - The next experiment should vary the package token cap within model and prompt, and should add a
   bounded-list instruction arm. That factorial separates runaway enumeration from token-boundary
   truncation and tests a practical mitigation.
