@@ -403,11 +403,12 @@ Two of its 59 flagged names are now-registered packages: `python-design-patterns
 upload 2024-10-18) and `pyjpeg` (first upload **2026-06-17** — roughly ten months after the
 model's release, the temporal shape of the slopsquatting risk the original warns about,
 though registration by an unrelated party is indistinguishable from coincidence here). The
-remaining top repeats are standard-library modules named as installable packages
-(`[redacted-stdlib-module-name]` 9×, `[redacted-stdlib-module-name]` 6×) and a plausible sibling of a real package
-(`[redacted-nonexistent-sibling-name]` 5×, cf. `pyobjc-framework-cocoa`) — the module-vs-package
-confusion the original discusses in Appendix G, not free invention. All were verified absent
-from the frozen master list.
+remaining top repeats are two standard-library module names written as installable packages
+(9× and 6×) and a plausible but non-existent sibling of a real multi-package framework (5×) —
+the module-vs-package confusion the original discusses in Appendix G, not free invention. All
+were verified absent from the frozen master list. *(Redacted 2026-09-27: earlier revisions of
+this report printed those three still-unregistered names here; they were replaced with
+descriptions under the release policy. The raw run under `Tests/` retains them.)*
 
 ### 5.7 Levenshtein proximity: exploratory, and dominated by the reference set
 

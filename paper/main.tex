@@ -174,7 +174,8 @@ useful for the original task. Every extracted name is normalized and looked up i
 registry names taken on 2024-01-10. Any name that is missing from the list counts as a hallucination.
 The threat model is an attacker with no special access who can register packages. The study withheld
 the hallucinated names themselves for safety. We adopt both the threat model and the release policy:
-no candidate unregistered name appears in this paper or its artifacts. The original study describes
+no candidate unregistered name appears in this paper or its result artifacts
+(\S\ref{sec:ethics} records one lapse in the repository's earlier reports). The original study describes
 the threat as a variation of the classical package confusion attack. The name
 \emph{slopsquatting}, modeled on typosquatting, was coined by Seth Larson and popularized by Andrew
 Nesbitt in April 2025 \citep{nesbitt2025slopsquatting,gooding2025slopsquatting}, roughly ten months
@@ -915,6 +916,30 @@ responses are kept outside version control under a content-addressed index and c
 verified researchers under a responsible-access policy. This work measures unsafe recommendations. It
 does not show that any named package is malicious, and a name registered after a model first
 recommended it cannot be distinguished here from an unrelated coincidence.
+
+Two caveats belong next to that policy. First, withholding the list is a weak control. The
+pipeline, the prompts, the parser, and both registry snapshots are public, and anyone with access
+to the models can regenerate a comparable list. Our Kimi K3 cell cost \$16.27 in API spend, and
+Churilov reports \$860.90 for a full five-model sweep. A fresh run would not reproduce our list
+exactly, because decoding is random and hosted models change, but it would overlap heavily with
+it. What the policy buys is that we are not the direct source of a ready-made target list. It buys
+no secrecy; the gate is a few dollars and some obscurity. The threat that matters is the model
+itself. A frontier model produces names that look right, names with the shape of real packages, of
+standard-library modules, and of neighbouring packages in the same family, and it produces them for
+the attacker and the victim alike. The attacker uses the model to enumerate targets; the developer
+trusts the model's recommendation. Churilov's finding that 53 of the 127 names invented by all five
+of that study's models were still registrable after disclosure shows that the surface is real. How
+convincing these names are to a developer, and how often one would be installed without a check,
+is not something this study measured. It is the right next question for the security side of this
+work.
+
+Second, the release policy was applied imperfectly to the repository's own working documents. An
+early version of the replication report named five flagged names from a pre-campaign gpt-oss run
+as examples. Two of them are registered on PyPI today, one of them registered ten months after the
+model first recommended it. The other three were still unregistered when this paper was written.
+We have replaced them with descriptions in the current documents, but earlier revisions under
+version control still contain them. No candidate name appears in this paper, in the result
+artifacts, or in the figures.
 
 \section{Conclusion}
 \label{sec:conclusion}
