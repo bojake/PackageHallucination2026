@@ -13,6 +13,8 @@ try {
     Push-Location (Join-Path $root "paper")
     try {
         latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+        # The tracked deliverable carries the paper's name; main.pdf is the raw build output.
+        Copy-Item main.pdf PackageHallucinationRevisitedPaper.pdf -Force
     } finally {
         Pop-Location
     }

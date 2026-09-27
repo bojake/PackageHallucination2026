@@ -47,29 +47,29 @@
 \maketitle
 
 \begin{abstract}
-Package hallucinations---recommendations of package names that do not exist on the target
-registry---create correctness and software-supply-chain risk, but published rates can conflate
-model behavior with measurement artifacts. We reproduce the historical model comparison of
-Spracklen et al.\ under its own protocol with three generation seeds per model, validate a
-grammar-aware parser that treats non-conforming responses as abstentions, run a deterministic
-paired token-cap diagnostic, and benchmark six current hosted and local models on 800 fixed Python
-prompts with two package queries each, under a preregistered two-track design; separately frozen
-extension cells add Qwen 3.5, Kimi K2.7, and Kimi K3. CodeLlama reproduces near the published value
-(seed mean 24.55\% versus 26.12\%), and DeepSeek preserves the historical ordering and broad
-magnitude, but its family-parser estimates of 13.28--13.54\% fall below the published 16.61\% with
-every seed interval excluding it. The large token-cap association reported in our earlier
-replication and its independent audit \citep{anderson2026replication,codex2026audit} does not
-reproduce as a systematic or monotone effect. Primary unregistered-PyPI recommendation rates for modern models
-range from 1.31\% to 17.91\%, yet concentration analysis reveals three qualitatively different
-regimes: three responses supply 82.88\% of Grok~4.6's and 72.42\% of DeepSeek V4 Flash's
-unregistered recommendations, whereas DeepSeek Coder V2's 10.30\% is diffuse. The Kimi K3 cell
-extends the range to 33.30\%, where 46 capped responses supply 81.02\% of unregistered occurrences
-despite lower prompt-level risk than its predecessor---an aggregation reversal. Rescoring identical
-outputs with the code-import extractor of a concurrent 2026 replication leaves the original six cells
-at 8.30--17.49\%, and prompt-conditioned overlap shows that four of the five names shared by all six
-models arise on an identical prompt. Valid evaluation requires registry-versioned scoring, explicit
-parser coverage, prompt-cluster uncertainty, and concentration diagnostics; a single average rate is
-inadequate.
+When a code model recommends a package that does not exist on the registry, anyone can register
+that name and fill it with malicious code. Several studies now report how often models do this. We
+show that the reported rate depends heavily on how it is measured. We re-ran the 2024 study by
+Spracklen et al.\ under its own settings, with three random seeds per model. We built a stricter
+parser that refuses to mine package names out of prose or code, and we checked it against labeled
+samples. We ran a controlled test of the token cap that earlier work had blamed for large rate
+changes. We then measured six current models on the same 800 Python prompts, with two package
+questions per prompt, under a plan fixed before any data were collected. Three later cells added
+Qwen 3.5, Kimi K2.7, and Kimi K3. The old results mostly hold up. CodeLlama came out at 24.55\%
+against a published 26.12\%. DeepSeek kept its rank, but under its own original parser it scored
+13.28--13.54\%, below the published 16.61\%, and every seed's confidence interval excluded that
+value. The token-cap effect that we and an independent audit had reported earlier
+\citep{anderson2026replication,codex2026audit} did not reappear as a consistent or monotone effect.
+Modern models ranged from 1.31\% to 17.91\%, but the average hides three different kinds of failure.
+For Grok~4.6 and DeepSeek V4 Flash, three answers supplied 82.88\% and 72.42\% of all unregistered
+names; DeepSeek Coder V2's 10.30\% was spread across many prompts. Kimi K3 pushed the range to
+33.30\%, yet 46 answers that hit the token cap supplied 81.02\% of its unregistered names, and it put
+fewer prompts at risk than its predecessor, so the ranking between the two flips with the choice of
+metric. Rescoring the same outputs with the extractor of a concurrent 2026 replication kept the
+original six cells at 8.30--17.49\%, and four of the five names that all six models produced came
+from one identical prompt. A single average rate is not enough. Rates need a dated registry, a stated
+parser with its coverage, confidence intervals built on prompts, and a measure of how concentrated
+the errors are.
 \end{abstract}
 
 \section{Introduction}
@@ -77,168 +77,178 @@ inadequate.
 
 \subsection{Motivation}
 
-Code-generating language models do not only write code; they recommend dependencies. When a
-developer asks which packages a task needs, the model answers with names, and when one of those
-names is not registered on the package index, anyone can register it. This is the
-\emph{slopsquatting} threat \citep{nesbitt2025slopsquatting,gooding2025slopsquatting}: an adversary
-registers a malicious package under a name that models are already priming developers to install
-\citep{lanyado2023trust,lanyado2024diving,spracklen2025package}. Unlike typosquatting
-\citep{neupane2023beyond,ohm2020backstabber,zimmermann2019small,ladisa2023sok}, the attacker
-neither waits for a typo nor needs a name leak; the model supplies the name and the confidence.
+Code models do more than write code. Ask one which packages you need, and it answers with names. If
+one of those names is not registered on the package index, anyone can register it. This is the
+\emph{slopsquatting} threat \citep{nesbitt2025slopsquatting,gooding2025slopsquatting}: an attacker
+publishes a malicious package under a name that models are already telling developers to install
+\citep{lanyado2023trust,lanyado2024diving,spracklen2025package}. Typosquatting
+\citep{neupane2023beyond,ohm2020backstabber,zimmermann2019small,ladisa2023sok} waits for a developer
+to mistype a name. Slopsquatting does not have to wait. The model supplies both the name and the
+confidence.
 
-Two distinctions matter before anything is counted. First, a recommendation and a generated import
-are different observations: an install directive or an answer to ``which packages do I need'' is
-an explicit recommendation, whereas an import inside generated code may denote a project-local
-module. Second, an unregistered name is not necessarily a fabricated one. Models routinely name
-real system, \texttt{apt}, npm, Java, or Go artifacts that are simply not installable from PyPI, and
-they routinely name standard-library modules as if they were packages. Both are unsafe PyPI
-recommendations; they are different semantic failures. We therefore measure an
-\emph{unregistered-PyPI recommendation rate} and reserve the word ``hallucination'' for the
-historical metric we replicate.
+Two distinctions matter before we count anything. First, a recommendation is not the same as an
+import. An install command, or an answer to ``which packages do I need,'' is an explicit
+recommendation. An import statement inside generated code might just refer to a file in the same
+project. Second, a name that is not on PyPI is not necessarily made up. Models often name real tools
+from other ecosystems, such as \texttt{apt}, npm, Java, or Go packages, that simply cannot be
+installed with pip. They also name Python standard-library modules as if they were packages. All of
+these are unsafe recommendations, but they are different mistakes. So we measure an
+\emph{unregistered-PyPI recommendation rate}, and we use the word ``hallucination'' only for the
+older metric that we replicate.
 
-The replication problem follows directly. A reported rate depends on how free-form model text is
-converted into package tokens, on which registry snapshot is treated as ground truth, on the token
-budget the model was allowed, and on how the numerator is distributed across responses. None of
-these is a clerical detail. Each one changed a scientific conclusion in the work reported here.
+This is also why replication is hard. A reported rate depends on four choices: how the model's free
+text is turned into package names, which snapshot of the registry counts as the truth, how many
+tokens the model was allowed to produce, and how the errors are spread across answers. None of these
+is a small detail. Each of them changed a conclusion in the work reported here.
 
 \subsection{Gap}
 
-Spracklen et al.\ \citep{spracklen2025package} established the phenomenon at scale: across 16
-models and 576,000 code samples, 19.7\% of recommended packages were hallucinated, and 205,474
-unique hallucinated names were observed. A concurrent 2026 replication on five frontier models
-\citep{churilov2026range} reports a compressed inter-model range and a model-agnostic set of
-universally hallucinated names. Both report average package-level rates. Our own earlier attempts
-to replicate the 2024 result through a provider-agnostic HTTP client \citep{anderson2026replication},
-audited independently \citep{codex2026audit}, exposed four ways an average can mislead: a permissive comma-splitting
-parser that scores code fragments and prose as hallucinated packages, truncation that either
-silently zeroes a reasoning model or cuts a list mid-name, registry drift that reclassifies names
-without any change in the model, and model-artifact ambiguity between a 2024 checkpoint and its
-2026 serving stack. Averages also do not reveal whether risk is routine and diffuse or concentrated
-in rare recommendation floods, which call for different mitigations.
+Spracklen et al.\ \citep{spracklen2025package} established the problem at scale. Across 16 models
+and 576,000 code samples, 19.7\% of recommended packages did not exist, and 205,474 different invented
+names appeared. A 2026 replication on five frontier models \citep{churilov2026range} reports that the
+gap between models has narrowed and that some names are invented by every model. Both studies report
+one average rate per model. Our own first attempt to replicate the 2024 result through a plain HTTP
+client \citep{anderson2026replication}, checked by an independent audit \citep{codex2026audit},
+found four ways that an average can mislead:
+\begin{itemize}
+\item A permissive parser that splits text on commas counts code fragments and prose as invented
+  packages.
+\item A token cap can silently produce empty answers from a reasoning model, or cut a list in the
+  middle of a name.
+\item The registry changes over time, so a name can switch from ``invented'' to ``real'' with no
+  change in the model.
+\item A 2024 checkpoint served through a 2026 stack is not provably the same model.
+\end{itemize}
+An average also cannot tell you whether the risk is spread evenly or concentrated in a few runaway
+answers. Those two situations call for different defenses.
 
 \subsection{Contributions}
 
 \begin{enumerate}
-\item A powered, seed-repeated artifact replication that separates broad reproduction from exact
-  numerical replication of the 2024 result (\S\ref{sec:tracka}).
-\item A validated grammar-aware parser with explicit abstention and response-format outcomes,
-  audited on hosted-model formats after the campaign (\S\ref{sec:instrument}, \S\ref{sec:validation}).
-\item A deterministic paired token-cap diagnostic that tests a previously suspected mechanism
+\item A properly powered replication of the 2024 result, with three seeds per model, that separates
+  ``the pattern holds'' from ``the exact number holds'' (\S\ref{sec:tracka}).
+\item A strict, validated parser that refuses unclear answers instead of guessing, checked again on
+  the newer hosted-model output formats after the campaign (\S\ref{sec:instrument},
+  \S\ref{sec:validation}).
+\item A controlled experiment on the token cap, with identical prompts and deterministic decoding
   (\S\ref{sec:cap}).
-\item A six-model modern benchmark with dual registries, prompt-cluster inference, and a
-  diffuse-versus-catastrophic tail characterization (\S\ref{sec:trackb}--\S\ref{sec:pairwise}),
-  extended by three separately frozen cloud cells whose successor comparison exposes an
-  aggregation reversal (\S\ref{sec:extension}, \S\ref{sec:k3}).
-\item A direct bridge to the concurrent Churilov study that holds model outputs fixed while
-  changing the extractor, plus a prompt-conditioned overlap analysis that distinguishes shared
-  elicitation from model-independent names (\S\ref{sec:bridge}).
+\item A benchmark of six current models on the same prompts, scored against two registry snapshots,
+  with confidence intervals that respect the prompt structure and a way to tell diffuse failures from
+  catastrophic ones (\S\ref{sec:trackb}--\S\ref{sec:pairwise}). Three later cells extend it, and the
+  comparison between Kimi K2.7 and Kimi K3 shows a ranking that flips with the choice of metric
+  (\S\ref{sec:extension}, \S\ref{sec:k3}).
+\item A direct comparison with the concurrent Churilov study, made by rescoring our own outputs
+  with that study's extractor, plus an overlap analysis that asks whether names shared across models
+  come from shared prompts (\S\ref{sec:bridge}).
 \end{enumerate}
 
 \subsection{Result preview}
 
-CodeLlama 7B measures 24.55\% (seed mean) under the generic parser against a published 26.12\%;
-DeepSeek Coder 6.7B measures 13.43\% under its historical family parser against 16.61\%, with all
-three seed intervals excluding the published value. The paired cap diagnostic finds no systematic or
-monotone association. Modern primary rates span 1.31--17.91\% with radically different concentration.
-The code-import bridge leaves the original Campaign~4 cells at 8.30--17.49\% and adds extension
-cells at 6.51\% (Qwen 3.5), 7.38\% (Kimi K2.7), and 8.37\% (Kimi K3); 608 of 621 flagged mentions
-(97.91\%) arise from imports rather than explicit install directives. Five unregistered names span all
-six Campaign~4 models, but four of them have same-prompt support across all six. The cloud extension
-adds a low-rate Qwen 3.5 cell (2.77\%; 95\% cluster interval 2.07--3.54) and a Kimi K2.7 list-flood
-failure whose 23.10\% aggregate falls to 4.95\% among responses with at most ten parsed packages
-and rises steeply with package position. Kimi K3 scores 33.30\% (27.22--38.81) occurrence-weighted
-with 21.50\% prompt risk and a 4.18\% response-macro mean; after diagnostic exclusion of its 46 exact
-package cap hits, K3 and K2.7 are 13.11\% and 13.18\%.
+\begin{itemize}
+\item CodeLlama 7B: 24.55\% (mean of three seeds) against a published 26.12\%.
+\item DeepSeek Coder 6.7B under its original parser: 13.43\% against a published 16.61\%. All three
+  seed intervals exclude the published value.
+\item Token cap: no consistent or monotone effect in the controlled test.
+\item Modern models: primary rates from 1.31\% to 17.91\%, with very different concentration.
+\item Rescoring with Churilov's extractor: the original six Campaign~4 cells stay at 8.30--17.49\%.
+  The extension cells score 6.51\% (Qwen 3.5), 7.38\% (Kimi K2.7), and 8.37\% (Kimi K3). Of the 621
+  flagged mentions, 608 (97.91\%) come from imports rather than install commands.
+\item Overlap: five names appear in all six Campaign~4 models, and four of them appear in all six on
+  the same prompt.
+\item Cloud extension: Qwen 3.5 at 2.77\% (95\% interval 2.07--3.54). Kimi K2.7 at 23.10\%, but only
+  4.95\% among answers with at most ten packages, and rising steeply with list position.
+\item Kimi K3: 33.30\% (27.22--38.81) when every recommended name counts equally, 21.50\% of prompts
+  at risk, and a 4.18\% mean rate per answer. Setting aside its 46 cap-hit answers, as a diagnostic
+  only, gives 13.11\%, next to K2.7's 13.18\%.
+\end{itemize}
 
 \section{Background and related work}
 \label{sec:background}
 
 \subsection{Package hallucinations and supply-chain risk}
 
-The original study \citep{spracklen2025package} measures package hallucination through three
-channels: \texttt{pip install} and \texttt{npm install} directives parsed out of generated code, a
-query asking which packages the model's own generated code requires, and a query asking which
-packages would be useful for the original task. Extracted names are normalized and compared against
-a master list of registry names snapshotted on 2024-01-10; any absent name is a hallucination. The
-threat model is an unprivileged adversary who can register packages, and the study's responsible
-disclosure withheld the hallucinated names themselves. We adopt the same threat model and the same
-release policy: no candidate unregistered name appears in this paper or its artifacts. The original
-study describes the resulting threat as a variation of the classical package confusion attack; the
-name \emph{slopsquatting}, modeled on typosquatting, was coined by Seth Larson and popularized by
-Andrew Nesbitt in April 2025 \citep{nesbitt2025slopsquatting,gooding2025slopsquatting}, roughly ten
-months after the study's preprint appeared.
+The original study \citep{spracklen2025package} counts package hallucinations in three ways. It
+parses \texttt{pip install} and \texttt{npm install} commands out of generated code. It asks the
+model which packages its own generated code requires. And it asks the model which packages would be
+useful for the original task. Every extracted name is normalized and looked up in a master list of
+registry names taken on 2024-01-10. Any name that is missing from the list counts as a hallucination.
+The threat model is an attacker with no special access who can register packages. The study withheld
+the hallucinated names themselves for safety. We adopt both the threat model and the release policy:
+no candidate unregistered name appears in this paper or its artifacts. The original study describes
+the threat as a variation of the classical package confusion attack. The name
+\emph{slopsquatting}, modeled on typosquatting, was coined by Seth Larson and popularized by Andrew
+Nesbitt in April 2025 \citep{nesbitt2025slopsquatting,gooding2025slopsquatting}, roughly ten months
+after the study's preprint appeared.
 
-Three terms recur below. A \emph{package recommendation} is a name the model offered in answer to a
-package query; a \emph{generated import} is a name that appears in an import statement of generated
-code. An \emph{unregistered name} is absent from the relevant PyPI snapshot. An \emph{ecosystem
-mismatch} is an unregistered name that denotes a real artifact elsewhere. All three are relevant to
-slopsquatting; only the first two are directly comparable across studies that use the same channel.
+Three terms recur below. A \emph{package recommendation} is a name the model offered when asked a
+package question. A \emph{generated import} is a name that appears in an import statement of
+generated code. An \emph{unregistered name} is absent from the relevant PyPI snapshot, and an
+\emph{ecosystem mismatch} is an unregistered name that is a real package somewhere else. All of these
+matter for slopsquatting, but only rates built on the same channel can be compared across studies.
 
 \subsection{Evaluation of code-generating models}
 
-Benchmarks of code models \citep{chen2021codex} pin model versions and report a single number per
-model; hosted models make pinning harder, because an alias can change what it serves. Stochastic
-decoding means a single run is a draw, and comparisons across models on the same prompts should be
-paired by prompt. Most importantly for this measurement, per-package observations are not
-independent: the several names in one response share a prompt, a task, and a generation trajectory.
-Treating them as independent Bernoulli trials is pseudoreplication \citep{hurlbert1984pseudoreplication};
-the appropriate unit of resampling is the cluster \citep{cameron2008bootstrap,efron1993bootstrap}.
+Code benchmarks \citep{chen2021codex} pin a model version and report one number per model. Hosted
+models make pinning harder, because the same alias can serve a different model next month. Decoding
+is random, so one run is one draw, and two models should be compared on the same prompts, pair by
+pair. Most important for this measurement, the package names in one answer are not independent
+observations. They share a prompt, a task, and a single generation. Treating each name as its own
+coin flip is pseudoreplication \citep{hurlbert1984pseudoreplication}. The right unit for resampling is
+the cluster, here the prompt \citep{cameron2008bootstrap,efron1993bootstrap}.
 
 \subsection{Measurement error in free-form generations}
 
-Converting free-form text into package tokens is a classification task with its own precision and
-recall. A permissive parser has high recall and manufactures false positives when the model drifts
-out of the requested format; a strict parser abstains on non-conforming responses and loses genuine
-recommendations embedded in prose. Either choice is a measurement decision that must be reported
-with the rate. Registry membership is also time-dependent: names are registered and deleted after
-any snapshot, so a name can move from ``hallucinated'' to registered, or from registered to
-deleted, with no change in the model. Finally, the response format itself is a variable. A token cap
-truncates lists; a reasoning model may spend its whole budget on hidden reasoning and return nothing;
-a hosted endpoint may leak a literal control token into content. Each of these can be mistaken for
-model behavior.
+Turning free text into package names is a classification task, and it has its own precision and
+recall. A permissive parser catches almost everything but invents false positives whenever the model
+stops following the requested format. A strict parser refuses answers that do not follow the format
+and misses real recommendations buried in prose. Either way, the choice is part of the measurement
+and belongs next to the rate. Registry membership also changes over time. Names get registered and
+deleted after any snapshot, so a name can move from ``hallucinated'' to real, or from real to
+deleted, while the model stays the same. Finally, the shape of the response matters. A token cap cuts
+lists short. A reasoning model can spend its whole budget on hidden reasoning and return nothing. A
+hosted endpoint can leak a literal control token into the text. Each of these looks like model
+behavior if nobody checks.
 
 \subsection{Concurrent 2026 replication}
 
-Churilov \citep{churilov2026range} re-ran the original prompt corpus in full (199,845 Python and
-JavaScript generations) on five frontier models released between October 2025 and March 2026,
-extracting package references from generated code (install directives plus imports) and validating
-against the original master lists. Beyond replication, that work identifies 127 names hallucinated by
-all five models, of which 53 remained registrable after coordinated disclosure with PyPI Security and
-Socket.dev, documents a Python-over-JavaScript asymmetry, and reports a Haiku-below-Sonnet inversion.
-It is the broader study in languages, corpus size, registrability testing, and disclosure, and it
-establishes that the cross-model attack surface is operationally real.
+Churilov \citep{churilov2026range} re-ran the full original prompt corpus (199,845 Python and
+JavaScript generations) on five frontier models released between October 2025 and March 2026. That
+study extracts package references from generated code (install commands plus imports) and checks
+them against the original master lists. Beyond the replication, it finds 127 names that all five
+models invent, of which 53 could still be registered after coordinated disclosure with PyPI Security
+and Socket.dev. It also reports that Python now has a higher rate than JavaScript, and that Claude
+Haiku 4.5 scores below Claude Sonnet 4.6. It is the broader study in languages, corpus size,
+registrability testing, and disclosure, and it shows that the cross-model attack surface is real.
 
-Three points of interpretation matter for the comparison in \S\ref{sec:bridge}. First, its
-code-import estimand differs from the original study's three-channel measurement and from our
-package-recommendation estimand; a rate from one is not directly a rate from the other. Second, its
-reported range compression (4.62--6.10\% overall, 5.49--7.27\% on Python, against 5.2\% and 21.7\%)
-compares a five-model frontier cohort with the original study's commercial and open-source
-\emph{category averages}, not with the original model-level extrema, which spanned 3.59\% to 26.12\%
-on Python. Third, its Wilson intervals, chi-square tests, and permutation tests treat each extracted
-package mention as an independent observation, although mentions cluster within generations; we do
-not assert that its significant pairs would vanish under cluster-aware inference, only that they were
-not computed under it. Its interpretation of Jaccard overlap as evidence of shared training origins
-is one hypothesis; shared prompt elicitation, extractor behavior, and corpus composition are
-alternatives that \S\ref{sec:overlap} tests directly.
+Three points matter for the comparison in \S\ref{sec:bridge}. First, its code-import measure is not
+the original study's three-channel measure, and it is not our package-recommendation measure either.
+A rate from one is not a rate from the other. Second, its headline that the range between models has
+compressed (4.62--6.10\% overall, 5.49--7.27\% on Python, against 5.2\% and 21.7\%) compares five
+frontier models with the original study's \emph{category averages} for commercial and open-source
+models. The original model-level range on Python was 3.59\% to 26.12\%. Third, its Wilson intervals,
+chi-square tests, and permutation tests treat every extracted mention as an independent observation,
+even though mentions cluster inside generations. We do not claim its significant pairs would
+disappear under cluster-aware inference, only that they were not computed that way. Its reading of
+name overlap as evidence of shared training data is one hypothesis. Shared prompts, extractor
+behavior, and corpus composition are alternatives that \S\ref{sec:overlap} tests directly.
 
 \subsection{Research questions}
 
 \begin{description}[style=unboxed,leftmargin=0pt,itemsep=2pt]
-\item[RQ1 (Replication).] Do the published CodeLlama and DeepSeek results reproduce with a larger
-  fixed prompt set and repeated generation seeds?
-\item[RQ2 (Measurement validity).] How much do parser family, strict grammar, response format, and
-  registry date alter reported rates?
-\item[RQ3 (Cap sensitivity).] Does package hallucination vary systematically with the package-response
-  token cap when code and prompts are paired and generation is deterministic?
-\item[RQ4 (Modern models).] How do current hosted and local models compare under a common prompt set,
-  frozen parser, and dual-registry definition?
-\item[RQ5 (Failure shape).] Are aggregate rates driven by diffuse errors or by rare catastrophic
-  recommendation floods?
-\item[RQ6 (Concurrent-work bridge).] When identical outputs are rescored with Churilov's code-import
-  extractor, and cross-model overlap is conditioned on prompt identity, which apparent agreements and
-  disagreements remain?
-\item[RQ7 (Successor and list-volume mechanism).] Do the Kimi K2.7 response-volume and late-position
-  effects persist in Kimi K3 when finish reason and token use are retained for every response?
+\item[RQ1 (Replication).] Do the published CodeLlama and DeepSeek results come back when we use a
+  larger fixed prompt set and repeat the generation with several seeds?
+\item[RQ2 (Measurement validity).] How much do the parser, its strictness, the response format, and
+  the registry date change the reported rate?
+\item[RQ3 (Cap sensitivity).] Does the rate change with the token cap on package answers, once the
+  code and prompts are held fixed and decoding is deterministic?
+\item[RQ4 (Modern models).] How do current hosted and local models compare on one prompt set, one
+  frozen parser, and one two-registry definition?
+\item[RQ5 (Failure shape).] Are the rates driven by errors spread across many answers, or by a few
+  catastrophic recommendation floods?
+\item[RQ6 (Concurrent-work bridge).] When we rescore identical outputs with Churilov's extractor, and
+  ask whether shared names came from shared prompts, which agreements and disagreements remain?
+\item[RQ7 (Successor and list-volume mechanism).] Do Kimi K2.7's list-flood and late-position effects
+  persist in Kimi K3, once we record the finish reason and token count for every answer?
 \end{description}
 
 \section{Study design}
@@ -276,140 +286,150 @@ alternatives that \S\ref{sec:overlap} tests directly.
 \node[box, right=0.35cm of tc, text width=3.4cm, fill=gray!5] (td)
   {\textbf{Diagnostics} (post hoc, labeled)\\cap diagnostic ($T{=}0$, seeded, 5 caps)\\code-import bridge, prompt-aligned\\overlap, cap-tail conditioning};
 \end{tikzpicture}}
-\caption{Two-track study design and measurement pipeline. Every cell uses the same fixed 800-prompt
-Python subset and two package queries per prompt; tracks differ in caps, parser, registries, and the
-comparability claim they license. Track B is not a scale reproduction of the 2024 study.}
+\caption{The two-track design and the measurement pipeline. Every cell uses the same fixed set of 800
+Python prompts and asks two package questions per prompt. The tracks differ in token caps, parser,
+registries, and in what they allow us to claim. Track B is not a scale reproduction of the 2024
+study.}
 \label{fig:design}
 \end{figure*}
 
 \subsection{Two-track design}
 
-Figure~\ref{fig:design} summarizes the design, which was frozen as a preregistration before data
-collection with every deviation logged as a dated amendment \citep{nosek2018preregistration}.
-\textbf{Track A} is historical artifact replication: the original model families, the paper's
-sampling settings and caps, the paper's family parsers, and the frozen 2024 registry. It licenses
-statements about whether the 2024 result reproduces. \textbf{Track B} is a modern benchmark: the
-same prompts, a validated grammar-aware parser (Parser~v2), larger token budgets, and both the 2024
-and 2026 registries. It licenses cross-model statements under one instrument and is explicitly not a
-scale reproduction of the 2024 study. \textbf{Extension cells} were added later under separately
-frozen protocols: Qwen 3.5 Cloud and Kimi K2.7 Code Cloud under a preregistration frozen on
-2026-08-14 (with a logged substitution of K2.7 for K3 when the K3 endpoint returned HTTP~402 before
-any generation), and Kimi K3 under a later successor/mechanism specification. These cells extend but
-do not alter Track B's original inferential family.
+Figure~\ref{fig:design} shows the design. We wrote it down and froze it before collecting data, and
+we logged every later change as a dated amendment; this is the practice known as preregistration
+\citep{nosek2018preregistration}. \textbf{Track A} is the historical replication. It uses the
+original model families, the original sampling settings and token caps, the original parsers, and
+the frozen 2024 registry. It answers one question: does the 2024 result come back? \textbf{Track B}
+is the modern benchmark. It uses the same prompts, our validated parser (Parser~v2), larger token
+budgets, and both the 2024 and the 2026 registries. It allows comparisons between current models
+under one instrument. It is not, and does not claim to be, a reproduction of the 2024 study at its
+original scale. The \textbf{extension cells} came later, each under its own frozen protocol. Qwen 3.5
+Cloud and Kimi K2.7 Code Cloud ran under a protocol frozen on 2026-08-14. (That protocol first named
+Kimi K3, but the K3 endpoint returned HTTP~402 before generating anything, so we substituted K2.7
+and logged the change.) Kimi K3 ran afterwards under a separate specification written to study the
+K2.7 mechanism in its successor. These cells extend Track B; they do not change its original set of
+comparisons.
 
-For Kimi K3 the word ``frozen'' is used narrowly. Prompts, parser, registries, model and sampling
-settings, estimands, diagnostics, and the comparison family were fixed before outcome inspection.
-Provenance and completion-gate code was expanded while collection was in flight and before any
-package response was scored; the live collector had already loaded the earlier implementation. Those
-edits did not change prompts, responses, parser decisions, or outcome calculations, but the
-executable pipeline was not byte-frozen end to end, and because the K3 preregistration was not
-committed before collection the run is retrospectively rather than cryptographically preregistered.
-A retrospective provenance stamp hashes the attested design core, the local chronology, every
-commit-candidate file, and a content-addressed index of the 93 raw-artifact files; it states plainly
-that it does not repair the missing pre-data commit. The repository now enforces a commit-based
-freeze gate for any future analytic cell.
+For Kimi K3 we use the word ``frozen'' carefully. The scientific design was fixed before we looked at
+any outcome: prompts, parser, registries, model and sampling settings, the quantities to estimate,
+the diagnostics, and the set of comparisons. But while collection was running, and before any package
+answer was scored, we expanded the code that records provenance and checks completeness. The running
+collector had already loaded the earlier version. Those edits changed no prompt, response, parser
+decision, or outcome calculation, but the executable pipeline was not frozen byte for byte. And
+because the K3 preregistration was not committed to version control before collection, the run is
+preregistered in spirit, not cryptographically. A provenance stamp written afterwards hashes the
+attested design, the local timeline, every file in the commit, and a content-addressed index of the 93
+raw-artifact files. It says plainly that it cannot repair the missing pre-data commit. The repository
+now enforces a commit-based freeze gate for any future analytic run.
 
 \subsection{Prompt corpus and unit of analysis}
 
 The original artifact provides four Python prompt datasets: Stack Overflow questions (all-time and
-last-year popularity) and LLM-generated prompts based on popular packages on the same two time bases.
-Because the Stack Overflow datasets are ordered by popularity, a prefix is a biased subset; we draw
-200 prompts per dataset with a fixed seed and use that one subset for every cell, seed, and phase.
-Each prompt yields one code generation and two package responses, so a complete cell contains 800
-prompts and 1,600 package responses. The prompt is the clustering and pairing unit for every interval
-and comparison.
+last-year popularity) and LLM-generated prompts based on popular packages over the same two periods.
+The Stack Overflow datasets are sorted by popularity, so taking the first $n$ prompts would bias the
+sample. Instead we draw 200 prompts per dataset with a fixed random seed and use that one subset in
+every cell, seed, and phase. Each prompt yields one code generation and two package answers, so a
+complete cell has 800 prompts and 1,600 package answers. Every confidence interval and every
+comparison treats the prompt as the unit.
 
 \subsection{Models and identity capture}
 \label{sec:models}
 
-Table~\ref{tab:cells} lists every cell with its exact served identity, size and quantization where
-known, reasoning setting, the sampling parameters the provider accepted, caps, and execution date.
-Track A uses CodeLlama 7B Instruct and DeepSeek Coder 6.7B Instruct served locally by Ollama, with
-the immutable digest, quantization, and server version recorded. Track B uses Claude Opus 5, GPT-5.2,
-gpt-oss 20B, Grok 4.6, DeepSeek Coder V2 16B, and DeepSeek V4 Flash. Hosted cells record the model
-id echoed in every response. Reasoning was disabled where the provider exposed a control (Anthropic
-thinking disabled; OpenAI reasoning effort \texttt{none}; \texttt{think:false} on Ollama Cloud);
-gpt-oss retained its native reasoning behavior, so reasoning was not disabled universally. Where a
-provider rejected a sampling parameter, the runner dropped it, retried, and recorded the adjustment.
-The DeepSeek Coder V2 cell was resumed across four invocations with mixed worker counts and context
-settings; its digest was stable, and the mixed operational settings are disclosed rather than
-hidden.
+Table~\ref{tab:cells} lists every cell: the exact model identity served, its size and quantization
+where known, its reasoning setting, the sampling parameters the provider accepted, the token caps,
+and the date. Track A uses CodeLlama 7B Instruct and DeepSeek Coder 6.7B Instruct, served locally by
+Ollama, with the immutable digest, quantization, and server version recorded. Track B uses Claude
+Opus 5, GPT-5.2, gpt-oss 20B, Grok 4.6, DeepSeek Coder V2 16B, and DeepSeek V4 Flash. For hosted
+models we record the model id that the provider echoes in every response. We turned reasoning off
+wherever the provider offered a switch (Anthropic thinking disabled; OpenAI reasoning effort
+\texttt{none}; \texttt{think:false} on Ollama Cloud). gpt-oss kept its native reasoning behavior, so
+reasoning was not disabled everywhere. When a provider rejected a sampling parameter, the runner
+dropped it, retried, and recorded the change. The DeepSeek Coder V2 cell was resumed across four
+invocations with different worker counts and context settings. Its model digest never changed, and we
+disclose the mixed settings rather than hide them.
 
 \input{tables/tab_cells}
 
 \subsection{Parser v2 and response statuses}
 \label{sec:instrument}
 
-Parser~v2 accepts a response only if it conforms to a comma or line list grammar whose items are
-PEP~503-style name tokens \citep{pep503}. List markers such as ``12.'' or ``-'' are stripped only
-when anchored at the start of an item, fixing a legacy normalizer that turned ``12. requests'' into
-``1requests''; wrapper characters are stripped only in matched pairs; names are deduplicated within
-a response. Every response receives one of three statuses: \emph{list}, \emph{malformed} (code
-fences, prose, or any non-name item), or \emph{empty}. Malformed responses are abstentions: they
-contribute no package to the denominator and are reported as an outcome. This is the deliberate
-trade of recall for precision that \S\ref{sec:validation} quantifies.
+Parser~v2 accepts an answer only if it looks like a list of package names, separated by commas or
+line breaks, where every item is a valid name in the PEP~503 sense \citep{pep503}. List markers such
+as ``12.'' or ``-'' are removed only at the start of an item. That fixes an old normalizer that turned
+``12. requests'' into ``1requests.'' Quotes and brackets are removed only in matched pairs. Names are
+counted once per answer. Every answer gets one of three labels: \emph{list}, \emph{malformed} (code
+fences, prose, or any item that is not a name), or \emph{empty}. A malformed answer contributes
+nothing to the rate; we report how often it happens instead. This is a deliberate trade: we give up
+some recall to avoid inventing false positives, and \S\ref{sec:validation} measures the cost.
 
 \subsection{Registries and categories}
 
-Two PyPI snapshots are used: the frozen 2024-01-10 master list from the original artifact (500,513
-names) and a snapshot fetched at campaign start on 2026-08-12 (869,894 names; the namespace grew by
-74\%). The primary metric counts a recommended name only if it is absent from \emph{both} snapshots
-and is not a standard-library module. Each qualifier earns its place: 8,961 names in the frozen list
-have since been deleted from PyPI, including squat-registrations of standard-library names such as
-\texttt{os} and \texttt{json}, which means the original methodology silently scored stdlib confusion
-as valid packages, and its Python pipeline, unlike its JavaScript one, had no core-module exclusion.
-Secondary categories are valid in both snapshots, post-snapshot package, deleted since snapshot,
+We use two PyPI snapshots: the frozen list from the original artifact, taken on 2024-01-10 (500,513
+names), and a snapshot taken at the start of our campaign on 2026-08-12 (869,894 names). The
+namespace grew by 74\% in between. Our primary metric counts a recommended name only if it is missing
+from \emph{both} snapshots and is not a Python standard-library module. Each condition earns its
+place. Since 2024, 8,961 names on the frozen list have been deleted from PyPI. Some of those were
+squatted registrations of standard-library names such as \texttt{os} and \texttt{json}. That means
+the original method silently counted standard-library confusion as valid packages, because its Python
+pipeline, unlike its JavaScript one, did not exclude core modules. We also record secondary
+categories: valid in both snapshots, registered after the 2024 snapshot, deleted since the snapshot,
 standard-library confusion, and unregistered in both.
 
 \subsection{Outcomes}
 
-Every cell co-reports: the unregistered-package occurrence rate (unregistered occurrences over
-accepted package occurrences); the prompt-level probability of at least one unregistered
-recommendation (\emph{prompt risk}); malformed and empty response rates; packages per prompt and per
-accepted response; unique unregistered names; top-one, top-three, and top-ten response shares with
-leave-top-$k$ diagnostics; and, for the cap diagnostic and extension cells, position-band rates.
-Leave-top-$k$ estimates characterize concentration; they are not alternative primary estimands.
+Every cell reports the same set of numbers. The \emph{occurrence rate} is the share of accepted
+package names that are unregistered; an answer with 600 names counts 600 times. \emph{Prompt risk}
+is the share of prompts with at least one unregistered name. We report the share of malformed and
+empty answers, the number of packages per prompt and per accepted answer, and the number of distinct
+unregistered names. To describe concentration we report the share of unregistered names that come
+from the worst one, three, and ten answers, and the rate that remains after removing them
+(\emph{leave-top-$k$}). For the cap diagnostic and the extension cells we also report rates by list
+position. Leave-top-$k$ numbers describe concentration; they are never a substitute for the primary
+rate.
 
 \subsection{Statistical analysis}
 
-All intervals are dataset-stratified prompt-cluster percentile bootstraps: prompts are resampled with
-replacement within each of the four 200-prompt datasets, and the ratio of interest is recomputed in
-each replicate (50,000 replicates for cell intervals and pairwise comparisons; 20,000 for the cap
-diagnostic). Cross-cell comparisons are paired by prompt on the 800 shared prompts, with Holm
-correction \citep{holm1979simple} across the 15 Track B pairs. The preregistration fixed the
-bootstrap but not the exact $p$-value convention; the campaign therefore reports the preregistered
-two-sided bootstrap-tail probability and, as a labeled post-hoc sensitivity, a recentered-null
-bootstrap with the same replicates, strata, pairing, and seed. Effect sizes and intervals are
-primary. Adjusted values at the finite-bootstrap resolution floor are reported as bounds: for the
-eight-comparison K3 family, $8 \times 1/50{,}000 = 0.000160$ is written $p \le 0.000160$, never as an
-exact value. The post-hoc K2.7/K3 prompt-risk and flood-frequency comparisons use the same
-dataset-stratified paired resampling.
+Every confidence interval is a bootstrap that resamples prompts, not package names. We resample
+prompts with replacement inside each of the four 200-prompt datasets, recompute the quantity of
+interest, and repeat (50,000 times for cell intervals and pairwise comparisons; 20,000 for the cap
+diagnostic). When we compare two cells, we pair them prompt by prompt on the 800 shared prompts and
+apply Holm's correction \citep{holm1979simple} across the 15 Track B pairs, because testing many pairs
+at once inflates the chance of a false positive. The preregistration fixed the bootstrap but not the
+exact rule for turning it into a $p$-value, so we report both the preregistered two-sided
+bootstrap-tail probability and, clearly labeled as a check done afterwards, a recentered-null
+bootstrap with the same replicates, strata, pairing, and seed. Effect sizes and intervals come first.
+When an adjusted $p$-value hits the floor of what 50,000 replicates can resolve, we report it as a
+bound: for the eight-comparison K3 family that floor is $8 \times 1/50{,}000 = 0.000160$, written
+$p \le 0.000160$, never as an exact value. The K2.7-versus-K3 comparisons of prompt risk and flood
+frequency use the same paired, dataset-stratified resampling.
 
 \subsection{Churilov bridge and prompt-conditioned overlap}
 
-To compare with the concurrent study without regenerating anything, the frozen generated code of
-every cell was rescored with a port of the public Churilov extraction design: a \texttt{pip install}
-regex plus top-level imports (AST first, tree-sitter fallback), the artifact's stdlib list and
-false-positive filter, imports deduplicated within a generation, and no cross-channel deduplication
-against install hits. Both the frozen-registry absence rate (the closest artifact-level bridge) and
-our dual-registry, non-stdlib rate are reported with prompt-cluster intervals stratified by dataset.
-For overlap, ordinary Jaccard over unique unregistered names is reported beside an aligned Jaccard
-over (normalized name, dataset, prompt index) tuples, and for every pairwise and all-model
-intersection we count how many shared names occur on at least one identical prompt. No candidate
-name is published.
+To compare with the concurrent study without generating anything new, we took the frozen generated
+code from every cell and rescored it with a port of Churilov's public extractor: a \texttt{pip
+install} regex plus top-level imports (parsed with the Python AST, falling back to tree-sitter), the
+same standard-library list and false-positive filter, imports counted once per generation, and no
+deduplication between the install and import channels. We report two rates: absence from the frozen
+registry, which is the closest match to their artifact, and our own two-registry, non-stdlib rate.
+Both come with prompt-based intervals, stratified by dataset. For overlap, we report the ordinary
+Jaccard similarity between the sets of unregistered names of each model pair, and beside it an
+aligned Jaccard over (normalized name, dataset, prompt index) tuples. For every pair, and for the
+names shared by all models, we count how many shared names occurred on at least one identical prompt.
+We publish no candidate names.
 
 \subsection{Cloud extension and per-response provenance}
 
-The Qwen 3.5 and Kimi K2.7 cells reuse the fixed subset, Parser~v2, dual registries, and the
-two-query design, with a separate 13-comparison Holm family for comparisons involving a new cell.
-\qone\ and \qtwo\ volumes are co-reported because the two prompts are measurement channels, not
-interchangeable replicates, once a model enumerates hundreds of names in one channel. Kimi K2.7's
-combined preregistered estimate is preserved; its query-, volume-, and position-specific diagnostics
-are post hoc. The first extension runner retained cap hits only at phase level, so K2.7 cap membership
-is a frozen within-phase longest-response \emph{proxy}. Kimi K3 corrected that instrumentation:
-every response carries an ordered sidecar with finish reason, served model, prompt and completion
-tokens, and exact cap status, and scoring fails if any of the 2,400 rows is missing. Provider-reported
-token cost was recorded against a maintainer-authorized run-level dollar guard.
+The Qwen 3.5 and Kimi K2.7 cells reuse the fixed prompt subset, Parser~v2, both registries, and the
+two-question design. Comparisons that involve a new cell form their own family of 13 Holm-corrected
+tests. We report \qone\ and \qtwo\ volumes separately, because once a model lists hundreds of names
+in one channel, the two questions stop behaving like repeat measurements. Kimi K2.7's combined
+preregistered estimate stays as it was; its breakdowns by question, list length, and position were
+done afterwards. The first extension runner recorded cap hits only per phase, not per answer, so for
+K2.7 we can only \emph{approximate} which answers hit the cap by taking the longest answers in each
+phase. Kimi K3 fixed that. Every K3 answer carries a sidecar record with its finish reason, served
+model, prompt and completion tokens, and exact cap status, and scoring refuses to run if any of the
+2,400 records is missing. We also recorded the provider's token counts against a dollar budget the
+maintainer had authorized in advance.
 
 \section{Results}
 \label{sec:results}
@@ -417,248 +437,254 @@ token cost was recorded against a maintainer-authorized run-level dollar guard.
 \subsection{Measurement validation}
 \label{sec:validation}
 
-The instrument changed the scientific conclusion, so we report it first (Table~\ref{tab:parser}).
-On the initial stratified 200-response validation sample, Parser~v2 classified response status with
-98\% accuracy; all four errors share one root cause (wrapper characters around an entire comma
-list), and no list-classified record contained an incorrectly extracted token. Grammar-valid
-occurrence recall is 97.78\%, but end-to-end semantic recall is 79.75\%: 102 recommendation
-occurrences sat inside prose or code that the grammar refuses to mine. That is the deliberate cost of
-strict abstention, and it is why malformed rates accompany every rate below. The validation sample
-predates the hosted cells, so a post-campaign audit drew 180 Track B responses (20 uniformly random
-and 10 deliberately difficult format or tail cases per model). All 180 agreed with the frozen contract
-on both status and exact extraction.
+The instrument changed the conclusions, so we describe it first (Table~\ref{tab:parser}). On the
+initial validation sample of 200 answers, Parser~v2 assigned the right status 98\% of the time. All
+four mistakes had the same cause: quote characters wrapped around an entire list. No answer labeled as
+a list contained a wrongly extracted name. Among names that appeared in a valid list format, the
+parser found 97.78\%. Counting every recommendation a human could see, including those buried in
+prose or code, it found 79.75\%: 102 recommendations sat inside text that the grammar refuses to mine.
+That is the price of strictness, and it is why we report malformed rates next to every rate below.
+The validation sample was drawn before the hosted models were run, so after the campaign we audited
+180 more answers from Track B (20 chosen at random and 10 deliberately difficult ones per model). All
+180 matched the frozen parser on both status and the exact names extracted.
 
 \input{tables/tab_parser}
 
-The audit also surfaced two sensitivities that contract agreement cannot see. Grok 4.6 appended a
-literal \texttt{<|eos|>} marker to 184 responses; all 184 are malformed under the frozen grammar and
-become valid lists when, and only when, that exact terminal marker is removed. Stripping it changes
-Grok's malformed rate from 12.56\% to 1.06\% but its primary rate only from 8.22\% to 7.91\%, because
-the 262 recovered names are registered or standard-library names. DeepSeek Coder V2 produced the
-collapsed token \texttt{NoPythonpackagesrequired} eleven times, which the grammar accepts as a name;
-treating such one-token answers as no-package responses moves its rate from 10.30\% to 9.89\% (and
-gpt-oss from 2.15\% to 2.14\%). The frozen results remain primary; both adjustments are reported as
-transport and semantic sensitivities.
+The audit also found two problems that agreement with the parser cannot reveal. Grok 4.6 ended 184
+answers with a literal \texttt{<|eos|>} marker. All 184 count as malformed under the frozen grammar,
+and all 184 become valid lists when that marker, and only that marker, is removed. Removing it drops
+Grok's malformed rate from 12.56\% to 1.06\%, but moves its primary rate only from 8.22\% to 7.91\%,
+because the 262 names recovered are registered or standard-library names. DeepSeek Coder V2 wrote the
+collapsed token \texttt{NoPythonpackagesrequired} eleven times, which the grammar accepts as a name.
+Treating such one-word answers as ``no packages'' moves its rate from 10.30\% to 9.89\% (and gpt-oss
+from 2.15\% to 2.14\%). The frozen results stay primary; we report both adjustments as sensitivities.
 
-Registry time changes the label space (Table~\ref{tab:categories}). Standard-library mentions are
-10--20\% of accepted occurrences in every cell, peaking at DeepSeek Coder V2, and the original
-methodology could not see them. Scoring against the current snapshot alone inflates every rate
-because the purged stdlib squats now count as absent; scoring against the frozen snapshot alone
-counts post-snapshot registrations as hallucinations and squatted stdlib names as valid. Only the
-dual-registry, non-stdlib definition is stable in both directions.
+The registry date changes what counts as an error (Table~\ref{tab:categories}). Standard-library
+names make up 10--20\% of accepted names in every cell, most of all in DeepSeek Coder V2, and the
+original method could not see them. Scoring against the 2026 snapshot alone inflates every rate,
+because the deleted squats of standard-library names now look like missing packages. Scoring against
+the 2024 snapshot alone counts packages registered since then as hallucinations and counts squatted
+standard-library names as valid. Only the two-snapshot, non-stdlib definition is stable in both
+directions.
 
 \input{tables/tab_categories}
 
 \subsection{Historical replication}
 \label{sec:tracka}
 
-Figure~\ref{fig:tracka} and Table~\ref{tab:tracka} give Track A. Under the paper's exact protocol
-with three independent generation seeds on the fixed subset, CodeLlama 7B measures 24.20\%, 24.84\%,
-and 24.60\% (seed mean 24.55\%), and every generic-parser interval contains the published 26.12\%.
-DeepSeek Coder 6.7B measures 14.37--14.86\% under the generic parser but 13.28--13.54\% under its
-historical family parser, which is the acceptance condition; all three family-parser intervals
-(roughly 11.6--15.4\%) exclude the published 16.61\%. The seed spread is 0.5--0.6\pp\ for both models,
-so regeneration noise is small, and the ordering reproduces at every seed.
+The 2024 pattern comes back; the exact DeepSeek number does not (Figure~\ref{fig:tracka} and
+Table~\ref{tab:tracka}). Under the paper's exact protocol, with three independent seeds on the fixed
+prompt set, CodeLlama 7B scored 24.20\%, 24.84\%, and 24.60\% (mean 24.55\%). Every one of its
+intervals contains the published 26.12\%. DeepSeek Coder 6.7B scored 14.37--14.86\% under the generic
+parser. Under its own original parser, which is the fair test, it scored 13.28--13.54\%, and all three
+intervals (roughly 11.6--15.4\%) exclude the published 16.61\%. The seeds differ from each other by
+only 0.5--0.6 percentage points for both models, so regeneration noise is small, and CodeLlama scores
+above DeepSeek at every seed.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_tracka_forest}
-\caption{Track A replication forest plot: published value (dashed) and three seed-level estimates per
-model with 95\% dataset-stratified prompt-cluster intervals. The family parser is the historical
-parser for DeepSeek; every family-parser interval excludes the published value.}
+\caption{Track A replication. The dashed line is the published value; each dot is one seed with its
+95\% prompt-based confidence interval. The family parser is DeepSeek's original parser, and every
+family-parser interval excludes the published value.}
 \label{fig:tracka}
 \end{figure}
 
 \input{tables/tab_tracka}
 
-The conclusion is a broad reproduction with an exact numerical failure: historical ordering and broad
-magnitude reproduce, the exact DeepSeek result does not. A consistent 1.5--2\pp\ low bias across both
-models and all seeds points at checkpoint, quantization, or chat-template provenance (GPTQ 4-bit via
-\texttt{transformers} in 2024 versus Q4\_0 GGUF via Ollama here), which digests now pin going forward
-but cannot recover for 2024. Parser~v2's malformed shares in Table~\ref{tab:tracka} show why the
-historical protocol is hard to reuse directly: the 64-token package cap truncates DeepSeek's package
-queries so often (810--816 cap hits per seed) that most of its responses fail a strict grammar.
+So the ordering and the rough size of the effect reproduce, but the exact DeepSeek value does not.
+Both models come out 1.5--2 percentage points low at every seed. That consistent bias points at the
+model artifacts themselves: the 2024 study used GPTQ 4-bit weights through \texttt{transformers},
+while we used Q4\_0 GGUF weights through Ollama, with possibly different chat templates. We now
+record digests so this can be pinned in future, but the 2024 checkpoints cannot be recovered. The
+malformed shares in Table~\ref{tab:tracka} also show why the old protocol is hard to reuse. Its
+64-token cap on package answers cuts DeepSeek off so often (810--816 cap hits per seed) that most of
+its answers fail a strict grammar.
 
 \subsection{Controlled cap diagnostic}
 \label{sec:cap}
 
-Earlier versions of this replication \citep{anderson2026replication} attributed an 11.5\pp\ increase
-in DeepSeek's measured rate at a raised cap to truncation suppressing genuinely hallucinated tails.
-The independent audit \citep{codex2026audit} identified
-the dominant mechanism as evaluator contamination: at the larger budget DeepSeek drifted out of the
-comma-list grammar (code fences in 338 of 800 long responses versus 132 of 800 short), and the
-permissive parser scored code fragments and prose as hallucinated packages. That decomposition
-motivated a controlled test. Both DeepSeek generations were queried over the same code and prompts at
-temperature 0 with a fixed seed, one worker, and counterbalanced caps of 64, 128, 256, 512, and 2048
-tokens, with prefix-verified pairing and Parser~v2 (Figure~\ref{fig:cap};
-Appendix Table~\ref{tab:capcells}).
+Our earlier report \citep{anderson2026replication} had found that DeepSeek's measured rate rose by
+11.5 percentage points when the token cap was raised, and read that as truncation hiding invented
+names at the end of long lists. The independent audit \citep{codex2026audit} found a different
+explanation. With more tokens, DeepSeek drifted out of the requested list format (code fences appeared
+in 338 of 800 long answers versus 132 of 800 short ones), and the permissive parser then scored code
+fragments and prose as invented packages. That finding called for a controlled test. We queried both
+DeepSeek models over the same code and prompts at temperature 0 with a fixed seed and one worker,
+under caps of 64, 128, 256, 512, and 2048 tokens in counterbalanced order, and checked that shorter
+answers were prefixes of longer ones. Parser~v2 scored everything (Figure~\ref{fig:cap}; Appendix
+Table~\ref{tab:capcells}).
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_cap_diagnostic}
-\caption{Controlled cap diagnostic. (A) Unregistered rate by package-response cap. (B) Malformed share
-by cap. (C) Each cap paired with the 2048-token response at the prompt level, with 95\%
-dataset-stratified paired bootstrap intervals. Every interval includes zero; no equivalence margin was
-preregistered.}
+\caption{Controlled cap diagnostic. (A) Unregistered rate at each cap on package answers. (B) Share
+of malformed answers at each cap. (C) Each cap compared with the 2048-token answer to the same prompt,
+with 95\% paired, dataset-stratified bootstrap intervals. Every interval includes zero. No
+equivalence margin was preregistered.}
 \label{fig:cap}
 \end{figure*}
 
-DeepSeek Coder V2 16B measures 7.10--7.48\% across the five caps; every paired delta versus 2048 is at
-most 0.33\pp, and all intervals include zero. DeepSeek Coder 6.7B is hump-shaped rather than
-monotone: 5.28\%, 5.81\%, 6.72\%, 5.12\%, and 4.78\%. All paired intervals include zero, although the
-cap-256 interval is wide ($-0.04$ to $4.29$\pp). Malformed rates are stable across caps (about 12\%
-and 53\% respectively). The supported statement is that the large historical cap association did
-not reproduce as a systematic or monotone effect in the deterministic paired diagnostic. It is not a
-proof of equivalence or of a zero causal effect: no equivalence margin was preregistered, some paired
-generations still diverged before the truncation point, and temperature was not crossed factorially
-with cap. What remains true from the earlier work is that a 64-token cap silently zeroes a reasoning
-model (gpt-oss 20B returned empty content on 15 of 15 probe queries, versus 0 of 15 for a CodeLlama
-control), and that cap-truncated list tails interact with any parser.
+DeepSeek Coder V2 16B scored between 7.10\% and 7.48\% at every cap. No cap differs from the
+2048-token cap by more than 0.33 percentage points, and every paired interval includes zero. DeepSeek
+Coder 6.7B does not move in one direction either: 5.28\%, 5.81\%, 6.72\%, 5.12\%, and 4.78\%. Every
+paired interval includes zero, although the interval at cap 256 is wide ($-0.04$ to $4.29$ percentage
+points). The malformed share barely moves with the cap (about 12\% for one model and 53\% for the
+other). What the data support is this: the large cap effect from the earlier work does not reappear as
+a consistent or monotone effect when decoding is deterministic and the parser is strict. What the
+data do not support is a claim of ``no effect.'' We preregistered no equivalence margin, some paired
+answers still diverged before the truncation point, and we did not vary temperature along with the
+cap. Two earlier findings do still stand: a 64-token cap silently produces empty answers from a
+reasoning model (gpt-oss 20B returned nothing on 15 of 15 probe queries, versus 0 of 15 for a
+CodeLlama control), and a list cut off at a cap interacts with any parser.
 
 \subsection{Modern benchmark}
 \label{sec:trackb}
 
-Table~\ref{tab:trackb} and Figure~\ref{fig:trackb} report the six Track B cells. Three cells are low:
-Claude Opus 5 at 1.31\% (95\% cluster interval 1.04--1.62), GPT-5.2 at 1.88\% (1.49--2.30), and
-gpt-oss 20B at 2.15\% (1.76--2.57). DeepSeek Coder V2 16B is high at 10.30\% (8.77--11.89) with the
-highest malformed share (18.25\%) and the fewest packages per prompt. Grok 4.6 at 8.22\% and DeepSeek
-V4 Flash at 17.91\% carry intervals so wide (1.55--18.27 and 5.71--29.86) that their point estimates
-mean little on their own. We do not describe Opus, GPT-5.2, and gpt-oss as a ``frontier trio'':
-gpt-oss is a local 20B open-weight model, and six purposive cells are not a representative sample of
-frontier or local models.
+Table~\ref{tab:trackb} and Figure~\ref{fig:trackb} give the six Track B cells. Three models are low:
+Claude Opus 5 at 1.31\% (95\% interval 1.04--1.62), GPT-5.2 at 1.88\% (1.49--2.30), and gpt-oss 20B at
+2.15\% (1.76--2.57). DeepSeek Coder V2 16B is high at 10.30\% (8.77--11.89), with the most malformed
+answers (18.25\%) and the fewest packages per prompt. Grok 4.6 at 8.22\% and DeepSeek V4 Flash at
+17.91\% have intervals so wide (1.55--18.27 and 5.71--29.86) that the point estimates say little on
+their own. We do not call Opus, GPT-5.2, and gpt-oss a ``frontier trio.'' gpt-oss is a local 20B
+open-weight model, and six hand-picked cells are not a representative sample of anything.
 
 \input{tables/tab_trackb}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_trackb_forest}
-\caption{Rate forest plot paired with response coverage for the six Campaign~4 cells, the two
-preregistered cloud extension cells, and the Kimi K3 successor cell. (A) Primary rate with 95\%
-prompt-cluster interval. (B) Prompt risk. (C) Response status shares. The three families are
-separated by dotted lines and were compared under separate Holm families.}
+\caption{Rates and response coverage for the six Campaign~4 cells, the two preregistered cloud
+extension cells, and the Kimi K3 successor cell. (A) Primary rate with its 95\% prompt-based
+interval. (B) Prompt risk. (C) Share of answers that were lists, malformed, or empty. Dotted lines
+separate the three families, which were compared under separate Holm corrections.}
 \label{fig:trackb}
 \end{figure*}
 
-Coverage differs materially across cells: gpt-oss returned 111 empty responses (6.94\%) even at a
-2048-token package cap, Grok and DeepSeek V4 Flash are malformed on 10--13\% of responses, and DeepSeek
-Coder V2 on 18\%. Because malformed responses are abstentions, a rate is never published here without
-these columns.
+Coverage differs a lot between models. gpt-oss returned 111 empty answers (6.94\%) even with a
+2048-token cap. Grok and DeepSeek V4 Flash gave malformed answers 10--13\% of the time, and DeepSeek
+Coder V2 18\% of the time. Because malformed answers add nothing to the rate, we never publish a rate
+without these columns.
 
 \subsection{Failure regimes and tail risk}
 \label{sec:tail}
 
-The signature result is that similar-looking averages conceal operationally different risks
-(Figures~\ref{fig:concentration} and \ref{fig:leavetopk}). Ranking prompts by their unregistered
-count and accumulating their share separates three regimes.
+The central finding is that similar averages can hide very different risks
+(Figures~\ref{fig:concentration} and \ref{fig:leavetopk}). If we rank prompts by how many
+unregistered names they produced and add up their share, three patterns appear.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_concentration}
-\caption{Ranked-prompt cumulative concentration curves. Each curve is the share of a cell's
-unregistered occurrences supplied by its $k$ worst prompts. (A) Campaign~4 cells. (B) Extension
-cells. Grok 4.6 and DeepSeek V4 Flash reach half their total within one and two prompts; the
-low-rate cells and DeepSeek Coder V2 need 29--52 prompts.}
+\caption{Concentration curves. Each curve shows what share of a cell's unregistered names comes from
+its $k$ worst prompts. (A) Campaign~4 cells. (B) Extension cells. Grok 4.6 and DeepSeek V4 Flash reach
+half of their total within one and two prompts; the low-rate cells and DeepSeek Coder V2 need 29--52
+prompts.}
 \label{fig:concentration}
 \end{figure*}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_leave_topk}
-\caption{Leave-top-$k$ sensitivity: the rate after removing the $k$ worst responses, for $k$ of 0,
-1, 3, and 10. Flat lines are diffuse failures; steep lines are catastrophic tails. Leave-top-$k$ is a
-concentration diagnostic, not an alternative estimand.}
+\caption{Leave-top-$k$: the rate after removing the $k$ worst answers, for $k$ of 0, 1, 3, and 10.
+Flat lines mean the errors are spread out; steep lines mean a few answers dominate. This is a
+description of concentration, not a replacement for the primary rate.}
 \label{fig:leavetopk}
 \end{figure}
 
-\paragraph{Low-rate, diffuse failures.} For Opus, GPT-5.2, and gpt-oss, the three worst responses
-supply 5--11\% of unregistered occurrences, and removing them moves the rate by only 0.10--0.13\pp\
-(1.31 to 1.18, 1.88 to 1.74, 2.15 to 2.05). Half of each cell's total requires 29--38 prompts. The
-median prompt has zero unregistered names and the maximum is 3--7.
+\paragraph{Low rate, spread out.} For Opus, GPT-5.2, and gpt-oss, the three worst answers supply
+only 5--11\% of unregistered names. Removing them moves the rate by 0.10--0.13 percentage points (1.31
+to 1.18, 1.88 to 1.74, 2.15 to 2.05). It takes 29--38 prompts to reach half of each cell's total. The
+median prompt has no unregistered name, and the worst prompt has 3--7.
 
-\paragraph{High-rate, diffuse failure.} DeepSeek Coder V2's top three responses contribute only
-3.98\% of its unregistered occurrences; removing them leaves 9.93\%, and removing ten leaves 9.43\%.
-Its risk is everywhere: 21.0\% of prompts yield at least one unregistered name, the highest prompt
-risk in the cohort.
+\paragraph{High rate, spread out.} DeepSeek Coder V2's three worst answers supply only 3.98\% of its
+unregistered names. Removing them leaves 9.93\%; removing ten leaves 9.43\%. Its problem is
+everywhere: 21.0\% of prompts produce at least one unregistered name, the highest prompt risk in the
+group.
 
-\paragraph{Catastrophic-tail failure.} One Grok 4.6 response supplies 63.06\% of its unregistered
-occurrences (350 names in a single answer) and three supply 82.88\%; removing those three reduces
-Grok from 8.22\% to 1.61\%, and removing ten leaves 0.80\%. Two DeepSeek V4 Flash prompts supply
-half its total, three responses supply 72.42\%, and the leave-three rate is 5.71\%. Both cells have the
-\emph{lowest} prompt risk in the cohort (5.5\% and 18.1\%): a typical Grok or V4 Flash answer is fine,
-and the tail free-associates entire package inventories. That concentration is also what destroys
-their statistical resolution.
+\paragraph{Catastrophic tail.} A single Grok 4.6 answer, with 350 names in it, supplies 63.06\% of
+Grok's unregistered names, and three answers supply 82.88\%. Remove those three and Grok drops from
+8.22\% to 1.61\%; remove ten and it is 0.80\%. For DeepSeek V4 Flash, two prompts supply half of the
+total, three answers supply 72.42\%, and the rate without them is 5.71\%. Both models have the
+\emph{lowest} prompt risk in the group (5.5\% and 18.1\%). A typical Grok or V4 Flash answer is fine;
+the tail is a runaway inventory of names. That same concentration is what makes their intervals so
+wide.
 
-The practical consequence is that the same average implies different mitigations. Diffuse failure
-calls for routine validation of every recommended name at install time; catastrophic tails call for
-flood detection, output bounds, and refusal to enumerate. A leaderboard that ranks Grok 4.6 (8.22\%)
-next to DeepSeek Coder V2 (10.30\%) as neighbors hides that they fail in different ways.
+The practical point is that the same average calls for different defenses. Spread-out errors call for
+checking every recommended name against the registry at install time. Catastrophic tails call for
+detecting floods, capping the length of recommendation lists, and refusing to enumerate. A leaderboard
+that puts Grok 4.6 (8.22\%) next to DeepSeek Coder V2 (10.30\%) hides that they fail in different
+ways.
 
 \subsection{Pairwise sensitivity}
 \label{sec:pairwise}
 
-Table~\ref{tab:paired} lists the 15 paired comparisons. Seven pass the preregistered
-bootstrap-tail/Holm convention and five pass the recentered-null sensitivity. Five findings are
-stable under both: Opus versus gpt-oss ($-0.84$\pp, 95\% interval $-1.28$ to $-0.39$); each of Opus,
-GPT-5.2, and gpt-oss versus DeepSeek Coder V2 (about $-8$ to $-9$\pp); and Opus versus DeepSeek V4
-Flash ($-16.59$\pp, $-28.65$ to $-4.43$). GPT-5.2 and gpt-oss versus DeepSeek V4 Flash pass the
-original convention but not the recentered sensitivity (Holm-adjusted $p = 0.0596$). Opus versus
-GPT-5.2 is inconclusive ($-0.57$\pp; raw $p \approx 0.008$, Holm $\approx 0.07$): an earlier
-assembly reported it significant from an unstratified 2,000-replicate bootstrap, and the review's
-challenge was verified and adopted. No pair involving Grok 4.6 is stable after correction, because its
-estimate is dominated by a few prompts. We therefore avoid a total ordering, particularly for Grok,
-and lead with effect sizes, intervals, and tail shape.
+Table~\ref{tab:paired} lists all 15 paired comparisons. Seven pass under the preregistered rule, and
+five pass under the recentered-null check. Five differences hold up under both:
+\begin{itemize}
+\item Opus versus gpt-oss ($-0.84$ percentage points, 95\% interval $-1.28$ to $-0.39$);
+\item Opus, GPT-5.2, and gpt-oss, each versus DeepSeek Coder V2 (about $-8$ to $-9$ percentage
+  points);
+\item Opus versus DeepSeek V4 Flash ($-16.59$ percentage points, $-28.65$ to $-4.43$).
+\end{itemize}
+GPT-5.2 and gpt-oss versus DeepSeek V4 Flash pass the preregistered rule but not the recentered check
+(adjusted $p = 0.0596$). Opus versus GPT-5.2 is inconclusive ($-0.57$ percentage points; raw
+$p \approx 0.008$, adjusted $\approx 0.07$). An earlier draft had called that pair significant, based
+on a bootstrap with 2,000 replicates that did not stratify by dataset; the reviewer's challenge was
+verified and adopted. No comparison involving Grok 4.6 survives correction, because a handful of
+prompts drive its estimate. We therefore do not rank the six models from best to worst, and we lead
+with effect sizes, intervals, and the shape of the tail.
 
 \input{tables/tab_paired}
 
 \subsection{Concurrent-work bridge}
 \label{sec:bridge}
 
-Table~\ref{tab:bridge} reports the code-import bridge. Under the dual-registry, non-stdlib
-definition, the original six Campaign~4 cells score 8.30\% (GPT-5.2), 8.87\% (DeepSeek Coder V2),
-8.89\% (DeepSeek V4 Flash), 9.52\% (Opus 5), 10.61\% (gpt-oss), and 17.49\% (Grok 4.6). The
-extension cells score 6.51\% (Qwen 3.5), 7.38\% (Kimi K2.7), and 8.37\% (Kimi K3). Only Qwen falls
-inside Churilov's reported Python range of 5.49--7.27\%; Kimi K2.7 sits 0.11\pp\ above its upper
-edge. There is no exact model overlap between the cohorts, so this contrast is described rather than
-tested.
+Table~\ref{tab:bridge} shows what happens when our outputs are scored the way Churilov scores them.
+Under our two-registry, non-stdlib definition, the original six Campaign~4 cells score 8.30\%
+(GPT-5.2), 8.87\% (DeepSeek Coder V2), 8.89\% (DeepSeek V4 Flash), 9.52\% (Opus 5), 10.61\% (gpt-oss),
+and 17.49\% (Grok 4.6). The extension cells score 6.51\% (Qwen 3.5), 7.38\% (Kimi K2.7), and 8.37\%
+(Kimi K3). Only Qwen lands inside Churilov's reported Python range of 5.49--7.27\%; Kimi K2.7 is 0.11
+percentage points above its top. The two studies share no model, so we describe this contrast rather
+than test it.
 
 \input{tables/tab_bridge}
 
-Four facts constrain the interpretation. First, matching the extractor does not by itself reconcile
-the studies: the original six cells remain above the reported band on identical outputs. Second,
-registry drift does not explain the gap: only 11 of 632 frozen-absence mentions are removed by the
-current-registry and stdlib correction. Third, imports supply 608 of 621 dual-registry flags
-(97.91\%); explicit install directives are rare in generated code, so the live measurement question is
-the semantic validity of mapping an import module directly to a PyPI distribution (module and
-distribution names differ for many real packages) and of treating a project-local import as an
-external dependency. Fourth, prompt source is a major effect modifier: across the nine cells the
-LLM-synthesized datasets span 3.70--26.45\% while the Stack Overflow datasets span 0.00--7.50\%
-(Appendix Table~\ref{tab:bridgedatasets}), which agrees directionally with Churilov's observation that
-synthetic prompts yield higher rates. Note also that Kimi K2.7's and K3's package-query aggregates
-are different estimands dominated by extreme \qtwo\ enumeration and must not be compared with code
-imports at all.
+Four facts shape the interpretation. First, using the same extractor does not by itself bring the
+studies into agreement: on identical outputs, the original six cells stay above the reported band.
+Second, registry drift is not the explanation: the 2026 registry and the standard-library rule remove
+only 11 of 632 flagged mentions. Third, imports account for 608 of the 621 remaining flags (97.91\%).
+Explicit install commands are rare in generated code, so the open question is whether an import can
+be mapped straight to a PyPI package at all. Many real packages import under a different name than
+they install under, and an import can refer to a file in the same project. Fourth, the prompt source
+matters a great deal. Across the nine cells, the LLM-written datasets score 3.70--26.45\% while the
+Stack Overflow datasets score 0.00--7.50\% (Appendix Table~\ref{tab:bridgedatasets}). That agrees in
+direction with Churilov's observation that synthetic prompts produce higher rates. One caution: Kimi
+K2.7's and K3's package-question rates are a different quantity, dominated by extreme \qtwo\ lists,
+and must not be compared with code-import rates at all.
 
 \subsection{Prompt-conditioned overlap}
 \label{sec:overlap}
 
-Table~\ref{tab:overlap} and Figure~\ref{fig:overlap} separate ordinary from prompt-aligned overlap.
-Among the six Campaign~4 cells, five unregistered names are emitted by every model, but four of the
-five are emitted by all six models on at least one identical prompt. Across all nine cells, mean
-ordinary pairwise Jaccard is 0.038, two names span every model, and one of those has same-prompt
-support across all nine. Pairwise, the same-prompt share of shared names is 60--95\% for most pairs
-and falls only where a Kimi flood is involved (Appendix Table~\ref{tab:overlappairs}). Ordinary
-overlap cannot tell whether a shared name reflects shared training data, a common package
-misconception, or direct elicitation by the same prompt; the aligned result shows that prompt
-induction is a live alternative explanation that must be measured before overlap is attributed to
-training-corpus similarity.
+Table~\ref{tab:overlap} and Figure~\ref{fig:overlap} separate ordinary overlap from overlap on the
+same prompt. Among the six Campaign~4 cells, five unregistered names are produced by every model, but
+four of those five are produced by all six models on at least one identical prompt. Across all nine
+cells, the average Jaccard similarity between pairs is 0.038, two names appear in every model, and one
+of the two appears in every model on the same prompt. For most pairs, 60--95\% of the names they
+share occur on a shared prompt; the share drops only where a Kimi flood is involved (Appendix
+Table~\ref{tab:overlappairs}). Ordinary overlap cannot tell whether two models share a name because
+they share training data, because a package by that name is a common misconception, or because the
+same prompt pulled it out of both. The aligned numbers show that the prompt is a live explanation. It
+has to be ruled out before overlap can be read as evidence about training data.
 
 \input{tables/tab_overlap}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_overlap}
-\caption{Ordinary versus prompt-aligned overlap among the nine cells. (A) Ordinary Jaccard over
-unique unregistered names. (B) Share of each pair's shared names that both models emitted on at least
-one identical prompt. Kimi's flood-inflated name sets drive its low ordinary Jaccard.}
+\caption{Ordinary versus prompt-aligned overlap among the nine cells. (A) Jaccard similarity of the
+sets of unregistered names. (B) Share of each pair's shared names that both models produced on at
+least one identical prompt. Kimi's flood-inflated name sets drive its low ordinary Jaccard.}
 \label{fig:overlap}
 \end{figure*}
 
@@ -666,242 +692,252 @@ one identical prompt. Kimi's flood-inflated name sets drive its low ordinary Jac
 \label{sec:extension}
 
 Table~\ref{tab:extension} reports the two preregistered cloud cells, and Appendix
-Table~\ref{tab:extpairs} their 13-comparison Holm family (10 pass the original convention, 9 the
-recentered sensitivity). Qwen 3.5 Cloud is operationally clean: 2.77\% (2.07--3.54), 7.88\% prompt
-risk, 13.25\% malformed, zero package-response cap hits, and 2,782 parsed occurrences. Kimi K2.7 Code
-Cloud is 23.10\% (20.19--26.19) with 43.00\% prompt risk, 14.75\% malformed, 323 package-response cap
-hits, and 111,842 parsed occurrences, 107,955 of them from \qtwo.
+Table~\ref{tab:extpairs} their family of 13 comparisons (10 pass the preregistered rule, 9 the
+recentered check). Qwen 3.5 Cloud is clean: 2.77\% (2.07--3.54), 7.88\% prompt risk, 13.25\% malformed
+answers, no package answer at the token cap, and 2,782 accepted names. Kimi K2.7 Code Cloud is
+23.10\% (20.19--26.19), with 43.00\% prompt risk, 14.75\% malformed answers, 323 package answers at
+the cap, and 111,842 accepted names, of which 107,955 come from \qtwo.
 
 \input{tables/tab_extension}
 
-The channels must be split immediately. Kimi's \qone\ is 21.82\% over 3,887 occurrences and \qtwo\ is
-23.15\% over 107,955; the \qone\ aggregate is itself driven by six responses extending beyond
-position 100, and excluding the phase-matched longest-response proxy reduces it to 3.77\%. Lists of
-at most ten packages score 4.95\%; responses above 25 packages supply 106,980 occurrences at 23.93\%.
-The weighting contrast is material: the pooled occurrence rate is 23.10\% versus an unweighted 8.36\%
-mean over non-empty parsed responses and an 11.78\% prompt-macro mean, and both macro medians are
-zero. These are descriptive views, not replacements for the preregistered estimand.
+The two questions have to be looked at separately. Kimi's \qone\ rate is 21.82\% over 3,887 names and
+its \qtwo\ rate is 23.15\% over 107,955. Even the \qone\ figure is driven by six answers that run
+past position 100; leaving out the longest answers in each phase (our stand-in for cap hits) brings it
+to 3.77\%. Answers with at most ten packages score 4.95\%. Answers with more than 25 packages supply
+106,980 names at 23.93\%. The weighting matters: the pooled rate is 23.10\%, but the average rate per
+answer is 8.36\%, the average per prompt is 11.78\%, and the median of both is zero. These are
+descriptions, not replacements for the preregistered estimate.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_k27_mechanism}
-\caption{Kimi K2.7's aggregate is a response-volume and late-position phenomenon. (A) \qtwo\
-occurrence rate by package position: Kimi stays near 5--6\% through position 25 and rises to 27.33\%
-after position 100; Qwen 3.5 has no parsed occurrences after position 50. (B) Kimi's \qtwo\
-denominator is concentrated in the 101+ bin (log scale). (C) The upper two response-volume quartiles
-carry both extreme package volume and materially higher rates. Counts are parsed occurrences, not
-prompts.}
+\caption{Kimi K2.7's rate is a story about long lists. (A) \qtwo\ rate by list position. Kimi stays
+near 5--6\% through position 25 and rises to 27.33\% after position 100; Qwen 3.5 produces nothing
+after position 50. (B) Most of Kimi's \qtwo\ names sit past position 100 (log scale). (C) The two
+longest quartiles of answers carry both the volume and the higher rates. Counts are accepted names,
+not prompts.}
 \label{fig:k27}
 \end{figure*}
 
-Position is the clearest mechanism (Figure~\ref{fig:k27}; Appendix Table~\ref{tab:positions}).
+List position is the clearest mechanism (Figure~\ref{fig:k27}; Appendix Table~\ref{tab:positions}).
 Kimi's \qtwo\ rate is 5.28--5.87\% through position 25, then 10.85\% at positions 26--50, 15.03\% at
-51--100, and 27.33\% after 100. This is a late-enumeration validity collapse combined with an
-instruction-following failure, not a uniform model rate. Parser noise mediates but does not explain
-it: the 323 cap-proxy responses are malformed at 26.94\% versus 11.67\% for non-proxies and contain
-36.86\% of all Kimi malformed responses, yet 236 proxies parse as lists and supply 104,420
-occurrences, and after excluding every proxy \qtwo\ still rises from roughly 5--7\% through position
-25 to 22.03\%, 36.94\%, and 41.38\% in positions 26--50, 51--100, and 101+. Those late bins rest on
-only 16, 12, and 10 responses and are mechanism evidence, not precise population rates. The 234
-\qtwo\ responses above 100 packages are not copies of one catalog: their mean pairwise package-set
-Jaccard is 0.066, 39 names form a common core, diverse prompt-conditioned tails dominate, and the
-paired \qone/\qtwo\ Jaccard for these floods is only 0.005. Because exact cap-hit response ids were not
-retained for K2.7, every proxy-based statement above is post hoc; the K3 cell was instrumented to
-remove that ambiguity.
+51--100, and 27.33\% after 100. This is a model that sometimes ignores the instruction and enumerates,
+and whose lists get worse the longer they run; it is not a flat rate. Parser noise plays a part but
+does not explain it. The 323 answers we treat as cap hits are malformed 26.94\% of the time, versus
+11.67\% for the rest, and they hold 36.86\% of all Kimi's malformed answers. Yet 236 of them do parse
+as lists and supply 104,420 names. Even after all 323 are removed, \qtwo\ still climbs from roughly
+5--7\% through position 25 to 22.03\%, 36.94\%, and 41.38\% at positions 26--50, 51--100, and 101+.
+Those late bins rest on only 16, 12, and 10 answers, so they show the mechanism rather than measure it
+precisely. The 234 \qtwo\ answers with more than 100 packages are not copies of one list: their mean
+pairwise Jaccard is 0.066, a core of 39 names recurs, and the rest varies with the prompt. The
+paired \qone/\qtwo\ Jaccard for these floods is only 0.005. Because K2.7's runner did not record which
+answers hit the cap, every statement above that depends on the cap is a post-hoc approximation. The
+K3 cell was instrumented to remove that ambiguity.
 
 \subsection{Kimi K3 successor test}
 \label{sec:k3}
 
-The 2,400-call Kimi K3 cell passed all twelve response-sidecar gates: one served id, zero errors or
-request adjustments, 72 exact cap hits (46 in package responses, all in \qtwo), and \$16.27 of
-token-derived analytic spend (Table~\ref{tab:k3}). Its primary occurrence-weighted rate is 33.30\%
-(27.22--38.81) with 21.50\% prompt risk, 4.19\% malformed responses, and 25,889 parsed occurrences.
-All eight separately adjusted paired comparisons place K3 above its comparator on this estimand
-(Appendix Table~\ref{tab:k3pairs}); K2.7 minus K3 is $-10.20$\pp\ ($-16.43$ to $-3.44$).
+The Kimi K3 cell of 2,400 calls passed all twelve checks on its per-answer records: one served model
+id, no errors or request adjustments, 72 exact cap hits (46 of them in package answers, all in
+\qtwo), and \$16.27 of token-based spend (Table~\ref{tab:k3}). Its primary rate is 33.30\%
+(27.22--38.81), with 21.50\% prompt risk, 4.19\% malformed answers, and 25,889 accepted names. All
+eight comparisons in its family put K3 above the other model on this rate (Appendix
+Table~\ref{tab:k3pairs}); K2.7 minus K3 is $-10.20$ percentage points ($-16.43$ to $-3.44$).
 
 \input{tables/tab_k3}
 
-The task split is stark: \qone\ is 1.76\% over 1,303 occurrences, \qtwo\ is 34.97\% over 24,586. K3
-follows the requested-code query well and sometimes treats the open recommendation query as an
-unbounded enumeration task. The exact cap decomposition explains the headline: the 46 package cap
-hits are 2.88\% of package responses but supply 13,408 occurrences (51.79\% of the total) and 6,985
-unregistered occurrences (81.02\%) at a 52.10\% within-tail rate. The exact-cap-excluded diagnostic is
-13.11\%. We keep 33.30\% primary and label exclusion as post-hoc conditioning on a post-treatment
-variable \citep{montgomery2018conditioning}, not as a corrected estimate.
+The two questions could not be more different: \qone\ is 1.76\% over 1,303 names and \qtwo\ is
+34.97\% over 24,586. K3 answers the question about its own code well, and sometimes treats the
+open-ended question as an invitation to list everything. The exact cap records explain the headline.
+The 46 package answers that hit the cap are 2.88\% of package answers, but they supply 13,408 names
+(51.79\% of all accepted names) and 6,985 unregistered names (81.02\% of the total), at a rate of
+52.10\% within those answers. Without them the rate would be 13.11\%. We keep 33.30\% as the primary
+result. Whether an answer hit the cap is only known after the answer was generated, so removing those
+answers is conditioning on an outcome \citep{montgomery2018conditioning}, and we label it a
+diagnostic, not a correction.
 
 \input{tables/tab_k27k3}
 
-The comparison with K2.7 is an aggregation reversal (Table~\ref{tab:k27k3}, Figure~\ref{fig:k3}).
-K3 has lower prompt risk (21.50\% versus 43.00\%), a lower response-macro mean (4.18\% versus 8.36\%),
-and only 54 \qtwo\ responses above 100 packages versus 234; on the 800 shared prompts the paired
-\qtwo\ prompt-risk difference is 20.63\pp\ (16.50--24.75) and the flood-frequency difference is
-22.50\pp\ (19.00--26.00). Yet K3's rarer capped floods are far more contaminated (52.10\% versus
-23.81\% in K2.7's cap proxy), so the pooled occurrence rate is worse. After diagnostic exclusion of the
-respective cap tails the rates nearly coincide at 13.11\% and 13.18\%. Twenty-two prompts flood in
-both models against 15.8 expected under independence (odds ratio 1.73), so prompt susceptibility is
-shared; but the flood-prompt Jaccard of 0.083 against a marginal-constrained maximum of 0.231 shows
-that susceptibility does not alone determine which model floods. The 54 K3 floods contain 8,010 unique
-normalized unregistered names with mean pairwise Jaccard 0.0011 and no name in at least a quarter of
-floods, which rules out a repeated fixed catalog or a degenerate repetition loop as the main
-explanation of the tail; it does not remove the parser's ordinary validity limitations.
+Compared with K2.7, the ranking flips depending on the metric (Table~\ref{tab:k27k3},
+Figure~\ref{fig:k3}). K3 has lower prompt risk (21.50\% versus 43.00\%), a lower average rate per
+answer (4.18\% versus 8.36\%), and only 54 \qtwo\ answers above 100 packages versus 234. On the 800
+shared prompts, the paired difference in \qtwo\ prompt risk is 20.63 percentage points
+(16.50--24.75), and the difference in flood frequency is 22.50 percentage points (19.00--26.00). Yet
+K3's rarer floods are much worse (52.10\% unregistered, versus 23.81\% in K2.7's approximate cap
+hits), so its pooled rate is higher. Set aside the cap tails of both, as a diagnostic, and the two
+rates nearly coincide: 13.11\% and 13.18\%. Twenty-two prompts flood in both models, against 15.8
+expected if flooding were independent (odds ratio 1.73), so some prompts are prone to floods in both.
+But the Jaccard overlap of flood prompts is 0.083 against a maximum of 0.231 given the two models'
+flood rates, so the prompt alone does not decide which model floods. The 54 K3 floods contain 8,010
+distinct unregistered names with a mean pairwise Jaccard of 0.0011, and no name appears in even a
+quarter of them. The tail is not one memorized list repeated, and it is not a parser stuck in a loop.
+That does not remove the parser's ordinary limitations.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_k3_mechanism}
-\caption{Kimi K2.7 versus Kimi K3. (A) The headline reversal is aggregation-sensitive: K3 is worse
-occurrence-weighted but better on prompt risk, response-macro mean, and after cap-tail exclusion.
-(B) K3's 46 exact package cap hits are 2.9\% of responses but 81.0\% of unregistered occurrences.
-(C) Late-position degradation persists after exclusion of the K2.7 proxy and the exact K3 cap hits.}
+\caption{Kimi K2.7 versus Kimi K3. (A) The ranking depends on the metric: K3 is worse when every name
+counts equally, but better on prompt risk, on the average rate per answer, and after cap-tail
+exclusion. (B) K3's 46 exact package cap hits are 2.9\% of its answers but 81.0\% of its unregistered
+names. (C) Rates still rise with list position after removing the K2.7 approximate cap hits and the
+exact K3 cap hits.}
 \label{fig:k3}
 \end{figure*}
 
-Late-position degradation survives exact cap exclusion: K3's \qtwo\ rate rises from 2.70--5.62\%
-through position 25 to 9.06\%, 11.22\%, and 36.75\% at positions 26--50, 51--100, and 101+. The
-mechanism is therefore two-stage: occasional runaway enumeration creates a long tail, and package
-validity declines sharply within it. The token boundary reveals and censors that process; it is not
-established as its cause.
+The rise with list position survives the removal of exact cap hits: K3's \qtwo\ rate goes from
+2.70--5.62\% through position 25 to 9.06\%, 11.22\%, and 36.75\% at positions 26--50, 51--100, and
+101+. So the mechanism has two stages. Occasionally the model runs away and enumerates, and the
+further down the list it gets, the less real the names become. The token cap reveals that process and
+cuts it off; nothing here shows that the cap causes it.
 
 \section{Discussion}
 \label{sec:discussion}
 
 \subsection{The parser is part of the measurement instrument}
 
-Strict parsing bought precision by selectively abstaining, and the price was visible: 79.75\%
-end-to-end recall in validation, and malformed shares from 0.44\% (gpt-oss) to 18.25\% (DeepSeek
-Coder V2) in the benchmark. Coverage differences of that size can bias cross-model comparisons if
-they are omitted, because the denominator of a low-coverage cell is drawn from the subset of its
-responses that stayed on format. Transport-layer control tokens should be normalized before parsing
-and logged; the Grok \texttt{<|eos|>} case shows that a hosted endpoint can move a malformed rate by
-eleven points without moving the primary rate.
+Strict parsing bought precision by refusing unclear answers, and the cost was visible: 79.75\% recall
+in validation, and malformed shares from 0.44\% (gpt-oss) to 18.25\% (DeepSeek Coder V2) in the
+benchmark. Differences that large can bias a comparison between models if they are left out, because
+the rate of a low-coverage model is computed only from the answers that stayed in format. Control
+tokens leaked by the transport layer should be stripped before parsing and logged. The Grok
+\texttt{<|eos|>} case shows that a hosted endpoint can move a malformed rate by eleven points without
+moving the primary rate at all.
 
 \subsection{Registry time changes the label space}
 
 A name can move from ``hallucinated'' to registered, or from registered to deleted, with no change in
-the model, and the 2024 registry contained squatted standard-library names that made module confusion
-invisible. Registry snapshots should be dated and digested exactly like model artifacts, and rates
-should be scored against a frozen and a current snapshot with an explicit stdlib policy. The bridge
-shows the corollary: once the extractor is held fixed, registry drift explains almost none of the gap
-between studies, so a disagreement between two 2026 rates is about cohorts, prompts, and extraction
-semantics, not about the calendar.
+the model, and the 2024 registry contained squatted standard-library names that hid module confusion
+entirely. Registry snapshots should be dated and hashed like model weights, and rates should be scored
+against both a frozen and a current snapshot with an explicit standard-library rule. The bridge adds a
+corollary: with the extractor held fixed, registry drift explains almost none of the gap between the
+two studies, so a disagreement between two 2026 rates is about which models, which prompts, and how
+names are extracted, not about the calendar.
 
 \subsection{Average rates conceal operationally different risks}
 
-Three regimes appeared in six modern models: low and diffuse, high and diffuse, and catastrophic
-tail. Tail-aware metrics are necessary for a security evaluation because the mitigations differ.
-Diffuse risk is addressed by registry checks at install time and by installation confirmation
-interfaces; catastrophic tails are addressed by flood guards and output bounds on enumeration. The
-K2.7/K3 reversal is the clearest example: K3 is safer on typical-prompt measures and worse when every
-emitted occurrence receives equal weight. Neither estimand subsumes the other; a report that carries
-only one of them answers only one operational question.
+Six modern models showed three kinds of failure: low and spread out, high and spread out, and
+catastrophic tail. Security evaluations need tail-aware metrics because the defenses differ.
+Spread-out risk is handled by checking names against the registry at install time and by asking the
+user to confirm installations. Catastrophic tails are handled by flood guards and by bounding how
+many names a model may recommend. The K2.7/K3 comparison is the clearest example: K3 is the safer
+model on a typical prompt and the worse model when every emitted name counts equally. Neither number
+contains the other. A report that carries only one of them answers only one operational question.
 
 \subsection{What the cap diagnostic resolves, and what it does not}
 
-Under deterministic, contamination-free measurement the proposed cap mechanism for DeepSeek is
-weakened: rates are flat or non-monotone across a 32-fold range of caps with every paired interval
-including zero. The diagnostic does not identify temperature as the cause of the earlier association
-\citep{anderson2026replication} and does not establish formal equivalence. The exact K3 finish reasons then show a different relation
-between caps and outcomes: cap-associated responses can dominate an aggregate, but cap membership is
-observed after generation and cannot distinguish runaway enumeration from the boundary that truncates
-it. A randomized within-prompt cap experiment is still required.
+Under deterministic decoding and a strict parser, the proposed cap mechanism for DeepSeek is weakened:
+rates are flat or non-monotone across a 32-fold range of caps, and every paired interval includes
+zero. The diagnostic does not show that temperature caused the earlier association
+\citep{anderson2026replication}, and it does not prove equivalence. The exact K3 cap records then
+show a different relationship between caps and outcomes: answers that hit the cap can dominate a rate,
+but cap status is only known after generation, so it cannot separate a runaway list from the boundary
+that truncates it. A randomized within-prompt cap experiment is still needed.
 
 \subsection{Replication as measurement debugging}
 
-The useful verdict here is not binary. Artifact fidelity (does the transport reproduce the artifact),
-measurement validity (does the instrument measure package recommendations), and contemporary
-relevance (what do current models do) are separate questions with separate evidence. ``Broad
-reproduction with exact numerical failure'' is more informative than ``replicated'' or ``failed to
-replicate'' because it locates the residual in checkpoint provenance rather than in the phenomenon,
-and it is only visible because the parser and cap confounds were removed first.
+The useful verdict is not a yes or a no. Whether the transport reproduces the artifact, whether the
+instrument measures package recommendations, and what current models do are three separate
+questions with separate evidence. ``The pattern reproduces but the exact number does not'' is more
+informative than ``replicated'' or ``failed to replicate,'' because it places the leftover gap in the
+model artifacts rather than in the phenomenon. And that gap only became visible once the parser and
+cap confounds were removed.
 
 \subsection{What the concurrent replication changes}
 
-Churilov establishes breadth and a real, registrable cross-model attack surface. Our bridge shows
-that matching the extractor is necessary but not sufficient for rate comparability: cohort, prompt
-source, the module-to-distribution mapping, refusal policy, and the inferential unit remain
-consequential. Prompt-conditioned overlap should become standard before universal-name sets are used
-to infer shared training origins, since four of five all-model names in our cohort are explained by
-same-prompt elicitation. Two concrete additions that would strengthen that study without new model
-runs are the current-registry revalidation it defers and a generation-clustered recomputation of its
-pairwise significance.
+Churilov establishes breadth and a real, registrable cross-model attack surface. Our bridge shows that
+using the same extractor is necessary but not sufficient for two rates to be comparable. The models,
+the prompt source, the mapping from import to package, the refusal policy, and the unit of inference
+all still matter. Prompt-conditioned overlap should become standard before a set of universal names
+is read as evidence of shared training data, because four of the five all-model names in our cohort
+are explained by a shared prompt. Two additions would strengthen that study without any new model
+runs: the current-registry check it defers to future work, and a recomputation of its pairwise tests
+that clusters by generation.
 
 \section{Threats to validity and limitations}
 \label{sec:threats}
 
 \begin{itemize}
-\item Python only, and a package-query task rather than general code generation.
-\item The six-cell benchmark, the two separately frozen extension cells, and the K3 successor cell
-  are purposive, not representative samples of frontier or local models.
-\item Kimi K3's scientific design was frozen, but its provenance and completion gates were expanded
-  during collection; the finalized manifest's missing later fields corroborate that the live process
-  had loaded an earlier pipeline version. Those edits did not affect prompts, responses, parsing, or
-  estimands, but ``frozen pipeline'' would overstate the record, and the K3 freeze rests on a
-  retrospective attestation and later remote commit, not a tamper-evident pre-data commit.
-\item One fixed prompt subset and one modern generation draw per model; between-run variance for
-  Track B is bounded only by Track A's seed evidence.
-\item Parser~v2 has 79.75\% end-to-end semantic recall in the initial validation sample; the Track B
-  audit was AI-reviewed at maintainer direction, and no human labeled every record.
-\item Occurrence rates condition on accepted grammar-valid package tokens.
-\item Hosted aliases and provider-side infrastructure can change despite served-id capture; the
-  DeepSeek Coder V2 resumed-run metadata are mixed.
-\item Some package-query responses hit token caps, so catastrophic-tail totals may be lower bounds.
-\item Kimi K2.7's phase-level cap counts cannot be mapped to exact response ids; its exclusion
-  analysis is a longest-response proxy. K3's exact cap membership is observed but cap-excluded
-  conditioning remains post-treatment, and the K2.7/K3 comparison mixes exact labels with a proxy.
-\item Kimi K2.7's aggregate denominator is overwhelmingly generated by extreme \qtwo\ lists;
-  occurrence-weighted and prompt-level risk answer different operational questions.
-\item Unregistered PyPI names include ecosystem mismatches, not only invented strings.
-\item All tail, EOS, sentinel, recentered-bootstrap, bridge, and cap-conditioning analyses are post hoc
-  and remain labeled as such; the bridge cohorts have no exact model match, and generated imports can
-  denote local modules.
-\item The Qwen 3.5 and Kimi K2.7 cells are a separately preregistered extension and are not folded
-  retroactively into Campaign~4's confirmatory family.
+\item Python only, and a package-question task rather than general code generation.
+\item The six benchmark cells, the two extension cells, and the K3 cell were chosen by hand. They are
+  not a representative sample of frontier or local models.
+\item Kimi K3's scientific design was frozen, but the provenance and completeness checks were
+  expanded during collection; the finished manifest lacks fields added later, which confirms that the
+  running process used the earlier code. Those edits did not touch prompts, responses, parsing, or
+  outcomes, but ``frozen pipeline'' would overstate the record. The K3 freeze rests on an attestation
+  and a later commit, not on a tamper-evident commit made before the data existed.
+\item One fixed prompt subset and one generation per model in Track B; only Track A's seeds tell us
+  how much a rerun would move.
+\item Parser~v2 found 79.75\% of visible recommendations in the validation sample. The Track B audit
+  was done by an AI reviewer at the maintainer's direction; no human read every record.
+\item The occurrence rate is computed only over names the parser accepted.
+\item Hosted aliases and provider infrastructure can change even when the served id is recorded. The
+  DeepSeek Coder V2 run was resumed under mixed settings.
+\item Some package answers hit the token cap, so the catastrophic-tail totals may be lower bounds.
+\item Kimi K2.7's cap counts exist only per phase, so its cap analysis uses the longest answers as a
+  stand-in. K3's cap status is exact, but removing cap hits is still conditioning on an outcome, and
+  the K2.7/K3 comparison mixes exact labels with a stand-in.
+\item Kimi K2.7's rate is dominated by extreme \qtwo\ lists. The occurrence rate and prompt risk
+  answer different questions.
+\item Unregistered PyPI names include real packages from other ecosystems, not only invented strings.
+\item Every tail, control-token, sentinel, recentered-bootstrap, bridge, and cap-conditioning analysis
+  was done after seeing the data and is labeled that way. The bridge cohorts share no model, and
+  generated imports can refer to local files.
+\item The Qwen 3.5 and Kimi K2.7 cells were preregistered separately and are not folded back into
+  Campaign~4's original set of comparisons.
 \end{itemize}
 
-We also list claims the evidence does not support. Grok 4.6 and DeepSeek V4 Flash refute the
-generalization that frontier models hallucinate at 1.3--2.2\%, and gpt-oss is not a hosted frontier
-model. The cap diagnostic supports non-reproduction, not causal elimination. Not every unregistered
-name is fabricated. Only five model pairs are definitively different. Parser~v2's grammar is
-reliable, but strict abstention, transport markers, and collapsed no-package tokens are measurable
-limitations. Churilov's results and ours do not agree once extraction is matched. Universal names do
-not prove shared training data. Kimi K2.7 does not have a model-wide 23.10\% ordinary recommendation
-rate, and removing cap-hit responses does not ``repair'' it. Kimi K3 is not simply worse than K2.7;
-the ranking depends on the operational question. The token cap is not established as the cause of
-K3's tail. And the low flood-prompt Jaccard does not make prompt susceptibility irrelevant.
+We also list claims that the evidence does not support:
+\begin{itemize}
+\item That frontier models hallucinate at 1.3--2.2\%. Grok 4.6 and DeepSeek V4 Flash contradict it,
+  and gpt-oss is not a hosted frontier model.
+\item That the cap effect ``vanished.'' The diagnostic shows non-reproduction, not the absence of any
+  effect.
+\item That every unregistered name is invented.
+\item That more than five model pairs are definitively different.
+\item That Parser~v2 is semantically perfect. Its grammar is reliable, but strict abstention, leaked
+  control tokens, and collapsed ``no packages'' tokens are measurable limitations.
+\item That Churilov's results and ours agree once extraction is matched.
+\item That universal names prove shared training data.
+\item That Kimi K2.7 has an ordinary recommendation rate of 23.10\%, or that removing cap hits
+  ``repairs'' it.
+\item That Kimi K3 is simply worse than K2.7. The ranking depends on the question.
+\item That the token cap causes K3's tail.
+\item That the low overlap of flood prompts makes prompt susceptibility irrelevant.
+\end{itemize}
 
 \section{Security, ethics, and responsible artifact release}
 \label{sec:ethics}
 
-Publishing currently unregistered candidate package names would hand an adversary a target list.
-Following the original study, this paper and every committed artifact release aggregate and
-per-prompt counts, hashes, manifests, model ids and digests, parser version, and registry snapshot
-identities, but never the names. Raw responses are retained outside version control under a
-content-addressed index and can be shared with verified researchers under a responsible-access
-policy. The work measures unsafe recommendations; it does not validate that any named package is
-malicious, and a name registered after a model first recommended it is indistinguishable here from
-an unrelated coincidence.
+Publishing a list of unregistered candidate names would hand attackers a target list. Following the
+original study, this paper and every committed artifact release counts, hashes, manifests, model ids
+and digests, the parser version, and the registry snapshot identities, but never the names. Raw
+responses are kept outside version control under a content-addressed index and can be shared with
+verified researchers under a responsible-access policy. This work measures unsafe recommendations. It
+does not show that any named package is malicious, and a name registered after a model first
+recommended it cannot be distinguished here from an unrelated coincidence.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-The historical pattern broadly reproduces, but the exact DeepSeek value does not under its own family
-parser. Modern models show distinct diffuse and catastrophic-tail failure regimes that a single
-average conceals, and a successor model can be safer on typical prompts while scoring worse
-occurrence-weighted. Future package-hallucination evaluations should version the registry and the
-parser, report response coverage beside every rate, cluster inference by prompt, and quantify
-concentration. The next experiment implied by these results is a within-prompt package-cap by
-bounded-list factorial, launched through a commit-based freeze gate, to separate runaway enumeration
-from token-boundary truncation and to test a practical mitigation.
+The 2024 pattern comes back, but the exact DeepSeek value does not under its own parser. Modern
+models fail in distinct ways, spread out or in catastrophic tails, and a single average hides the
+difference; a successor model can be safer on typical prompts while scoring worse overall. Future
+evaluations of package hallucination should record the registry and parser versions, report how
+many answers the parser accepted, build confidence intervals on prompts, and measure how concentrated
+the errors are. The next experiment these results call for is a within-prompt factorial that varies
+the token cap and adds a bounded-list instruction, launched through the commit-based freeze gate, to
+separate runaway enumeration from truncation and to test a practical defense.
 
 \section*{Disclosure of AI involvement}
 
 The code, analyses, and reports in the underlying repository were produced by Anthropic Claude
-(Opus 5 and Fable 5) and OpenAI Codex under the interactive direction of the author; the two AI systems
-also performed the delegated label sign-off, the Track B parser audit, and two adversarial reviews of
-each other's work, with every adopted finding re-verified against raw artifacts as committed code.
-This manuscript draft was written by Claude (Fable 5.1) from the committed artifacts and the
-maintainer's paper outline; all tables are generated programmatically from the frozen result files.
-The maintainer's preregistration sign-offs and delegations are the human control points. The original
-study, its pipeline, prompt corpus, and detection code are the work of Spracklen et al.
+(Opus 5 and Fable 5) and OpenAI Codex under the interactive direction of the author. The two AI
+systems also performed the delegated label sign-off, the Track B parser audit, and two adversarial
+reviews of each other's work, and every adopted finding was re-verified against raw artifacts as
+committed code. This manuscript was written by Claude (Fable 5.1) from the committed artifacts and
+the maintainer's paper outline, and all tables are generated programmatically from the frozen result
+files. The maintainer's preregistration sign-offs and delegations are the human control points. The
+original study, its pipeline, prompt corpus, and detection code are the work of Spracklen et al.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}
@@ -914,33 +950,40 @@ study, its pipeline, prompt corpus, and detection code are the work of Spracklen
 \section{Artifact checklist}
 \label{app:artifacts}
 
-\begin{sloppypar}
-The repository accompanying this paper contains: the full preregistrations and their chronological
-amendments (\texttt{Experiments/PREREGISTRATION\_v4.md},
-\texttt{PREREGISTRATION\_OLLAMA\_CLOUD\_EXTENSION.md}, \texttt{PREREGISTRATION\_KIMI\_K3\_EXTENSION.md});
-the frozen Parser~v2 grammar and unit tests (\texttt{parser\_v2.py}); the initial and Track B audit
-designs, signed summaries, and hashes; dual-registry construction, dates, and counts; all seed-level
-Track A tables and the full cap pairing and position-band tables (\texttt{campaign4\_results.json},
-\texttt{cap\_diagnostic\_summary.json}); all 15 paired comparisons under both conventions
-(\texttt{campaign4\_post\_analysis.json}); prompt-level derived counts sufficient to reproduce every
-interval without exposing raw names; the DeepSeek Coder V2 run-history addendum; the Churilov-compatible
-extractor port and its machine-readable output (\texttt{churilov\_bridge\_analysis.py}, \texttt{.json});
-the separately frozen extension protocol, manifests, and post-analysis
-(\texttt{ollama\_cloud\_extension\_results.json}, \texttt{ollama\_cloud\_extension\_post\_analysis.json});
-the Kimi K3 ordered response-metadata sidecars, cost ledger, scoring gate, and results
-(\texttt{kimi\_k3\_extension\_results.json}); the K2.7/K3 paired post-analysis
-(\texttt{kimi\_k2\_7\_vs\_k3\_post\_analysis.json}); the retrospective provenance stamp with its explicit
-non-cryptographic-preregistration limitation and raw-artifact hash index; the review amendment ledger;
-and the commit-based freeze gate (\texttt{experiment\_gate.py}) required for every future analytic
-cell. The manuscript's tables and figures are regenerated from these files by
+The repository accompanying this paper contains:
+\begin{itemize}
+\item the full preregistrations and their dated amendments
+  (\texttt{Experiments/PREREGISTRATION\_v4.md}, \texttt{PREREGISTRATION\_OLLAMA\_CLOUD\_EXTENSION.md},
+  \texttt{PREREGISTRATION\_KIMI\_K3\_EXTENSION.md});
+\item the frozen Parser~v2 grammar and its unit tests (\texttt{parser\_v2.py});
+\item the initial and Track B audit designs, signed summaries, and hashes;
+\item the construction, dates, and counts of both registry snapshots;
+\item all seed-level Track A tables and the full cap pairing and position-band tables
+  (\texttt{campaign4\_results.json}, \texttt{cap\_diagnostic\_summary.json});
+\item all 15 paired comparisons under both conventions (\texttt{campaign4\_post\_analysis.json});
+\item prompt-level derived counts sufficient to reproduce every interval without exposing raw names;
+\item the DeepSeek Coder V2 run-history addendum;
+\item the Churilov-compatible extractor port and its machine-readable output
+  (\texttt{churilov\_bridge\_analysis.py}, \texttt{.json});
+\item the separately frozen extension protocol, manifests, and post-analysis
+  (\texttt{ollama\_cloud\_extension\_results.json}, \texttt{ollama\_cloud\_extension\_post\_analysis.json});
+\item the Kimi K3 per-answer metadata records, cost ledger, scoring gate, and results
+  (\texttt{kimi\_k3\_extension\_results.json});
+\item the K2.7/K3 paired post-analysis (\texttt{kimi\_k2\_7\_vs\_k3\_post\_analysis.json});
+\item the retrospective provenance stamp, with its explicit statement that it is not a
+  cryptographic preregistration, and the raw-artifact hash index;
+\item the review amendment ledger; and
+\item the commit-based freeze gate (\texttt{experiment\_gate.py}) required for every future analytic
+  run.
+\end{itemize}
+The manuscript's tables and figures are regenerated from these files by
 \texttt{paper/build\_tables.py} and \texttt{paper/make\_figures.py}.
-\end{sloppypar}
 
 \section{Additional cap-diagnostic tables}
 \label{app:cap}
 
 Table~\ref{tab:capcells} lists every paired cell of the controlled cap diagnostic, and
-Table~\ref{tab:capbands} the position-band rates within grammar-valid responses.
+Table~\ref{tab:capbands} the rates by list position within answers that parsed as lists.
 
 \input{tables/tab_capcells}
 \input{tables/tab_capbands}
@@ -948,7 +991,7 @@ Table~\ref{tab:capbands} the position-band rates within grammar-valid responses.
 \section{Bridge and overlap detail}
 \label{app:bridge}
 
-Table~\ref{tab:bridgedatasets} decomposes the code-import bridge by prompt dataset, and
+Table~\ref{tab:bridgedatasets} breaks the code-import bridge down by prompt dataset, and
 Table~\ref{tab:overlappairs} gives the fifteen pairwise overlap statistics for the Campaign~4 cells.
 
 \input{tables/tab_bridgedatasets}
@@ -957,8 +1000,8 @@ Table~\ref{tab:overlappairs} gives the fifteen pairwise overlap statistics for t
 \section{Extension-cell detail}
 \label{app:extension}
 
-Tables~\ref{tab:extpairs} and \ref{tab:k3pairs} give the two extension Holm families, and
-Table~\ref{tab:positions} the \qtwo\ position profiles with and without cap-tail exclusion.
+Tables~\ref{tab:extpairs} and \ref{tab:k3pairs} give the two extension comparison families, and
+Table~\ref{tab:positions} the \qtwo\ rates by list position with and without cap-tail exclusion.
 
 \input{tables/tab_extpairs}
 \input{tables/tab_k3pairs}

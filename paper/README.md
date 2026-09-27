@@ -1,8 +1,9 @@
 # Manuscript
 
 `main.tex` is the paper draft written from [`PAPER_OUTLINE.md`](../PAPER_OUTLINE.md) and the
-committed result artifacts under [`Experiments/`](../Experiments). `main.pdf` is the compiled
-output.
+committed result artifacts under [`Experiments/`](../Experiments).
+`PackageHallucinationRevisitedPaper.pdf` is the compiled output (a copy of the untracked build
+product `main.pdf`, made by `build.ps1`).
 
 ## Provenance of every number
 

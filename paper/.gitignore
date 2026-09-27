@@ -1,4 +1,6 @@
-# LaTeX build products (main.pdf is tracked deliberately)
+# LaTeX build products. The tracked deliverable is PackageHallucinationRevisitedPaper.pdf,
+# copied from main.pdf by build.ps1.
+main.pdf
 *.aux
 *.bbl
 *.blg
@@ -10,5 +12,3 @@
 *.toc
 build.log
 page-*.png
-# Maintainer's local copy of an earlier draft; main.pdf is the tracked build output.
-PackageHallucinationRevisitedPaper.pdf
