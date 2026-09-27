@@ -1,0 +1,14 @@
+# LaTeX build products (main.pdf is tracked deliberately)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+build.log
+page-*.png
+# Maintainer's local copy of an earlier draft; main.pdf is the tracked build output.
+PackageHallucinationRevisitedPaper.pdf
