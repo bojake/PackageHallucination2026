@@ -15,8 +15,9 @@ product `main.pdf`, made by `build.ps1`).
   (Table 1), whose rows come from the run manifests under the git-ignored `Tests/` tree and the
   preregistration execution logs.
 - `data/churilov_bridge_analysis_six_cell_eac1434.json` is the six-cell bridge artifact as
-  committed at `eac1434`, kept here because the current artifact holds the nine-cell version and
-  the paper reports both.
+  committed at `eac1434` (now `a212e05` after the 2026-09-27 history rewrite; see
+  `HISTORY_REWRITE_2026-09-27.md` at the repository root), kept here because the current artifact
+  holds the nine-cell version and the paper reports both.
 - `make_figures.py` draws Figures 2--4 and 6--9 from the same JSON files. Figure 5 (ranked-prompt
   concentration curves) re-scores the raw responses under `Tests/` through the frozen
   `post_campaign_analysis.py` path and prints each cell's totals so they can be checked against

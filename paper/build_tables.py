@@ -378,7 +378,8 @@ def build_overlap():
          f"{nine['same_prompt_share_of_universal_names_pct']:.0f}"],
     ]
     notes = ("Base set: dual-registry, non-stdlib unregistered recommendations accepted by Parser~v2. "
-             "The six-cell column is the frozen Campaign~4 cohort (artifact at commit \\texttt{eac1434}); "
+             "The six-cell column is the frozen Campaign~4 cohort (artifact at commit \\texttt{a212e05}, "
+             "\\texttt{eac1434} before the 2026-09-27 history rewrite); "
              "the nine-cell column adds the three extension cells. Candidate names are withheld.")
     summary = table("table", "@{}p{5.6cm}rr@{}", "Overlap statistic & Six cells & Nine cells", rows,
                     "Ordinary versus prompt-aligned cross-model overlap.", "tab:overlap",

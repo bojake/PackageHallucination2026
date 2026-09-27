@@ -5,7 +5,9 @@ classification, primary estimate, or preregistered comparison family changed.
 
 This record responds to the second part of Fable's review of the Kimi K3 extension. It is a
 prospective amendment to the paper materials and code, not an attempt to rewrite the historical
-execution record locked at commit `8bcde486a3dbd1d1bffe45410465748bfc173f3e`.
+execution record locked at commit `8bcde486a3dbd1d1bffe45410465748bfc173f3e` (now `2850472…`
+after the 2026-09-27 history rewrite; see
+[HISTORY_REWRITE_2026-09-27.md](../HISTORY_REWRITE_2026-09-27.md)).
 
 ## Dispositions
 

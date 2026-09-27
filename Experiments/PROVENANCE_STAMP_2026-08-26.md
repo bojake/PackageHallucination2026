@@ -2,6 +2,10 @@
 
 **Status:** retrospective evidence stamp; **not** a cryptographic preregistration.
 
+> **Note added 2026-09-27:** the repository history was rewritten after this stamp was made (see
+> [HISTORY_REWRITE_2026-09-27.md](../HISTORY_REWRITE_2026-09-27.md)). Commit ids quoted below refer
+> to the pre-rewrite history; `eac1434…` is now `a212e05…`. File-content hashes are unaffected.
+
 The Kimi K3 preregistration, scorer, and outcomes were not committed before inference. No
 post-run artifact can repair that historical fact. This stamp instead locks the evidence that
 exists now, states the maintainer/operator attestation narrowly, and makes later modifications

@@ -248,7 +248,9 @@ Because this campaign was run from an uncommitted working tree, its evidence is 
 qualified by the [retrospective provenance stamp](Experiments/PROVENANCE_STAMP_2026-08-26.md).
 The stamp hashes the attested pre-outcome design core, local chronology, commit-candidate files,
 and raw-artifact index, but does not claim to retroactively create a cryptographic
-preregistration.
+preregistration. Commit ids quoted in the stamp and in the other reports predate the 2026-09-27
+history rewrite that removed three example unregistered package names from every revision; the
+old-to-new mapping is in [HISTORY_REWRITE_2026-09-27.md](HISTORY_REWRITE_2026-09-27.md).
 Here, “frozen” applies to prompts, parser, registries, model/sampling settings, estimands, and
 the comparison family. Provenance and completion-gate code was expanded during collection,
 before scoring; the live process had already loaded an earlier implementation. Those changes
